@@ -146,6 +146,7 @@ import { WordComponent } from './components/word/word.component';
 import { WitnessPanelComponent } from './panels/witness-panel/witness-panel.component';
 import { XmlBeautifyPipe } from './pipes/xml-beautify.pipe';
 import { XMLParsers } from './services/xml-parsers/xml-parsers';
+import { SynopsisComponent } from './view-modes/synopsis/synopsis.component';
 
 const routes: Routes = [
 ];
@@ -279,6 +280,7 @@ const DynamicComponents = [
     VerseProseSelectComponent,
     WitnessPanelComponent,
     XmlBeautifyPipe,
+    SynopsisComponent,
     ...DynamicComponents,
   ],
   imports: [
