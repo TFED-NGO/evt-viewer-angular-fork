@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
-import { ApparatusEntry, GenericElement, Reading } from '../../../models/evt-models';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
+import { distinctUntilChanged } from 'rxjs';
+import { EVTStatusService } from 'src/app/services/evt-status.service';
 @Component({
   selector: 'evt-apparatus-entry-detail',
   templateUrl: './apparatus-entry-detail.component.html',
@@ -10,13 +12,20 @@ import { EVTModelService } from '../../../services/evt-model.service';
 })
 
 @register(ApparatusEntryDetailComponent)
-export class ApparatusEntryDetailComponent implements OnInit {
+export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
+
+  private subscriptions;
+
   @Input() data: ApparatusEntry;
   nestedApps: ApparatusEntry[] = [];
   rdgHasCounter = false;
 
+  @Input() selectedLayer: string;
+
+  public orderedLayers: string[];
+
   get significantRdg(): Reading[] {
-    return this.data.readings.filter((rdg) => rdg.significant);
+    return this.data.readings.filter((rdg) => rdg?.significant);
   }
 
   get notSignificantRdg(): Reading[] {
@@ -35,8 +44,13 @@ export class ApparatusEntryDetailComponent implements OnInit {
       }),     {});
   }
 
+  getLayerData(changeData: ChangeLayerData) {
+    this.orderedLayers = changeData?.layerOrder;
+  }
+
   constructor(
     public evtModelService: EVTModelService,
+    public evtStatusService: EVTStatusService,
   ) {
   }
 
@@ -44,6 +58,11 @@ export class ApparatusEntryDetailComponent implements OnInit {
     if (this.data.nestedAppsIDs.length > 0) {
       this.recoverNestedApps(this.data);
     }
+    this.subscriptions = this.evtStatusService.currentChanges$.pipe(distinctUntilChanged()).subscribe(({ next: (data) => this.getLayerData(data) }));
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 
   recoverNestedApps(app: ApparatusEntry) {

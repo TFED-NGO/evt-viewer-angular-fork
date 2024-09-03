@@ -4,10 +4,11 @@ import { BehaviorSubject, combineLatest, merge, Observable, Subject, timer } fro
 import { distinctUntilChanged, filter, first, map, mergeMap, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AppConfig, EditionLevelType } from '../app.config';
-import { Page, ViewMode } from '../models/evt-models';
+import { ChangeLayerData, Page, ViewMode } from '../models/evt-models';
 import { EVTModelService } from './evt-model.service';
+import { deepSearch } from '../utils/dom-utils';
 
-export type URLParamsKeys = 'd' | 'p' | 'el' | 'ws' | 'vs';
+export type URLParamsKeys = 'd' | 'p' | 'el' | 'ws' | 'vs' | 'lr';
 export type URLParams = { [T in URLParamsKeys]: string };
 
 @Injectable({
@@ -38,6 +39,7 @@ export class EVTStatusService {
 
         return defaultViewMode;
     }
+
     public updateViewMode$: BehaviorSubject<ViewMode> = new BehaviorSubject(undefined);
     public updateDocument$: BehaviorSubject<string> = new BehaviorSubject('');
     public updatePage$: Subject<Page> = new Subject();
@@ -46,6 +48,8 @@ export class EVTStatusService {
     public updateEditionLevels$: Subject<EditionLevelType[]> = new Subject();
     public updateWitnesses$: BehaviorSubject<string[]> = new BehaviorSubject([]);
     public updateVersions$: BehaviorSubject<string[]> = new BehaviorSubject([]);
+    public updateChangeLayer$: BehaviorSubject<ChangeLayerData> = new BehaviorSubject(undefined);
+    public updateLayer$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
     public currentViewMode$ = this.updateViewMode$.asObservable();
     public currentDocument$ = merge(
@@ -85,6 +89,20 @@ export class EVTStatusService {
         this.route.queryParams.pipe(map((params: URLParams) => params.vs?.split(',') ?? [])),
         this.updateVersions$,
     );
+    public currentChanges$ = merge(
+        merge(
+            //this.route.queryParams.pipe(map((params: URLParams) => params.lr ?? '')),
+            this.evtModelService.changeData$,
+        ).pipe(
+            filter((n) => n !== undefined),
+            withLatestFrom(this.updateLayer$),
+            map(([data,selectedLayer]) => {
+                data.selectedLayer = selectedLayer;
+
+                return data;
+            }),
+        ),
+    );
 
     public currentStatus$: Observable<AppStatus> = combineLatest([
         this.updateViewMode$,
@@ -93,6 +111,7 @@ export class EVTStatusService {
         this.currentEditionLevels$,
         this.currentWitnesses$,
         this.currentVersions$,
+        this.currentChanges$,
     ]).pipe(
         distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
         shareReplay(1),
@@ -103,6 +122,7 @@ export class EVTStatusService {
             editionLevels,
             witnesses,
             versions,
+            changeLayerData,
         ]) => {
             if (viewMode.id === 'textText') {
                 if (editionLevels.length === 1) {
@@ -121,6 +141,7 @@ export class EVTStatusService {
                 editionLevels,
                 witnesses,
                 versions,
+                changeLayerData,
             };
         }),
     );
@@ -130,6 +151,10 @@ export class EVTStatusService {
     );
 
     public currentNamedEntityId$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+    public currentQuotedId$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+
+    public syncImageNavBar$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         private evtModelService: EVTModelService,
@@ -171,6 +196,7 @@ export class EVTStatusService {
             el: status.editionLevels.join(','),
             ws: status.witnesses.join(','),
             vs: status.versions.join(','),
+            lr: status.changeLayerData.selectedLayer,
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
@@ -179,6 +205,18 @@ export class EVTStatusService {
             params,
         };
     }
+
+    /** to avoid loops this function must not be fed with nodes */
+    getPageElementsByClassList(classList) {
+        const attributesNotIncludedInSearch = ['originalEncoding','type','spanElements','includedElements'];
+        const maxEffort = 4000;
+
+        return this.currentStatus$.pipe(
+            map(({ page }) => page.parsedContent),
+            map((pageSubElements) => deepSearch(pageSubElements, 'class', classList, maxEffort, attributesNotIncludedInSearch)),
+        );
+    }
+
 }
 
 export interface AppStatus {
@@ -188,4 +226,5 @@ export interface AppStatus {
     editionLevels: EditionLevelType[];
     witnesses: string[];
     versions: string[];
+    changeLayerData: ChangeLayerData,
 }

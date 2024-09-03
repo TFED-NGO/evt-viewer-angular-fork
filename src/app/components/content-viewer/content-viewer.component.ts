@@ -1,25 +1,31 @@
-import { Component, ComponentRef, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, ComponentRef, HostListener, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { AttributesMap } from 'ng-dynamic-component';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import { EditionLevelType, TextFlow } from '../../app.config';
-import { GenericElement } from '../../models/evt-models';
+import { GenericElement, Paragraph, Verse } from '../../models/evt-models';
 import { ComponentRegisterService } from '../../services/component-register.service';
 import { EntitiesSelectService } from '../../services/entities-select.service';
 import { EntitiesSelectItem } from '../entities-select/entities-select.component';
+import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
+import { AdditionComponent } from '../addition/addition.component';
+
 
 @Component({
   selector: 'evt-content-viewer',
   templateUrl: './content-viewer.component.html',
 })
 export class ContentViewerComponent implements OnDestroy {
-  private v: GenericElement;
-  @Input() set content(v: GenericElement) {
-    this.v = v;
-    this.contentChange.next(v);
+  private _content: GenericElement;
+
+  @Input() mouseCapture = false;
+
+  @Input() set content(genericElement: GenericElement) {
+    this._content = genericElement;
+    this.contentChange.next(genericElement);
   }
-  get content() { return this.v; }
+  get content() { return this._content; }
 
   private ith: EntitiesSelectItem[];
   @Input() set itemsToHighlight(i: EntitiesSelectItem[]) {
@@ -48,9 +54,26 @@ export class ContentViewerComponent implements OnDestroy {
   get textFlow() { return this.txtFlow; }
   textFlowChange = new BehaviorSubject<TextFlow>(undefined);
 
+  private withDels: boolean;
+  @Input() set withDeletions(d: boolean) {
+    this.withDels = d;
+    this.withDeletionsChange.next(d);
+  }
+  get withDeletions() { return this.withDels; }
+  withDeletionsChange = new BehaviorSubject<boolean>(true);
+
+  private selLayer: string;
+  @Input() set selectedLayer(d: string) {
+    this.selLayer = d;
+    this.selectedLayerChange.next(d);
+  }
+  get selectedLayer() { return this.selLayer; }
+  selectedLayerChange = new BehaviorSubject<string>(undefined);
+
   constructor(
     private componentRegister: ComponentRegisterService,
     private entitiesSelectService: EntitiesSelectService,
+    private evtHighlineService: EvtLinesHighlightService,
   ) {
   }
 
@@ -69,8 +92,10 @@ export class ContentViewerComponent implements OnDestroy {
     this.itemsToHighlightChange,
     this.editionLevelChange,
     this.textFlowChange,
+    this.withDeletionsChange,
+    this.selectedLayerChange,
   ]).pipe(
-    map(([data, itemsToHighlight, editionLevel, textFlow]) => {
+    map(([data, itemsToHighlight, editionLevel, textFlow, withDeletions, selLayer]) => {
       if (this.toBeHighlighted()) {
         return {
           data,
@@ -78,6 +103,8 @@ export class ContentViewerComponent implements OnDestroy {
           itemsToHighlight,
           editionLevel,
           textFlow,
+          withDeletions,
+          selLayer,
         };
       }
 
@@ -85,6 +112,8 @@ export class ContentViewerComponent implements OnDestroy {
         data,
         editionLevel,
         textFlow,
+        withDeletions,
+        selLayer,
       };
     }),
     shareReplay(1),
@@ -123,6 +152,106 @@ export class ContentViewerComponent implements OnDestroy {
       highlight: ith?.some((i) => this.entitiesSelectService.matchClassAndAttributes(i.value, data?.attributes ?? {}, data?.class)) ?? false,
       highlightColor: this.entitiesSelectService.getHighlightColor(data?.attributes ?? {}, data?.class, ith),
     };
+  }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @HostListener('click',['$event']) mouseClick($event: any) {
+
+    if (!this._content.content){
+
+      if (this._content.type.name === AdditionComponent.name){
+          return;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const lbId = (this._content as any).lbId;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const correspId =  (this._content as any).correspId;
+
+      if ((lbId === '' || correspId === '')){
+        return;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((this._content as any).text === '' || (this._content as any).text === ' ' ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._content as any).type.name === Verse.name ||
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this._content as any).type.name === Paragraph.name
+          ){
+        return;
+      }
+
+      const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+      const findElement = elementsSelected
+          .find((e)=>e.corresp === correspId && e.id === lbId);
+
+
+      if (findElement){
+        this.evtHighlineService.lineBeginningSelected$.next(
+          elementsSelected.filter((e)=>e.corresp !== correspId && e.id !== lbId),
+        );
+
+
+      } else {
+
+        this.evtHighlineService.lineBeginningSelected$.next([
+          ...elementsSelected,
+          {
+            id: lbId, corresp: correspId, selected: true,
+          }]);
+      }
+    }
+    $event.preventDefault();
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @HostListener('mouseover',['$event']) mouseOver($event: any) {
+    if (this._content.type.name === AdditionComponent.name){
+      return;
+    }
+ // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const lbId = (this._content as any).lbId;
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const correspId = (this._content as any).correspId;
+
+    if ((lbId === '' ||correspId  === '') ){
+      return;
+    }
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const textComponent = (this._content as any).text;
+
+    if (textComponent === '' || textComponent === ' ' ||
+        ((this._content as GenericElement).type.name === Verse.name && !(this._content as GenericElement).attributes['facs'] ) ||
+         (this._content as GenericElement).type.name === Paragraph.name
+        ){
+      return;
+    }
+
+    $event.preventDefault();
+    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+
+    if ((this._content as GenericElement).type.name === Verse.name && (this._content as GenericElement).attributes['facs'] ){
+
+      const facsId = (this._content as GenericElement).attributes['facs'].replace('#', '');
+      const id = (this._content as GenericElement).attributes['id'];
+      this.evtHighlineService.lineBeginningSelected$.next([
+        {
+        id: facsId, corresp: id, selected: undefined,
+      }, ...elementsSelected]);
+
+
+    } else {
+
+      this.evtHighlineService.lineBeginningSelected$.next([
+        {
+        id: lbId, corresp: correspId, selected: undefined,
+      }, ...elementsSelected]);
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @HostListener('mouseleave', ['$event']) mouseLeave($event: any) {
+
+    $event.preventDefault();
+    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+    this.evtHighlineService.lineBeginningSelected$.next(elementsSelected);
   }
 
   ngOnDestroy() {

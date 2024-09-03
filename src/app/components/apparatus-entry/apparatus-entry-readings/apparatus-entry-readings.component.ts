@@ -18,6 +18,7 @@ export class ApparatusEntryReadingsComponent {
   @Input() rdgHasCounter: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @Input() template: TemplateRef<any>;
+  @Input() selectedLayer: string;
 
   groups$ = this.evtModelService.groups$;
 
@@ -27,7 +28,7 @@ export class ApparatusEntryReadingsComponent {
   }
 
   get significantRdg(): Reading[] {
-    return this.data.readings.filter((rdg) => rdg.significant);
+    return this.data.readings.filter((rdg) => rdg?.significant);
   }
 
   getWits$(witID: string): Observable<string[]> {

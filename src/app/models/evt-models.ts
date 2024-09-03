@@ -36,7 +36,8 @@ export interface EditionStructure {
     pages: Page[];
 }
 
-export type ViewModeId = 'readingText' | 'imageText' | 'textText' | 'collation' | 'textSources' | 'textVersions';
+export type ViewModeId = 'imageOnly' | 'imageImage' | 'readingText' | 'imageText' | 'textText' |
+'collation' | 'textSources' | 'textVersions' | 'documentalMixed';
 
 export interface ViewMode {
     id: ViewModeId;
@@ -54,6 +55,12 @@ export interface Page {
     parsedContent: Array<ParseResult<GenericElement>>;
     url: string;
     facsUrl: string;
+}
+
+export interface ChangeLayerData {
+    list: ListChange[],
+    layerOrder: string[],
+    selectedLayer: string,
 }
 
 export interface NamedEntities {
@@ -166,14 +173,99 @@ export class ApparatusEntry extends GenericElement {
     lemma: Reading;
     readings: Reading[];
     notes: Note[];
-    originalEncoding: string;
+    originalEncoding: OriginalEncodingNodeType;
     nestedAppsIDs: string[];
+    changes: Mod[];
+    orderedReadings: Reading[];
+}
+
+export const SourceClass = 'sourceEntry';
+export const AnalogueClass = 'analogueEntry';
+export const BibliographyClass = 'biblioEntry';
+
+export class QuoteEntry extends GenericElement {
+    id: string;
+    tagName: string;
+    text: string;
+    sources: BibliographicEntry[] | BibliographicList[];
+    extSources: BibliographicEntry[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    extElements: any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    analogues: any;
+    originalEncoding: OriginalEncodingNodeType;
+    isInsideCit: boolean;
+    quotedText: string[];
+    isNoteView: boolean;
+    contentToShow: Array<ParseResult<GenericElement>>
+    //rend: string;
+}
+
+export class BibliographicList extends GenericElement {
+    id: string;
+    head: string[];
+    sources: BibliographicEntry[];
+}
+
+export interface AuthorDetail {
+    fullName: string;
+    forename: string;
+    forenameInitials: string;
+    surname: string;
+    nameLink: string[];
+}
+export class BibliographicEntry extends GenericElement {
+    id: string;
+    author: string[];
+    authorsDetails: AuthorDetail[];
+    editor: string[];
+    title: string[];
+    titleDetails: {
+        title: string;
+        level: string;
+    };
+    publication: string;
+    idno: string[];
+    doi: string;
+    date: string[];
+    publisher: string[];
+    pubPlace: string[];
+    citedRange: string[];
+    pageNumber: string;
+    volumeNumber: string;
+    issueNumber: string;
+    biblScope: string[];
+    text: string;
+    quotedText: string;
+    isInsideCit: boolean;
+    originalEncoding: OriginalEncodingNodeType;
+}
+
+export class BibliographicStructEntry extends GenericElement {
+    id: string;
+    analytic: BibliographicEntry[];
+    monogrs: BibliographicEntry[];
+    series: BibliographicEntry[];
+    originalEncoding: OriginalEncodingNodeType;
+}
+
+export class Analogue extends GenericElement {
+    id: string;
+    text: string;
+    sources: BibliographicEntry[];
+    extSources: BibliographicEntry[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    extLinkedElements: any;
+    quotedElements: [{ id: string, quote: string }];
+    contentToShow: Array<ParseResult<GenericElement>>
+    originalEncoding: OriginalEncodingNodeType;
 }
 
 export class Reading extends GenericElement {
     id: string;
     witIDs: string[];
     significant: boolean;
+    varSeq?: number;
 }
 
 export interface GridItem {
@@ -194,10 +286,14 @@ export class Note extends GenericElement {
     noteLayout: NoteLayout;
     noteType: string;
     exponent: string;
+    source: QuoteEntry;
+    analogue: Analogue;
 }
 
 export class Paragraph extends GenericElement {
     n: string;
+    source: QuoteEntry;
+    analogue: Analogue;
 }
 
 export class Lb extends GenericElement {
@@ -218,6 +314,19 @@ export class Surface extends GenericElement {
         hotspots: ZoneHotSpot[];
     };
 }
+
+export class Facsimile extends GenericElement{
+    corresp: string | undefined;
+    surfaces: Surface[];
+    surfaceGrps: SurfaceGrp[];
+    graphics: Graphic[];
+}
+
+export class SurfaceGrp extends GenericElement {
+
+    surfaces: Surface[];
+}
+
 export type ZoneRendition = 'Line' | 'HotSpot'; // EVT rule to distinguish lines for ITL from HotSpots
 export interface Point {
     x: number;
@@ -284,11 +393,15 @@ export class Choice extends GenericElement {
 
 export class Verse extends GenericElement {
     n: string;
+    source: QuoteEntry;
+    analogue: Analogue;
 }
 
 export class VersesGroup extends GenericElement {
     n: string;
     groupType: string;
+    source: QuoteEntry;
+    analogue: Analogue;
 }
 
 export class Supplied extends GenericElement {
@@ -316,10 +429,20 @@ export class Gap extends GenericElement {
     extent?: string;
 }
 
-export type PlacementType = 'above' | 'below' | 'inline' | 'left' | 'right' | 'inspace' | 'end' | 'sup' | 'sub' | 'under';
+export class Subst extends GenericElement {
+    after: ParseResult<GenericElement>;
+}
+
+
+export type PlacementType = 'above' | 'below' | 'inline' | 'left' | 'right' | 'inspace' | 'end' | 'sup' | 'superscript' | 'sub' | 'under';
 
 export class Addition extends GenericElement {
     place: PlacementType;
+}
+
+export class Space extends GenericElement {
+    quantity?: number;
+    unit?: 'chars' | 'letter' ;
 }
 
 export type SicType = 'crux'; // sic types supported in specific ways
@@ -450,13 +573,13 @@ export class MsItemStruct extends GenericElement {
     titles: Array<ParseResult<GenericElement>>; // TODO: Add specific type when title is handled
     rubric: Rubric;
     incipit: Incipit;
-    quote: Array<ParseResult<GenericElement>>; // TODO: Add specific type when quote is handled
+    quote: QuoteEntry;
     explicit: Explicit;
     finalRubric: FinalRubric;
     colophons: Array<ParseResult<GenericElement>>; // TODO: Add specific type when colophon is handled
     decoNote: DecoNote;
-    listBibl: Array<ParseResult<GenericElement>>; // TODO: Add specific type when listBibl is handled
-    bibl: Array<ParseResult<GenericElement>>; // TODO: Add specific type when bibl is handled
+    listBibl: BibliographicList;
+    bibl: BibliographicEntry;
     filiation: Filiation[];
     noteEl: Note[];
     textLangs: Array<ParseResult<GenericElement>>; // TODO: Add specific type when textLang is handled
@@ -1042,6 +1165,32 @@ export class Term extends GenericElement {
     rend?: string;
 }
 
+export class Milestone extends GenericElement {
+    id?: string;
+    unit?: string;
+    spanText: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    spanElements: any;
+}
+
+export class Anchor extends GenericElement {
+    id?: string;
+}
+
+export class Span extends GenericElement {
+    id?: string;
+    from: string;
+    to: string;
+    includedText: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    includedElements: any;
+}
+
+export class SpanGrp extends GenericElement {
+    id?: string;
+    spans: Span[]
+}
+
 export class Keywords extends GenericElement {
     scheme?: string;
     terms: Term[];
@@ -1189,9 +1338,24 @@ export class ListChange extends GenericElement {
     ordered?: boolean;
 }
 
+export class Mod extends GenericElement {
+    id?: string;
+    changeLayer: string;
+    varSeq: string;
+    isRdg: boolean;
+    insideApp: [boolean, string];
+    content: Array<ParseResult<GenericElement>>;
+    notes: Note[];
+    originalEncoding: OriginalEncodingNodeType
+}
+
 export class RevisionDesc extends GenericElement {
     content: Array<ListChange | Change>;
     status?: Status | string;
+}
+
+export class BibliographyInfo {
+    bibliographicEntries: Array<BibliographicEntry | BibliographicStructEntry>;
 }
 
 export class ProjectInfo {

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { EditionLevel } from '../../app.config';
 import { Page } from '../../models/evt-models';
@@ -8,11 +8,14 @@ import { EntitiesSelectItem } from '../entities-select/entities-select.component
   selector: 'evt-page',
   templateUrl: './page.component.html',
   styleUrls: ['./page.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageComponent {
   @Input() itemsToHighlight: EntitiesSelectItem[];
   @Input() editionLevel: EditionLevel;
   @Input() textFlow: boolean;
+  @Input() withDeletions: boolean;
+  @Input() selectedLayer: string;
 
   private d: Page;
   @Input() set data(v: Page) {

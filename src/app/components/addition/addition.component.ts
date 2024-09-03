@@ -4,9 +4,9 @@ import { EditorialConventionLayoutData } from '../../directives/editorial-conven
 import { Addition } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { EditorialConventionDefaults } from '../../services/editorial-conventions.service';
-import { EditionlevelSusceptible, Highlightable } from '../components-mixins';
+import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
 
-export interface AdditionComponent extends EditionlevelSusceptible, Highlightable { }
+export interface AdditionComponent extends EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible { }
 
 @register(Addition)
 @Component({
@@ -16,6 +16,7 @@ export interface AdditionComponent extends EditionlevelSusceptible, Highlightabl
 })
 export class AdditionComponent {
   @Input() data: Addition;
+  @Input() selectedLayer: string;
 
   get editorialConventionData(): EditorialConventionLayoutData {
     return {
@@ -30,6 +31,7 @@ export class AdditionComponent {
     switch (this.data.place) {
       case 'above':
       case 'sup':
+      case 'superscript':
         return 'additionAbove';
       case 'below':
       case 'under':

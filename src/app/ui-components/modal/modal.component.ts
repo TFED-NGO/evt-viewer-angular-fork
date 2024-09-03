@@ -49,7 +49,8 @@ export class ModalComponent implements OnInit {
   @HostListener('click', ['$event'])
   clickout(event) {
     const modal = this.modalDialog.nativeElement;
-    const internalClick: boolean = event.path.find((o) => o.className && o.className.indexOf && o.className.indexOf(modal.className) >= 0);
+    const path = event.composedPath ? event.composedPath() : event.path;
+    const internalClick: boolean = path.find((o) => o.className && o.className.indexOf && o.className.indexOf(modal.className) >= 0);
     if (this.closeOnShadow && !internalClick) {
       this.closeDialog();
     }

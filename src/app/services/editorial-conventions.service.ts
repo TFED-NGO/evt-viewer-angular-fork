@@ -5,7 +5,7 @@ import { EditorialConvention, EditorialConventionLayouts } from '../models/evt-m
 
 // List of handled editorial convention
 export type EditorialConventionDefaults = 'addition' | 'additionAbove' | 'additionBelow' | 'additionInline' | 'additionLeft' | 'additionRight' |
-  'damage' | 'deletion' | 'sicCrux' | 'surplus';
+  'damage' | 'deletion' | 'sicCrux' | 'surplus' | 'sources' | 'analogues' | 'mod' ;
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +31,12 @@ export class EditorialConventionsService {
           'background-color': '#bdecb6',
         },
       },
+      changesView: {
+        style: {
+          'vertical-align': 'super',
+          'font-size': '1rem',
+        },
+      },
     },
     additionBelow: {
       interpretative: {
@@ -42,6 +48,12 @@ export class EditorialConventionsService {
           'vertical-align': 'bottom',
           'font-size': '.7rem',
           'background-color': '#bdecb6',
+        },
+      },
+      changesView: {
+        style: {
+          'vertical-align': 'bottom',
+          'font-size': '1rem',
         },
       },
     },
@@ -69,6 +81,11 @@ export class EditorialConventionsService {
           'background-color': '#bdecb6',
         },
       },
+      changesView: {
+        style: {
+          'margin-left': '-1rem',
+        },
+      },
     },
     additionRight: {
       interpretative: {
@@ -89,6 +106,11 @@ export class EditorialConventionsService {
           'background-color': 'rgba(193, 193, 193, 0.7)',
         },
       },
+      changesView: {
+        style: {
+          'background-color': 'rgba(193, 193, 193, 0.7)',
+        },
+      },
     },
     deletion: {
       diplomatic: {
@@ -100,6 +122,11 @@ export class EditorialConventionsService {
       interpretative: {
         pre: '[[',
         post: ']]',
+      },
+      changesView: {
+        style: {
+          'text-decoration': 'line-through',
+        },
       },
     },
     sicCrux: {
@@ -115,6 +142,10 @@ export class EditorialConventionsService {
         pre: '&dagger;',
         post: '&dagger;',
       },
+      changesView: {
+        pre: '&dagger;',
+        post: '&dagger;',
+      },
     },
     surplus: {
       diplomatic: {
@@ -125,26 +156,84 @@ export class EditorialConventionsService {
         },
       },
     },
+    'sources': {
+      diplomatic: {
+        style: {
+          'font-style': 'italic',
+          'font-size': '104%',
+        },
+      },
+      interpretative: {
+        style: {
+          'font-style': 'italic',
+          'font-size': '104%',
+        },
+      },
+      critical: {
+        style: {
+          'font-style': 'italic',
+          'font-size': '104%',
+        },
+      },
+    },
+    'analogues': {
+      diplomatic: {
+        pre: '🗎',
+        style: {
+          'text-decoration': 'underline dotted from-font',
+        },
+      },
+      interpretative: {
+        pre: '🗎',
+        style: {
+          'text-decoration': 'underline dotted from-font',
+        },
+      },
+      critical: {
+        pre: '🗎',
+        style: {
+          'text-decoration': 'underline dotted from-font',
+        },
+      },
+      changesView: {
+        pre: '🗎',
+        style: {
+          'text-decoration': 'underline dotted from-font',
+        },
+      },
+    },
+    mod: {
+      diplomatic: {
+          style: {
+          'background-color': '#bdecb6',
+        },
+      },
+      critical: {
+        style: {
+          'background-color': '#bdecb6',
+        },
+      },
+      interpretative: {
+        style: {
+          'background-color': '#bdecb6',
+        },
+      },
+    },
   };
 
   getLayouts(name: string, attributes: AttributesMap, defaultsKey: EditorialConventionDefaults) {
+    const excludedFromAttributeControl = ['sources', 'analogues'];
     const defaultKeys = this.defaultLayouts[defaultsKey];
     let layouts: Partial<EditorialConventionLayouts> = defaultKeys;
 
     const externalLayouts = this._getExternalConfigs().find((c) => c.element === name &&
-      (!attributes || Object.keys(attributes).concat(
+      (excludedFromAttributeControl.includes(name) || !attributes || Object.keys(attributes).concat(
         Object.keys(c.attributes)).every((k) => attributes[k] === c.attributes[k])))?.layouts ?? undefined;
 
     if (externalLayouts) {
-      Object.keys(externalLayouts).forEach((editionLevel) => {
-        layouts = {
-          ...defaultKeys || {},
-          [editionLevel]: {
-            ...defaultKeys ? defaultKeys[editionLevel] : {},
-            ...externalLayouts[editionLevel],
-          },
-        };
-      });
+      layouts = {
+        ...externalLayouts || {},
+      }
     }
 
     return layouts;

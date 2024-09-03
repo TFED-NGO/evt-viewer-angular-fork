@@ -27,7 +27,20 @@ export class TextPanelComponent {
     return this._mc;
   }
 
+  public orderedLayers: string[];
+
+  public selLayer: string;
+  @Input() set selectedLayer(layer: string) {
+    this.selLayer = layer;
+    this.evtStatus.updateLayer$.next(layer);
+  }
+  get selectedLayer() { return this.selLayer; }
+
   @Input() hideEditionLevelSelector: boolean;
+
+  @Input() showChangeLayerSelector: boolean;
+
+  @Input() enableHideDeletionsToggler: boolean;
 
   @Input() pageID: string;
   updatePageFromScroll$ = new BehaviorSubject<void>(undefined);
@@ -83,6 +96,9 @@ export class TextPanelComponent {
     if (e && !this.textFlow) {
       this.textFlow = this.defaultTextFlow;
     }
+    if (e && this.showDeletions === undefined) {
+      this.showDeletions = true;
+    }
   }
   public get editionLevelID() {
     return this._edLevel;
@@ -134,13 +150,24 @@ export class TextPanelComponent {
     return this._tf;
   }
 
-  public get proseVersesTogglerIcon(): EvtIconInfo {
-
-    return { icon: this.textFlow === 'prose' ? 'align-left' : 'align-justify', iconSet: 'fas' };
+  private _dl: boolean;
+  public set showDeletions(dl: boolean) {
+    this._dl = dl;
+  }
+  public get showDeletions() {
+    return this._dl;
   }
 
+  public deletionsText: 'hidesDeletions' | 'showsDeletions' = 'showsDeletions';
+
+  public get hideDeletionsTogglerIcon(): EvtIconInfo {
+    return { icon: (this.showDeletions) ? 'eye' : 'eye-slash', iconSet: 'fas' };
+  }
+
+  public isMultiplePageActive: boolean = AppConfig.evtSettings.edition.multiPageEngineForCriticalEdition;
+
   public isMultiplePageFlow$ = this.currentStatus$.pipe(
-    map((x) => x.editionLevel.id === 'critical' && x.currentViewMode.id !== 'imageText'),
+    map((x) => x.editionLevel.id === 'critical' && x.currentViewMode.id !== 'imageText' && this.isMultiplePageActive),
     shareReplay(1),
   );
 
@@ -171,8 +198,17 @@ export class TextPanelComponent {
     }
   }
 
-  toggleProseVerses() {
-    this.textFlow = this.textFlow === 'prose' ? 'verses' : 'prose';
+  toggleProseVerses(mode: TextFlow) {
+    this.textFlow = mode;
+  }
+
+  toggleHideDeletions() {
+    this.showDeletions = !this.showDeletions;
+    this.deletionsText = (this.showDeletions) ? 'showsDeletions' : 'hidesDeletions'
+  }
+
+  updateSelectedLayer(layer: string) {
+    this.selectedLayer = layer;
   }
 
   private _scrollToPage(pageId: string) {

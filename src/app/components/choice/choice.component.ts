@@ -3,9 +3,9 @@ import { Component, Input } from '@angular/core';
 import { EditionLevelType } from '../../app.config';
 import { Choice } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
-import { EditionlevelSusceptible, Highlightable, TextFlowSusceptible } from '../components-mixins';
+import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible, TextFlowSusceptible } from '../components-mixins';
 
-export interface ChoiceComponent extends EditionlevelSusceptible, Highlightable, TextFlowSusceptible { }
+export interface ChoiceComponent extends EditionlevelSusceptible, Highlightable, TextFlowSusceptible, ShowDeletionsSusceptible { }
 
 @Component({
   selector: 'evt-choice',
@@ -15,9 +15,10 @@ export interface ChoiceComponent extends EditionlevelSusceptible, Highlightable,
 @register(Choice)
 export class ChoiceComponent {
   @Input() data: Choice;
+  @Input() selectedLayer: string;
 
   get content() {
-    if (this.editionLevel === 'diplomatic') {
+    if ((this.editionLevel === 'diplomatic') || (this.editionLevel === 'changesView')) {
       return this.data.originalContent;
     }
 
@@ -25,7 +26,7 @@ export class ChoiceComponent {
   }
 
   get alternativeContent() {
-    if (this.editionLevel === 'diplomatic') {
+    if ((this.editionLevel === 'diplomatic') || (this.editionLevel === 'changesView')) {
       return this.data.normalizedContent;
     }
 

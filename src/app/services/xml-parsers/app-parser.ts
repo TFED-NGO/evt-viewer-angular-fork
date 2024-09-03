@@ -1,7 +1,6 @@
 import { AppConfig } from 'src/app/app.config';
 import { xmlParser } from '.';
-import { ApparatusEntry, Note, Reading, XMLElement } from '../../models/evt-models';
-import { getOuterHTML } from '../../utils/dom-utils';
+import { ApparatusEntry, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser } from './parser-models';
@@ -20,6 +19,7 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             content: this.parseAppReadingContent(rdg),
             significant: this.isReadingSignificant(rdg),
             class: rdg.tagName.toLowerCase(),
+            varSeq: parseInt(rdg.getAttribute('varSeq')),
         };
     }
 
@@ -64,17 +64,24 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     rdgParser = createParser(RdgParser, this.genericParse);
 
     public parse(appEntry: XMLElement): ApparatusEntry {
+
+        const lemma = this.parseLemma(appEntry);
+        const readings = this.parseReadings(appEntry);
+        const allReadings = (lemma !== undefined) ? readings.concat(lemma) : readings;
+
         return {
             type: ApparatusEntry,
             id: getID(appEntry),
             attributes: this.attributeParser.parse(appEntry),
             content: [],
-            lemma: this.parseLemma(appEntry),
-            readings: this.parseReadings(appEntry),
+            lemma: lemma,
+            readings: readings,
             notes: this.parseAppNotes(appEntry),
-            originalEncoding: getOuterHTML(appEntry),
+            originalEncoding: appEntry,
             class: appEntry.tagName.toLowerCase(),
             nestedAppsIDs: this.getNestedAppsIDs(appEntry),
+            changes: (lemma !== undefined) ? this.orderChanges(allReadings, lemma) : [],
+            orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
         };
     }
 
@@ -101,5 +108,33 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return Array.from(appEntry.querySelectorAll(`${this.readingTagName}`))
             .filter((el) => el.closest(this.appEntryTagName) === appEntry)
             .map((rdg: XMLElement) => this.rdgParser.parse(rdg));
+    }
+
+    /**
+     * This function order readings for varSeq attributes and retrieves lem's first
+     * (and hopefully unique) mod element '@change'.
+     * This info is useful to mod-component in order to decide when to switch
+     * between lemma and reading.
+     */
+    private orderChanges(readings: Reading[], lemma: Reading): Mod[] {
+        const changes = [];
+        let lemmaLayer: string;
+        Array.from(lemma.content).map((el) => {
+            if (el['type'] && el['type'] === Mod) {
+                if (el['changeLayer']) {
+                    lemmaLayer = el['changeLayer'];
+                } else {
+                    lemmaLayer = null;
+                }
+            }
+        } )
+        Array.from(readings).map((reading) => reading.content.map(( el ) => {
+            if (el['type'] && el['type'] === Mod) {
+                el['insideApp'] = [true, lemmaLayer];
+                changes.push(el);
+            }
+        }));
+
+        return changes;
     }
 }

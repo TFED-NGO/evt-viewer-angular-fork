@@ -1,10 +1,11 @@
 <div class="project-info-container row h-100 m-0">
     <div class="project-info-tabs bg-light col-3 p-0 h-100 border-right">
-        <ng-container *ngIf="projectInfo$ | async as projectInfo">
-            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'fileDesc', data: projectInfo.fileDesc }"></ng-template>
-            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'encodingDesc', data: projectInfo.encodingDesc }"></ng-template>
-            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'profileDesc', data: projectInfo.profileDesc }"></ng-template>
-            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'revisionDesc', data: projectInfo.revisionDesc }"></ng-template>
+        <ng-container *ngIf="{ projectInfo: projectInfo$  | async, bibliographicEntries: bibliographicEntries$ | async } as values " >
+            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'fileDesc', data: values.projectInfo.fileDesc }"></ng-template>
+            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'encodingDesc', data: values.projectInfo.encodingDesc }"></ng-template>
+            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'profileDesc', data: values.projectInfo.profileDesc }"></ng-template>
+            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'revisionDesc', data: values.projectInfo.revisionDesc }"></ng-template>
+            <ng-template [ngTemplateOutlet]="sectionTemplate" [ngTemplateOutletContext]="{ key: 'bibliography', data: values.bibliographicEntries }"></ng-template>
         </ng-container>
     </div>
     <div class="project-info-content col-9 p-3 h-100">

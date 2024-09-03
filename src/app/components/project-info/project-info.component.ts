@@ -14,6 +14,8 @@ export class ProjectInfoComponent {
     tap((info) => this.openSection('fileDesc', info.fileDesc)),
   );
 
+  public bibliographicEntries$  = this.evtModelService.bibliographicEntries$;
+
   public selectedSection: { key: string; content: GenericElement };
 
   constructor(

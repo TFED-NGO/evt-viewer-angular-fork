@@ -4,8 +4,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
-import { ViewMode, ViewModeId } from './models/evt-models';
+import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { Attributes, EditorialConventionLayout } from './models/evt-models';
+import { updateCSS } from './utils/dom-utils';
 
 @Injectable()
 export class AppConfig {
@@ -31,6 +32,7 @@ export class AppConfig {
                 ]).pipe(
                     map(([ui, edition, editorialConventions]) => {
                         console.log(ui, edition, files);
+                        this.updateStyleFromConfig(edition, ui);
                         // Handle default values => TODO: Decide how to handle defaults!!
                         if (ui.defaultLocalization) {
                             if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
@@ -53,7 +55,27 @@ export class AppConfig {
             });
         });
     }
+
+    /**
+     * Update once general css with values from config,
+     * this way we don't need to inject a style property in each element
+     * @param edition EditionConfig
+     */
+    updateStyleFromConfig(edition: EditionConfig, ui: UiConfig) {
+        const rules = [];
+        rules['.edition-font'] = `font-family: ${ui.mainFontFamily}; font-size: ${ui.mainFontSize};`;
+        rules['.app-detail-tabs .nav-link'] = `font-family: ${ui.secondaryFontFamily};`;
+        rules['.ui-font'] = `font-family: ${ui.secondaryFontFamily}; font-size: ${ui.secondaryFontSize};`;
+        rules['.app-detail-tabs'] = `font-family: ${ui.secondaryFontFamily};`;
+        rules['.' + AnalogueClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
+        rules['.' + SourceClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
+        rules['.' + AnalogueClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
+        rules['.' + SourceClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
+        Object.entries(rules).forEach(([selector,style]) => { updateCSS([[selector,style]]) });
+    }
+
 }
+
 export interface EVTConfig {
     ui: UiConfig;
     edition: EditionConfig;
@@ -74,14 +96,51 @@ export interface UiConfig {
     initNavBarOpened: boolean;
     thumbnailsButton: boolean;
     viscollButton: boolean;
+    defaultBibliographicStyle: string;
+	  allowedBibliographicStyles: {
+      [key: string]: {
+              id: string;
+        label: string;
+        enabled: boolean;
+              propsOrder: BibliographicProperties[];
+              properties: BibliographicStyle;
+        }
+    };
+    mainFontFamily: string;
+    mainFontSize: string;
+    secondaryFontFamily: string;
+    secondaryFontSize: string;
     theme: 'neutral' | 'modern' | 'classic';
+    syncZonesHighlightButton: boolean;
 }
+export type CitingRanges = 'issue' | 'volume' | 'page';
+export type BibliographicProperties = 'author'| 'date'| 'title'| 'editor' | 'publication' | 'pubPlace' | 'publisher' | 'doi';
+export type BibliographicStyle = Partial<{
+    propsDelimiter: string;
+    authorStyle: Partial<{
+        forenameInitials: boolean;
+        delimiter: string;
+        lastDelimiter: string;
+        order: Array<'forename' | 'surname'>;
+        maxAuthors: string;
+    }>;
+    publicationStyle: Partial<{
+        citingAcronym: 'all' | 'none' | CitingRanges[];
+        includeEditor: boolean;
+        inBrackets: CitingRanges[];
+    }>;
+    dateInsidePublication: boolean;
+    titleQuotes: boolean;
+    emphasized: BibliographicProperties[];
+    inBrackets: BibliographicProperties[];
+}>;
 
 export interface EditionConfig {
     editionTitle: string;
     badge: string;
     editionHome: string;
     showLists: boolean;
+    downloadableXMLSource: boolean;
     availableEditionLevels: EditionLevel[];
     namedEntitiesLists: Partial<{
         persons: NamedEntitiesListsConfig;
@@ -99,6 +158,31 @@ export interface EditionConfig {
     verseNumberPrinter: number;
     readingColorLight: string;
     readingColorDark: string;
+    externalBibliography: Partial<{
+        biblAttributeToMatch: string;
+        elementAttributesToMatch: string[];
+    }>;
+    biblView: Partial<{
+		propsToShow: string[];
+		showAttrNames: boolean;
+		showEmptyValues: boolean;
+		inline: boolean;
+        commaSeparated: boolean;
+        showMainElemTextContent: boolean;
+	}>;
+    analogueMarkers: string[];
+    sourcesExcludedFromListByParent: string[];
+    showChangeLayerMarkerInText: boolean;
+    showSeparatorBetweenChanges: boolean;
+    changeSequenceView: Partial<{
+        showVarSeqAttr: boolean;
+        showSeqAttr: boolean;
+        layerColors: string[];
+    }>;
+    startingFromDefinitiveLayer: boolean;
+    defaultImageZoomLevel: number;
+    showSubstitutionMarker: boolean;
+    multiPageEngineForCriticalEdition: boolean;
     annotatorColors: AnnotatorColors;
     annotationTextType: AnnotationTextType;
 }
@@ -119,7 +203,10 @@ export interface FileConfig {
         [T in EditionImagesSources]: EditionImagesConfig;
     };
     logoUrl?: string;
-    imagesFolderUrl?: string;
+    imagesFolderUrls?: {
+        single: string;
+        double: string;
+    };
     configurationUrls?: {
         edition: string;
         ui: string;
@@ -136,12 +223,13 @@ export interface NamedEntitiesListsConfig {
     defaultLabel: string;
     enable: boolean;
 }
-export type EditionLevelType = 'diplomatic' | 'interpretative' | 'critical';
+export type EditionLevelType = 'diplomatic' | 'interpretative' | 'critical' | 'changesView';
 export interface EditionLevel {
     id: EditionLevelType;
     label: string;
     title?: string;
     enable?: boolean;
+    hidden?: boolean;
 }
 
 export interface EditorialConventionsConfig {
@@ -158,4 +246,4 @@ export interface CustomEditorialConvention {
     };
 }
 
-export type TextFlow = 'prose' | 'verses';
+export type TextFlow = 'prose' | 'prose_mixed' | 'verses';

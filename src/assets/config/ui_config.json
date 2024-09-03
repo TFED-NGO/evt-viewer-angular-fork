@@ -1,6 +1,20 @@
 {
 	"availableViewModes": [
 		{
+			"icon": "images",
+			"iconSet": "fas",
+			"id": "imageImage",
+			"label": "Images",
+			"enable": true
+		},
+		{
+			"icon": "image",
+			"iconSet": "fas",
+			"id": "imageOnly",
+			"label": "Image only",
+			"enable": true
+		},
+		{
 			"icon": "txt",
 			"iconSet": "evt",
 			"id": "readingText",
@@ -41,6 +55,13 @@
 			"id": "textVersions",
 			"label": "Text Versions",
 			"enable": true
+		},
+		{
+			"icon": "documix",
+			"iconSet": "evt",
+			"id": "documentalMixed",
+			"label": "Documental",
+			"enable": true
 		}
 	],
 	"localization": true,
@@ -49,7 +70,7 @@
 		{
 			"code": "en",
 			"label": "languageEn",
-			"": true
+			"enable": true
 		},
 		{
 			"code": "it",
@@ -61,5 +82,86 @@
 	"initNavBarOpened": true,
 	"thumbnailsButton": true,
 	"viscollButton": true,
-	"theme": "modern"
+	"mainFontFamily": "Junicode, Times, serif",
+	"mainFontSize": "1.1rem",
+	"secondaryfontFamily": "Arial, sans-serif",
+	"secondaryfontSize": "1.1em",
+	"theme": "modern",
+	"syncZonesHighlightButton": true,
+	"defaultBibliographicStyle": "chicago",
+	"allowedBibliographicStyles": {
+		"chicago": {
+			"id": "chicago",
+			"label": "Chicago (Author-Date)",
+			"enabled": true,
+			"propsOrder": [
+				"author",
+				"date",
+				"title",
+				"editor",
+				"publication",
+				"pubPlace",
+				"publisher",
+				"doi"
+			],
+			"properties": {
+				"titleQuotes": true,
+				"emphasized": [ "publisher" ]
+			}
+		},
+		"apa": {
+			"id": "apa",
+			"label": "APA",
+			"enabled": true,
+			"propsOrder": [
+				"author",
+				"date",
+				"title",
+				"publication",
+				"publisher",
+				"doi"
+			],
+			"properties": {
+				"authorStyle": {
+					"delimiter": ",",
+					"forenameInitials": true,
+					"maxAuthors": 3
+				},
+				"publicationStyle": {
+					"citingAcronym": "none",
+					"inBrackets": [ "issue" ]
+				},
+				"propsDelimiter": ".",
+				"titleQuotes": false,
+				"emphasized": [ "publication" ],
+				"inBrackets": [ "date" ]
+			}
+		},
+		"mla": {
+			"id": "mla",
+			"label": "MLA",
+			"enabled": true,
+			"propsOrder": [
+				"author",
+				"title",
+				"publication",
+				"publisher",
+				"doi"
+			],
+			"properties": {
+				"propsDelimiter": ".",
+				"authorStyle": {
+					"delimiter": ","
+				},
+				"publicationStyle": {
+					"citingAcronym": "all",
+					"inBrackets": [ "issue" ],
+					"includeEditor": true
+				},
+				"dateInsidePublication": true,
+				"titleQuotes": false,
+				"emphasized": [ "publication" ]
+			}
+		}
+	}
 }
