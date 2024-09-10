@@ -203,6 +203,7 @@
     "criticalNote": "Critical note",
     "showsDeletions": "Show deletions",
     "hidesDeletions": "Hide deletions",
+    "occurrencesFoundLabel": "{{occurrencesCount}} occurrences found in {{formsCount}} forms"
     "ariaLabels": {
         "goToPrevPage": "Go to previous page",
         "goToNextPage": "Go to next page",
