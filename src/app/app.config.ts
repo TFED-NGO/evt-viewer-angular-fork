@@ -221,6 +221,7 @@ export interface EditionUrl {
     type: EditionUrlType;
     value: string;
     enable: boolean;
+    friendlyName: string;
 }
 
 export interface EditionImagesConfig {
