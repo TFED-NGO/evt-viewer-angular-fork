@@ -255,7 +255,7 @@ export function reduceCssUnit(value: string, multiplier: number): string {
  * The limit counter could be inserted in a config, same as the ignoredProperties
  * The types defined in loopAttributes are elements to be ignored because their methods of "dom navigation" generate loops
  */
-export function deepSearch(obj, attrToMatch: string, valuesToMatch, counter: number = 4000, ignoredProperties = []) {
+export function deepSearch(obj, attrToMatch: string, valuesToMatch: string[], counter: number = 4000, ignoredProperties = []) {
   const loopAttributes = [DOMTokenList, NodeList, NamedNodeMap, HTMLCollection, HTMLElement]
   let results = [];
   for (const key in obj) {
