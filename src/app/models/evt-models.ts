@@ -216,6 +216,30 @@ export class ApparatusEntry extends GenericElement {
     nestedAppsIDs: string[];
     changes: Mod[];
     orderedReadings: Reading[];
+
+    /**
+     * The {@link GenericElement.attributes} are used to display data
+     * so to avoid messing what already works, this property can be used
+     * to store additional attributes. 
+     */
+    additionalAttributes: AdditionalAttributes;
+}
+
+export class AdditionalAttributes {
+    attributes: Attributes = {};
+
+    get exponentId() {
+        return this.attributes['exponent-id'];
+    }
+
+    addExponentId(id: string): void {
+        this.attributes['exponent-id'] = id;
+    }
+
+    has(id: string) {
+        const values = Object.values(this.attributes);
+        return values.includes(id);
+    }
 }
 
 export const SourceClass = 'sourceEntry';
@@ -1448,6 +1472,7 @@ export class ApparatusEntryExponent extends GenericElement {
         if (!this.isValidId(id))
             throw new Error('id is required');
 
+        appEntries.forEach(x => x.additionalAttributes.addExponentId(id));
         const anchor = new ApparatusEntryExponent(label, appEntries);
         anchor.attributes = {
             'name': 'apparatusEntryAnchor',

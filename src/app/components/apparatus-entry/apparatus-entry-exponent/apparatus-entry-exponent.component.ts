@@ -4,6 +4,7 @@ import { register } from 'src/app/services/component-register.service';
 import { ApparatusEntryExponentService } from './apparatus-entry-exponent.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { ReadingTextService } from 'src/app/view-modes/reading-text/reading-text.service';
 
 @register(ApparatusEntryExponent)
 @Component({
@@ -33,12 +34,14 @@ export class ApparatusEntryExponentComponent {
 
   constructor(
     private exponentService: ApparatusEntryExponentService,
-    private statusService: EVTStatusService
+    private statusService: EVTStatusService,
+    private readingTextService: ReadingTextService,
   ) {
   }
 
   onExponentButtonClicked() {
     this.updateApparatusDetailsShown$.next(!this.updateApparatusDetailsShown$.value);
+    this.readingTextService.updateSelectedAppEntry(this.data.appEntries[0])
   }
 
   onHover(isHovering: boolean) {

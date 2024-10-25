@@ -1,6 +1,6 @@
 import { AppConfig } from 'src/app/app.config';
 import { xmlParser } from '.';
-import { ApparatusEntry, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { AdditionalAttributes, ApparatusEntry, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser } from './parser-models';
@@ -68,7 +68,6 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         const lemma = this.parseLemma(appEntry);
         const readings = this.parseReadings(appEntry);
         const allReadings = (lemma !== undefined) ? readings.concat(lemma) : readings;
-
         return {
             type: ApparatusEntry,
             id: getID(appEntry),
@@ -82,6 +81,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             nestedAppsIDs: this.getNestedAppsIDs(appEntry),
             changes: (lemma !== undefined) ? this.orderChanges(allReadings, lemma) : [],
             orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
+            additionalAttributes: new AdditionalAttributes()
         };
     }
 

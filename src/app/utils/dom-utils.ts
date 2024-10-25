@@ -311,4 +311,31 @@ export function deepFilter(content: any[], filterExpression: (item: any) => bool
   return { content, filteredItems };
 }
 
+/**
+ * Search recursively an object for properties with a given name,
+ * inside children objects and children arrays of objects. Useful for debugging.
+ * @param obj the object in which to search.
+ * @param propertyName the name of the property to find.
+ * @returns an array with the found objects or empty.
+ */
+export function deepSearchByKey(obj: object, propertyName: string): object[] {
+  const results: object[] = [];
 
+  function recurse(current: any) {
+    if (Array.isArray(current)) {
+      current.forEach(item => recurse(item));
+    } else if (typeof current === 'object' && current !== null) {
+      for (const key in current) {
+        if (current.hasOwnProperty(key)) {
+          if (key === propertyName) {
+            results.push(current[key]);
+          }
+          recurse(current[key]);
+        }
+      }
+    }
+  }
+
+  recurse(obj);
+  return results;
+}

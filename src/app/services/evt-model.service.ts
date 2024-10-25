@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, defaultIfEmpty, map, shareReplay, switchMap } from 'rxjs/operators';
+import { combineLatestWith, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
-  ApparatusEntry,
   ChangeLayerData,
   EditionStructure,
   Facsimile,
@@ -393,24 +392,4 @@ export class EVTModelService {
     return this.pages$.pipe(map((pages) => pages.find((page) => page.id === pageId)));
   }
 
-  getElementApparatusOrDefault(elementId: string): Observable<ApparatusEntry[]> {
-    return this.parsedEditionStructure$.pipe(
-      map(x => {
-        const values = Array.from(x.documentApparatusEntries.apps.values());
-        return values.flatMap(y => y.apps.get(elementId)?.apps || [])
-      }),
-      defaultIfEmpty([])
-    )
-  }
-
-  getPageApparatusOrDefault(pageId: string): Observable<ApparatusEntry[]> {
-    return this.parsedEditionStructure$.pipe(
-      map(x => {
-        const pageEntries = x.documentApparatusEntries?.apps.get(pageId);
-        const elementsEntries = Array.from(pageEntries?.apps.values() || []);
-        return elementsEntries.flatMap(y => y.apps);
-      }),
-      defaultIfEmpty([])
-    )
-  }
 }
