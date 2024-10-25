@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { ApparatusEntryExponent, Attribute } from 'src/app/models/evt-models';
 import { register } from 'src/app/services/component-register.service';
 import { ApparatusEntryExponentService } from './apparatus-entry-exponent.service';
+import { EVTStatusService } from 'src/app/services/evt-status.service';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 
 @register(ApparatusEntryExponent)
 @Component({
@@ -11,16 +13,32 @@ import { ApparatusEntryExponentService } from './apparatus-entry-exponent.servic
 })
 export class ApparatusEntryExponentComponent {
   @Input() data: ApparatusEntryExponent;
-  shown: boolean;
   noteType: string = 'critical'; // Temp, it's probably correct but needs confirmation
+  private get id(): Attribute {
+    return this.data.id();
+  }
+
+  private updateApparatusDetailsShown$ = new BehaviorSubject<boolean>(false);
+  apparatusDetailsShown$ = combineLatest([
+    this.statusService.currentViewMode$,
+    this.updateApparatusDetailsShown$
+  ]).pipe(
+    map(([viewMode, apparatusShown]) => {
+      if (viewMode.id === 'readingText') {
+        return false;
+      }
+      return apparatusShown;
+    })
+  );
 
   constructor(
-    private exponentService: ApparatusEntryExponentService
+    private exponentService: ApparatusEntryExponentService,
+    private statusService: EVTStatusService
   ) {
   }
 
-  private get id(): Attribute {
-    return this.data.id();
+  onExponentButtonClicked() {
+    this.updateApparatusDetailsShown$.next(!this.updateApparatusDetailsShown$.value);
   }
 
   onHover(isHovering: boolean) {
@@ -53,4 +71,5 @@ export class ApparatusEntryExponentComponent {
     }
   }
 }
+
 
