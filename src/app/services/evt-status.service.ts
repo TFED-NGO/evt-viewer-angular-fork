@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, timer } from 'rxjs';
-import { distinctUntilChanged, filter, first, map, mergeMap, shareReplay, switchMap, tap, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, first, map, mergeMap, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AppConfig, EditionLevel, EditionLevelType } from '../app.config';
 import { ChangeLayerData, Page, ViewMode } from '../models/evt-models';
@@ -71,7 +71,6 @@ export class EVTStatusService {
         ),
         this.updatePageNumber$.pipe(
             withLatestFrom(this.evtModelService.pages$),
-            tap(x => console.log(x)),
             map(([n, pages]) => n < 0 ? pages[pages.length - 1] : pages[n]),
         ),
     );
