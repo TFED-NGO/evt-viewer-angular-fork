@@ -11,10 +11,11 @@ export class ApparatusEntryExponentService {
    * It should be called when page is rendered, after that,
    * the elements are cached for performance.
    */
-  get allEvtTexts(): HTMLElement[] {
+  get allEvtTextSpans(): HTMLElement[] {
     if (!this.evtTexts) {
-      this.evtTexts = Array.from(document.querySelectorAll('evt-text'));
+      this.evtTexts = Array.from(document.querySelectorAll('evt-text > .evt-span'))
     }
     return this.evtTexts;
   }
 }
+

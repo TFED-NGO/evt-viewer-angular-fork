@@ -1,9 +1,9 @@
-<ng-container *ngIf="this.data.appEntries.length">
-    <evt-note-button [exponent]="this.data.label" [noteType]="this.noteType" (click)="this.onExponentButtonClicked()"
-        (mouseenter)="this.onHover(true)" (mouseleave)="this.onHover(false)"></evt-note-button>
+<ng-container *ngIf="data.appEntries.length">
+    <evt-note-button [exponent]="data.label" [noteType]="noteType" [isHovering]="isHovering" (click)="onExponentButtonClicked()"
+        (mouseenter)="onHover(true)" (mouseleave)="onHover(false)"></evt-note-button>
 
-    <ng-container *ngIf="this.apparatusDetailsShown$ | async">
-        <evt-apparatus-entry-detail *ngFor="let app of this.data.appEntries"
-            [data]="this.app"></evt-apparatus-entry-detail>
+    <ng-container *ngIf="apparatusDetailsShown$ | async">
+        <evt-apparatus-entry-detail *ngFor="let app of data.appEntries"
+            [data]="app"></evt-apparatus-entry-detail>
     </ng-container>
 </ng-container>

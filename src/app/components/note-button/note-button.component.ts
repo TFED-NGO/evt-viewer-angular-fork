@@ -9,6 +9,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 export class NoteButtonComponent {
   @Input() exponent: string;
   @Input() noteType: string;
+  @Input() isHovering: boolean = false;
 
   constructor() { }
 }
