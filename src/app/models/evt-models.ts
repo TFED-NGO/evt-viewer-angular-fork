@@ -109,6 +109,8 @@ export class Attribute {
     valueWithoutRef: string;
 
     private constructor(value: string) {
+        if(!value) throw new Error('value is required');
+
         this.valueWithoutRef = value.withoutSelectorCharacter();
         this.valueRef = value.withSelectorCharacter();
     }
@@ -121,6 +123,10 @@ export class Attribute {
             return false;
         }
         return this.valueWithoutRef === other.valueWithoutRef;
+    }
+
+    static create(value: string): Attribute | null {
+        return new Attribute(value);
     }
 
     static createOrDefault(value: string): Attribute | null {
@@ -1455,22 +1461,21 @@ export class ApparatusEntryExponent extends GenericElement {
     }
 
     id(): Attribute {
-        return Attribute.createOrDefault(this.attributes['id']);
+        return Attribute.create(this.attributes['id']);
     }
     from(): Attribute {
-        return Attribute.createOrDefault(this.attributes['from']);
+        return Attribute.create(this.attributes['from']);
     }
     to(): Attribute {
-        return Attribute.createOrDefault(this.attributes['to']);
-    }
-
-    requiresParentAsFrom(): boolean {
-        return this.from() === null;
+        return Attribute.create(this.attributes['to']);
     }
 
     static create(id: string, from: string, to: string, label: string, appEntries: ApparatusEntry[]): ApparatusEntryExponent {
         if (!this.isValidId(id))
             throw new Error('id is required');
+
+        if (!this.isValidId(from))
+            throw new Error('from is required');
 
         appEntries.forEach(x => x.additionalAttributes.addExponentId(id));
         const anchor = new ApparatusEntryExponent(label, appEntries);

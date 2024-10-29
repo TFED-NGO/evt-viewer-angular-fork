@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { ApparatusEntryExponent, Attribute } from 'src/app/models/evt-models';
+import { ApparatusEntryExponent } from 'src/app/models/evt-models';
 import { register } from 'src/app/services/component-register.service';
 import { ApparatusEntryExponentService } from './apparatus-entry-exponent.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
@@ -20,10 +20,6 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
 
   private onHoverTextSubs: Subscription;
   private onNotHoveringSubs: Subscription;
-
-  private get id(): Attribute {
-    return this.data.id();
-  }
 
   private onNotHovering$ = new Subject<void>();
   private updateApparatusDetailsShown$ = new BehaviorSubject<boolean>(false);
@@ -102,8 +98,7 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
 
   private getDepaElements() {
     const from = this.data.from();
-    const fromEl = this.data.requiresParentAsFrom() ? document.getElementById(this.id.valueWithoutRef).parentElement
-      : document.getElementById(from.valueWithoutRef);
+    const fromEl = document.getElementById(from.valueWithoutRef);
     const to = this.data.to();
     const toEl = document.getElementById(to.valueWithoutRef);
     return { fromEl, toEl };
