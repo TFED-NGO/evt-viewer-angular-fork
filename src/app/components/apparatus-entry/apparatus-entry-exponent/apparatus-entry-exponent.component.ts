@@ -1,10 +1,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { ApparatusEntryExponent } from 'src/app/models/evt-models';
 import { register } from 'src/app/services/component-register.service';
-import { ApparatusEntryExponentService } from './apparatus-entry-exponent.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
-import { BehaviorSubject, combineLatest, map, Subject, Subscription, switchMap, tap } from 'rxjs';
-import { ReadingTextService } from 'src/app/view-modes/reading-text/reading-text.service';
+import { BehaviorSubject, combineLatest, map, pipe, retry, Subscription, tap } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
 
 @register(ApparatusEntryExponent)
@@ -16,110 +14,93 @@ import { HoverService } from 'src/app/services/hover.service';
 export class ApparatusEntryExponentComponent implements OnDestroy {
   @Input() data: ApparatusEntryExponent;
   noteType: string = 'critical'; // Temp, it's probably correct but needs confirmation
-  isHovering: boolean = false;
-
-  private onHoverTextSubs: Subscription;
-  private onNotHoveringSubs: Subscription;
-
-  private onNotHovering$ = new Subject<void>();
-  private updateApparatusDetailsShown$ = new BehaviorSubject<boolean>(false);
-  public apparatusDetailsShown$ = combineLatest([
+  apparatusDetailsShown$ = combineLatest([
     this.statusService.currentViewMode$,
-    this.updateApparatusDetailsShown$
+    this.hoverService.selectedApparatusEntries$
   ]).pipe(
-    map(([viewMode, apparatusShown]) => {
+    map(([viewMode, selectedAppEntries]) => {
       if (viewMode.id === 'readingText') {
         return false;
       }
-      return apparatusShown;
+      const id = this.data.id();
+      const result = selectedAppEntries.find(app => id.equals(app.additionalAttributes.exponentId));
+      return result;
     })
   );
 
-  constructor(
-    private exponentService: ApparatusEntryExponentService,
-    private statusService: EVTStatusService,
-    private hoverService: HoverService,
-    private readingTextService: ReadingTextService,
-  ) {
-  }
-
-  ngOnInit(): void {
-    this.onHoverTextSubs = combineLatest([
-      this.apparatusDetailsShown$,
-      this.hoverService.onTextHover$
-    ])
-      .subscribe(([appDetailsShown, elements]) => {
-        this.isHovering = false;
-        const { fromEl, toEl } = this.getDepaElements();
-        for (let { id, element, isHovering } of elements) {
-
-          if (this.isElementBetween(fromEl, element, toEl)) {
-            this.isHovering = isHovering || appDetailsShown;
-            const value = this.hoverService.onUnderline$.value.filter(x => x !== id);
-            const newValue = this.isHovering ? [...value, id] : [...value];
-            this.hoverService.onUnderline$.next(newValue);
-          }
-        }
-      });
-
-    this.onNotHoveringSubs = this.onNotHovering$.pipe(
-      switchMap(() => this.apparatusDetailsShown$),
-      tap(appShown => {
-        if (!appShown) {
-          this.hoverService.onExponentHover$.next([]);
-        }
-      })).subscribe();
-  }
-
-  onExponentButtonClicked() {
-    this.updateApparatusDetailsShown$.next(!this.updateApparatusDetailsShown$.value);
-    this.readingTextService.updateSelectedAppEntry(this.data.appEntries[0])
-  }
-
-  onHover(isHovering: boolean) {
-    if (!isHovering) {
-      this.onNotHovering$.next();
-    }
-    else {
-      const elements = this.exponentService.allEvtTextSpans;
-      const { fromEl, toEl } = this.getDepaElements();
-      for (let element of elements) {
-        const { isChildOfAppDetails } = this.shouldSkip(element);
-        if (isChildOfAppDetails) continue;
-
-        if (this.isElementBetween(fromEl, element, toEl)) {
-          const value = this.hoverService.onExponentHover$.value.filter(x => x !== element.id);
-          const newValue = [...value, element.id];
-          this.hoverService.onExponentHover$.next(newValue);
-        }
+  private updatehoveredAppExponent$ = new BehaviorSubject<boolean>(false);
+  isHighlighted$ = combineLatest([
+    this.updatehoveredAppExponent$,
+    this.hoverService.selectedApparatusEntries$,
+  ]).pipe(
+    map(([updatehoveredAppExponent, selectedAppEntries]) => {
+      if (updatehoveredAppExponent) {
+        return true;
       }
-    }
-  }
+
+      const result = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
+      return result;
+
+      // const { id, element, isHovering } = hoveredTextOrDefault;
+      // if (!isHovering) {
+      //   this.hoverService.hoveredAppExponentOrDefault$.next(this.data);
+      // }
+      // else {
+      //   const key = id;
+      //   if (!this.isBetweenElementMemo.has(key)) {
+      //     const { fromEl, toEl } = this.getDepaElements();
+      //     const result = this.isElementBetween(fromEl, element, toEl);
+      //     this.isBetweenElementMemo.set(key, result);
+      //   }
+
+      //   const memo = this.isBetweenElementMemo.get(key);
+      //   if (memo) {
+      //     this.hoverService.hoveredAppExponentOrDefault$.next(this.data);
+      //     return true;
+      //   }
+      // }
+
+      // this.hoverService.hoveredAppExponentOrDefault$.next(null);
+      // return false;
+    })
+  );
+
+  private isBetweenElementMemo = new Map<string, boolean>();
+
+constructor(
+  private statusService: EVTStatusService,
+  private hoverService: HoverService,
+) {
+}
+
+ngOnInit(): void {
+
+}
+
+onExponentButtonClicked() {
+  this.hoverService.toggleApparatusEntry(this.data.appEntries);
+}
+
+onHover(isHovering: boolean) {
+  this.updatehoveredAppExponent$.next(isHovering);
+}
 
   private getDepaElements() {
-    const from = this.data.from();
-    const fromEl = document.getElementById(from.valueWithoutRef);
-    const to = this.data.to();
-    const toEl = document.getElementById(to.valueWithoutRef);
-    return { fromEl, toEl };
-  }
+  const from = this.data.from();
+  const fromEl = document.getElementById(from.valueWithoutRef);
+  const to = this.data.to();
+  const toEl = document.getElementById(to.valueWithoutRef);
+  return { fromEl, toEl };
+}
 
   private isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
-    const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBetween = isAfterFrom && isBeforeTo;
-    return !!isBetween;
-  }
+  const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
+  const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
+  const isBetween = isAfterFrom && isBeforeTo;
+  return !!isBetween;
+}
 
-  private shouldSkip(element: HTMLElement) {
-    return {
-      isChildOfAppDetails: element.closest('evt-apparatus-entry-detail')
-    };
-  }
-
-  ngOnDestroy(): void {
-    this.onHoverTextSubs.unsubscribe();
-    this.onNotHoveringSubs.unsubscribe();
-  }
+ngOnDestroy(): void {
+}
 }
 

@@ -1,5 +1,5 @@
-<div class="card app-detail-container" [class.selected]="this.isSelected$ | async" style="scroll-margin-top: 100px;" #container>
-    <div class="card-body app-detail-content ps-2" [class.bg-white]="this.isSelected$ | async">
+<div class="card app-detail-container" [class.selected]="this.isSelected">
+    <div class="card-body app-detail-content ps-2" [class.bg-white]="this.isSelected">
         <span>
             <evt-apparatus-entry-readings class="app-detail-readings" [data]="data" [template]="nestedAppsReadingsTemplate" [rdgHasCounter]="true"></evt-apparatus-entry-readings>
             <div *ngIf="data.nestedAppsIDs.length > 0" class="app-detail-nested-readings-container">
@@ -12,7 +12,7 @@
         <evt-pinner [item]="data" renderer="ApparatusEntryReadings" pinType="ApparatusEntry"></evt-pinner>
     </div>
     <div class="card-footer app-detail-tabs">
-        <ul ngbNav #appEntryTab="ngbNav" class="nav-pills">
+        <ul ngbNav #appEntryTab="ngbNav" class="nav-pills" (click)="$event.stopPropagation()">
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
                 <a class="app-detail-btn" ngbNavLink>{{'criticalNotes' | translate}}</a>
                 <ng-template ngbNavContent>
@@ -92,7 +92,7 @@
                 </ng-template>
             </li>
         </ul>
-        <div [ngbNavOutlet]="appEntryTab" class="tab-content" [class.bg-white]="this.isSelected$ | async"></div>
+        <div [ngbNavOutlet]="appEntryTab" class="tab-content" [class.bg-white]="this.isSelected"></div>
     </div>
 </div>
 

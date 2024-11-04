@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
-import { distinctUntilChanged, map, tap } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
-import { ReadingTextService } from 'src/app/view-modes/reading-text/reading-text.service';
+
 @Component({
   selector: 'evt-apparatus-entry-detail',
   templateUrl: './apparatus-entry-detail.component.html',
@@ -18,22 +18,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   private subscriptions;
 
   @Input() data: ApparatusEntry;
+  @Input() isSelected: boolean = false;
+
   nestedApps: ApparatusEntry[] = [];
   rdgHasCounter = false;
-
-  @ViewChild('container', {read: ElementRef}) containerRef!: ElementRef<HTMLElement>;
-
-  isSelected$ = this.readingTextService.selectedAppEntry.pipe(
-    map(app => {
-      const result = app.additionalAttributes.has(this.data.additionalAttributes.exponentId);
-      return result;
-    }),
-    tap(isSelected => {
-      if (isSelected) {
-        this.containerRef.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    })
-  );
 
   @Input() selectedLayer: string;
 
@@ -66,7 +54,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   constructor(
     public evtModelService: EVTModelService,
     public evtStatusService: EVTStatusService,
-    private readingTextService: ReadingTextService,
   ) {
   }
 
