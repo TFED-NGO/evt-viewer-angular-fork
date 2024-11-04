@@ -30,21 +30,21 @@ export class TextComponent implements OnInit {
   ngOnInit(): void {
     if (this.canBeUnderlined(this.elementRef.nativeElement)) return;
 
-    // this.underline$ = this.hoverService.hoveredAppExponentOrDefault$.pipe(
-    //   map(exponent => {
-    //     if(!exponent) return false;
+    this.underline$ = this.hoverService.highlightedAppExponents$.pipe(
+      map(exponents => {
+        for (const exponent of exponents) {
+          const exponentId = exponent.id().valueWithoutRef;
+          if (!this.exponentMemo.has(exponentId)) {
+            const { fromEl, toEl } = this.getDepaElements(exponent);
+            const isElementBetween = this.isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
+            this.exponentMemo.set(exponentId, isElementBetween);
+          }
 
-    //     const exponentId = exponent.id().valueWithoutRef;
-    //     if (!this.exponentMemo.has(exponentId)) {
-    //       const { fromEl, toEl } = this.getDepaElements(exponent);
-    //       const isElementBetween = this.isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
-    //       this.exponentMemo.set(exponentId, isElementBetween);
-    //     }
-
-    //     const isElementBetweenMemo = this.exponentMemo.get(exponentId);
-    //     if (isElementBetweenMemo) return true;
-    //   })
-    // );
+          const isElementBetweenMemo = this.exponentMemo.get(exponentId);
+          if (isElementBetweenMemo) return true;
+        }
+      })
+    );
   }
 
   onHover(isHovering: boolean) {
@@ -53,7 +53,7 @@ export class TextComponent implements OnInit {
       element: this.elementRef.nativeElement,
       isHovering: isHovering,
     }
-    //this.hoverService.hoveredTextOrDefault$.next(value);
+    this.hoverService.hoveredText$.next(value);
   }
 
   private getDepaElements(exponent: ApparatusEntryExponent) {

@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { AfterViewInit, Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, filter, Subject, Subscription } from 'rxjs';
 import { ApparatusEntry, ApparatusEntryExponent } from '../models/evt-models';
 import { EVTStatusService } from './evt-status.service';
@@ -7,22 +7,18 @@ import { NavigationStart, Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class HoverService implements OnDestroy {
-  hoveredTextOrDefault$ = new Subject<TextHoverArgs>();
-  hoveredAppExponentOrDefault$ = new Subject<ApparatusEntryExponent>();
+export class HoverService {
+  hoveredText$ = new Subject<TextHoverArgs>();
+  highlightedAppExponents$ = new BehaviorSubject<ApparatusEntryExponent[]>([]);
   selectedApparatusEntries$ = new BehaviorSubject<ApparatusEntry[]>([]);
-
-  private routerNavigationStartSubs: Subscription;
 
   constructor(
     private statusService: EVTStatusService,
     private router: Router,
   ) {
-    this.routerNavigationStartSubs = this.router.events.pipe(
+    this.router.events.pipe(
       filter((event) => event instanceof NavigationStart),
     ).subscribe(() => {
-      this.hoveredTextOrDefault$.next(null);
-      this.hoveredAppExponentOrDefault$.next(null);
       this.selectedApparatusEntries$.next([]);
     });
   }
@@ -57,11 +53,6 @@ export class HoverService implements OnDestroy {
       const newValue = [...entriesToKeep.map(entry => entry.app), ...entriesToAdd.map(entry => entry.app)];
       this.selectedApparatusEntries$.next(newValue);
     }
-
-  }
-
-  ngOnDestroy(): void {
-    this.routerNavigationStartSubs.unsubscribe();
   }
 }
 

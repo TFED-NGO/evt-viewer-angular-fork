@@ -28,79 +28,61 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
     })
   );
 
-  private updatehoveredAppExponent$ = new BehaviorSubject<boolean>(false);
+  private updateHovered$ = new BehaviorSubject<boolean>(false);
   isHighlighted$ = combineLatest([
-    this.updatehoveredAppExponent$,
+    this.updateHovered$,
     this.hoverService.selectedApparatusEntries$,
   ]).pipe(
-    map(([updatehoveredAppExponent, selectedAppEntries]) => {
-      if (updatehoveredAppExponent) {
+    map(([updateHovered, selectedAppEntries]) => {
+      const isSelected = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
+      const value = this.hoverService.highlightedAppExponents$.value.filter(x => !x.id().equals(this.data.id()));
+      if (updateHovered || isSelected) {
+        this.hoverService.highlightedAppExponents$.next([...value, this.data]);
         return true;
       }
-
-      const result = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
-      return result;
-
-      // const { id, element, isHovering } = hoveredTextOrDefault;
-      // if (!isHovering) {
-      //   this.hoverService.hoveredAppExponentOrDefault$.next(this.data);
-      // }
-      // else {
-      //   const key = id;
-      //   if (!this.isBetweenElementMemo.has(key)) {
-      //     const { fromEl, toEl } = this.getDepaElements();
-      //     const result = this.isElementBetween(fromEl, element, toEl);
-      //     this.isBetweenElementMemo.set(key, result);
-      //   }
-
-      //   const memo = this.isBetweenElementMemo.get(key);
-      //   if (memo) {
-      //     this.hoverService.hoveredAppExponentOrDefault$.next(this.data);
-      //     return true;
-      //   }
-      // }
-
-      // this.hoverService.hoveredAppExponentOrDefault$.next(null);
-      // return false;
+      else {
+        this.hoverService.highlightedAppExponents$.next(value);
+        return false;
+      }
     })
   );
 
   private isBetweenElementMemo = new Map<string, boolean>();
 
-constructor(
-  private statusService: EVTStatusService,
-  private hoverService: HoverService,
-) {
-}
+  constructor(
+    private statusService: EVTStatusService,
+    private hoverService: HoverService,
+  ) {
+  }
 
-ngOnInit(): void {
+  ngOnInit(): void {
 
-}
+  }
 
-onExponentButtonClicked() {
-  this.hoverService.toggleApparatusEntry(this.data.appEntries);
-}
+  onExponentButtonClicked() {
+    this.hoverService.toggleApparatusEntry(this.data.appEntries);
+  }
 
-onHover(isHovering: boolean) {
-  this.updatehoveredAppExponent$.next(isHovering);
-}
+  onHover(isHovering: boolean) {
+    this.updateHovered$.next(isHovering);
+  }
 
   private getDepaElements() {
-  const from = this.data.from();
-  const fromEl = document.getElementById(from.valueWithoutRef);
-  const to = this.data.to();
-  const toEl = document.getElementById(to.valueWithoutRef);
-  return { fromEl, toEl };
-}
+    const from = this.data.from();
+    const fromEl = document.getElementById(from.valueWithoutRef);
+    const to = this.data.to();
+    const toEl = document.getElementById(to.valueWithoutRef);
+    return { fromEl, toEl };
+  }
 
   private isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
-  const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
-  const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
-  const isBetween = isAfterFrom && isBeforeTo;
-  return !!isBetween;
-}
+    const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const isBetween = isAfterFrom && isBeforeTo;
+    return !!isBetween;
+  }
 
-ngOnDestroy(): void {
-}
+  ngOnDestroy(): void {
+  }
 }
 
