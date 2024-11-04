@@ -19,6 +19,8 @@ export class HoverService {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationStart),
     ).subscribe(() => {
+      this.hoveredTextOrDefault$.next(null);
+      this.highlightedAppExponents$.next([]);
       this.selectedApparatusEntries$.next([]);
     });
   }
