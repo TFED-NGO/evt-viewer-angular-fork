@@ -2,9 +2,8 @@ import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { ApparatusEntryExponent, Text } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { v4 as uuidv4 } from 'uuid';
-import { BehaviorSubject, combineLatest, filter, map, Observable } from 'rxjs';
-import { HoverService, TextHoverArgs } from 'src/app/services/hover.service';
-import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
+import { map, Observable } from 'rxjs';
+import { HoverService } from 'src/app/services/hover.service';
 
 @Component({
   selector: 'evt-text',
@@ -20,7 +19,6 @@ export class TextComponent implements OnInit {
   underline$: Observable<boolean> | null = null;
 
   constructor(
-    private structureService: StructureXmlParserService,
     private hoverService: HoverService,
     private elementRef: ElementRef<HTMLElement>
   ) { }

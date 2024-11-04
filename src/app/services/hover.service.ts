@@ -1,5 +1,5 @@
-import { AfterViewInit, Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, filter, Subject, Subscription } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, filter } from 'rxjs';
 import { ApparatusEntry, ApparatusEntryExponent } from '../models/evt-models';
 import { EVTStatusService } from './evt-status.service';
 import { NavigationStart, Router } from '@angular/router';

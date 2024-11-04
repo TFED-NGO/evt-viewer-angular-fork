@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 import { ApparatusEntryExponent } from 'src/app/models/evt-models';
 import { register } from 'src/app/services/component-register.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
-import { BehaviorSubject, combineLatest, map, pipe, retry, Subscription, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
 
 @register(ApparatusEntryExponent)
@@ -54,7 +54,6 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
       const result = isHovering && this.isBetweenElementMemo.get(id);
       const newValue = result ? [...value, this.data] : value;
       this.hoverService.highlightedAppExponents$.next(newValue);
-      //this.hoverService.updateUnderlineTextIdOrDefault$.next(result ? id : null);
       return result;
     })
   );
