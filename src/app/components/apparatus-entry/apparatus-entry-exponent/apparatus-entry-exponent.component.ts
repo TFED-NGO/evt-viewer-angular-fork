@@ -32,18 +32,30 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
   isHighlighted$ = combineLatest([
     this.updateHovered$,
     this.hoverService.selectedApparatusEntries$,
+    this.hoverService.hoveredTextOrDefault$,
   ]).pipe(
-    map(([updateHovered, selectedAppEntries]) => {
+    map(([updateHovered, selectedAppEntries, hoveredText]) => {
       const isSelected = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
       const value = this.hoverService.highlightedAppExponents$.value.filter(x => !x.id().equals(this.data.id()));
       if (updateHovered || isSelected) {
         this.hoverService.highlightedAppExponents$.next([...value, this.data]);
         return true;
       }
-      else {
-        this.hoverService.highlightedAppExponents$.next(value);
-        return false;
+
+      if(!hoveredText) return;
+
+      const { id, element, isHovering } = hoveredText;
+      if (!this.isBetweenElementMemo.has(id)) {
+        const { fromEl, toEl } = this.getDepaElements();
+        const isElementBetween = this.isElementBetween(fromEl, element, toEl);
+        this.isBetweenElementMemo.set(id, isElementBetween);
       }
+
+      const result = isHovering && this.isBetweenElementMemo.get(id);
+      const newValue = result ? [...value, this.data] : value;
+      this.hoverService.highlightedAppExponents$.next(newValue);
+      //this.hoverService.updateUnderlineTextIdOrDefault$.next(result ? id : null);
+      return result;
     })
   );
 

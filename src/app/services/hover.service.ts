@@ -8,7 +8,7 @@ import { NavigationStart, Router } from '@angular/router';
   providedIn: 'root'
 })
 export class HoverService {
-  hoveredText$ = new Subject<TextHoverArgs>();
+  hoveredTextOrDefault$ = new BehaviorSubject<TextHoverArgs>(null);
   highlightedAppExponents$ = new BehaviorSubject<ApparatusEntryExponent[]>([]);
   selectedApparatusEntries$ = new BehaviorSubject<ApparatusEntry[]>([]);
 
