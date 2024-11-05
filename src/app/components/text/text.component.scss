@@ -1,4 +1,19 @@
 .underline {
     text-decoration: underline;
     cursor: pointer;
+
+    &[data-exponent-level='1'] {
+        text-decoration-color: red;
+        text-underline-offset: 2px;
+    }
+
+    &[data-exponent-level='2'] {
+        text-decoration-color: blue;
+        text-underline-offset: 4px;
+    }
+
+    &[data-exponent-level='3'] {
+        text-decoration-color: green;
+        text-underline-offset: 6px;
+    }
 }

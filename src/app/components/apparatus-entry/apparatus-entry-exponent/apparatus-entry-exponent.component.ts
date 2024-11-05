@@ -28,6 +28,7 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
     })
   );
 
+  private isBetweenElementMemo = new Map<string, boolean>();
   private updateHovered$ = new BehaviorSubject<boolean>(false);
   isHighlighted$ = combineLatest([
     this.updateHovered$,
@@ -46,8 +47,8 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
 
       const { id, element, isHovering } = hoveredText;
       if (!this.isBetweenElementMemo.has(id)) {
-        const { fromEl, toEl } = this.getDepaElements();
-        const isElementBetween = this.isElementBetween(fromEl, element, toEl);
+        const { fromEl, toEl } = this.hoverService.getDepaElements(this.data);
+        const isElementBetween = this.hoverService.isElementBetween(fromEl, element, toEl);
         this.isBetweenElementMemo.set(id, isElementBetween);
       }
 
@@ -57,8 +58,6 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
       return result;
     })
   );
-
-  private isBetweenElementMemo = new Map<string, boolean>();
 
   constructor(
     private statusService: EVTStatusService,
@@ -78,22 +77,6 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
     this.updateHovered$.next(isHovering);
   }
 
-  private getDepaElements() {
-    const from = this.data.from();
-    const fromEl = document.getElementById(from.valueWithoutRef);
-    const to = this.data.to();
-    const toEl = document.getElementById(to.valueWithoutRef);
-    return { fromEl, toEl };
-  }
-
-  private isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
-    const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBetween = isAfterFrom && isBeforeTo;
-    return !!isBetween;
-  }
-
   ngOnDestroy(): void {
   }
 }
-

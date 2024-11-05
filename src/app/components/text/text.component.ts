@@ -2,8 +2,9 @@ import { Component, ElementRef, Input, OnInit } from '@angular/core';
 import { ApparatusEntryExponent, Text } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { v4 as uuidv4 } from 'uuid';
-import { map, Observable } from 'rxjs';
+import { defaultIfEmpty, filter, from, interval, map, Observable, of, shareReplay, startWith, take } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
+import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
 
 @Component({
   selector: 'evt-text',
@@ -16,33 +17,36 @@ export class TextComponent implements OnInit {
 
   id: string = uuidv4();
 
-  underline$: Observable<boolean> | null = null;
+  underlineData$: Observable<UnderlineData> = of({ enabled: false, level: 0 });
+  level: 3;
 
   constructor(
     private hoverService: HoverService,
-    private elementRef: ElementRef<HTMLElement>
+    private elementRef: ElementRef<HTMLElement>,
+    private structureService: StructureXmlParserService,
   ) { }
 
-  private exponentMemo = new Map<string, boolean>();
+  private exponentMemo = new Map<string, UnderlineData>();
 
   ngOnInit(): void {
     if (this.canBeUnderlined(this.elementRef.nativeElement)) return;
 
-    this.underline$ = this.hoverService.highlightedAppExponents$
+    this.underlineData$ = this.hoverService.highlightedAppExponents$
       .pipe(
         map((exponents) => {
           for (const exponent of exponents) {
             const exponentId = exponent.id().valueWithoutRef;
             if (!this.exponentMemo.has(exponentId)) {
-              const { fromEl, toEl } = this.getDepaElements(exponent);
-              const isElementBetween = this.isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
-              this.exponentMemo.set(exponentId, isElementBetween);
+              const { fromEl, toEl } = this.hoverService.getDepaElements(exponent);
+              const isElementBetween = this.hoverService.isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
+              this.exponentMemo.set(exponentId, { enabled: isElementBetween });
             }
 
-            const isElementBetweenMemo = this.exponentMemo.get(exponentId);
-            if (isElementBetweenMemo) return true;
+            const memo = this.exponentMemo.get(exponentId);
+            if (memo.enabled) return memo;
           }
-        })
+        }),
+        shareReplay(1) // because in the template there are multiple | async
       );
   }
 
@@ -55,23 +59,12 @@ export class TextComponent implements OnInit {
     this.hoverService.hoveredTextOrDefault$.next(value);
   }
 
-  private getDepaElements(exponent: ApparatusEntryExponent) {
-    const from = exponent.from();
-    const fromEl = document.getElementById(from.valueWithoutRef);
-    const to = exponent.to();
-    const toEl = document.getElementById(to.valueWithoutRef);
-    return { fromEl, toEl };
-  }
-
-  private isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
-    const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
-    const isBetween = isAfterFrom && isBeforeTo;
-    return !!isBetween;
-  }
-
   private canBeUnderlined(element: HTMLElement): boolean {
     const isChildOfAppDetails = element.closest('evt-apparatus-entry-detail') !== null;
     return isChildOfAppDetails;
   }
+}
+
+export interface UnderlineData {
+  enabled: boolean;
 }

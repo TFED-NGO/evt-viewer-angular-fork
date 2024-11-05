@@ -1,20 +1,22 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { BehaviorSubject, filter } from 'rxjs';
 import { ApparatusEntry, ApparatusEntryExponent } from '../models/evt-models';
 import { EVTStatusService } from './evt-status.service';
 import { NavigationStart, Router } from '@angular/router';
+import { StructureXmlParserService } from './xml-parsers/structure-xml-parser.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HoverService {
-  hoveredTextOrDefault$ = new BehaviorSubject<TextHoverArgs>(null);
-  highlightedAppExponents$ = new BehaviorSubject<ApparatusEntryExponent[]>([]);
-  selectedApparatusEntries$ = new BehaviorSubject<ApparatusEntry[]>([]);
+  readonly hoveredTextOrDefault$ = new BehaviorSubject<TextHoverArgs>(null);
+  readonly highlightedAppExponents$ = new BehaviorSubject<ApparatusEntryExponent[]>([]);
+  readonly selectedApparatusEntries$ = new BehaviorSubject<ApparatusEntry[]>([]);
 
   constructor(
     private statusService: EVTStatusService,
     private router: Router,
+    private structureService: StructureXmlParserService
   ) {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationStart),
@@ -50,10 +52,31 @@ export class HoverService {
       const newValue = [...entriesToAdd.map(entry => entry.app)];
       this.selectedApparatusEntries$.next(newValue);
     }
-    else{
+    else {
       const entriesToKeep = selectedIds.filter(({ exponentId }) => !newIds.some(newEntry => newEntry.exponentId === exponentId));
       const newValue = [...entriesToKeep.map(entry => entry.app), ...entriesToAdd.map(entry => entry.app)];
       this.selectedApparatusEntries$.next(newValue);
+    }
+  }
+
+
+  getDepaElements(exponent: ApparatusEntryExponent) {
+    const from = exponent.from();
+    const fromEl = document.getElementById(from.valueWithoutRef);
+    const to = exponent.to();
+    const toEl = document.getElementById(to.valueWithoutRef);
+    return { fromEl, toEl };
+  }
+
+  isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
+    try {
+      const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
+      const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
+      const isBetween = isAfterFrom && isBeforeTo;
+      return !!isBetween;
+    }
+    catch (error) {
+      console.warn(error);
     }
   }
 }
