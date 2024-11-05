@@ -18,7 +18,7 @@ export class TextComponent implements OnInit {
   id: string = uuidv4();
 
   underlineData$: Observable<UnderlineData> = of({ enabled: false, level: 0 });
-  level: 3;
+  level: 1;
 
   constructor(
     private hoverService: HoverService,

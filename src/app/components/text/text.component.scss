@@ -3,8 +3,8 @@
     cursor: pointer;
 
     &[data-exponent-level='1'] {
-        text-decoration-color: red;
-        text-underline-offset: 2px;
+        text-decoration-color: black;
+        text-underline-offset: 0px;
     }
 
     &[data-exponent-level='2'] {
