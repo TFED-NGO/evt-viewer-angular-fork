@@ -1,8 +1,8 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/core';
 import { ApparatusEntryExponent } from 'src/app/models/evt-models';
 import { register } from 'src/app/services/component-register.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
-import { BehaviorSubject, combineLatest, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
 
 @register(ApparatusEntryExponent)
@@ -13,6 +13,8 @@ import { HoverService } from 'src/app/services/hover.service';
 })
 export class ApparatusEntryExponentComponent implements OnDestroy {
   @Input() data: ApparatusEntryExponent;
+  @ViewChild('evtNoteButton', { read: ElementRef}) evtNoteButton!: ElementRef;
+
   noteType: string = 'critical'; // Temp, it's probably correct but needs confirmation
   apparatusDetailsShown$ = combineLatest([
     this.statusService.currentViewMode$,
@@ -30,20 +32,32 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
 
   private isBetweenElementMemo = new Map<string, boolean>();
   private updateHovered$ = new BehaviorSubject<boolean>(false);
+
+  private isSelected$ = this.hoverService.selectedApparatusEntries$.pipe(
+    map(selectedAppEntries => {
+      const isSelected = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
+      return isSelected;
+    }),
+    tap(isSelected => {
+      if (isSelected) {
+        this.evtNoteButton?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    })
+  );
+
   isHighlighted$ = combineLatest([
     this.updateHovered$,
-    this.hoverService.selectedApparatusEntries$,
+    this.isSelected$,
     this.hoverService.hoveredTextOrDefault$,
   ]).pipe(
-    map(([updateHovered, selectedAppEntries, hoveredText]) => {
-      const isSelected = selectedAppEntries.some(app => this.data.id().equals(app.additionalAttributes.exponentId));
+    map(([updateHovered, isSelected, hoveredText]) => {
       const value = this.hoverService.highlightedAppExponents$.value.filter(x => !x.id().equals(this.data.id()));
       if (updateHovered || isSelected) {
         this.hoverService.highlightedAppExponents$.next([...value, this.data]);
         return true;
       }
 
-      if(!hoveredText) return;
+      if (!hoveredText) return;
 
       const { id, element, isHovering } = hoveredText;
       if (!this.isBetweenElementMemo.has(id)) {

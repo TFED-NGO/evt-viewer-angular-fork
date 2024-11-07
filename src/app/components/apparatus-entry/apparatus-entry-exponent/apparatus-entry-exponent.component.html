@@ -1,5 +1,6 @@
 <ng-container *ngIf="data.appEntries.length">
-    <evt-note-button [exponent]="data.label" [noteType]="noteType" [isHovering]="isHighlighted$ | async" (click)="onExponentButtonClicked()" (mouseenter)="onHover(true)"
+    <evt-note-button #evtNoteButton style="scroll-margin-top: 5px;" [exponent]="data.label" [noteType]="noteType"
+        [isHovering]="isHighlighted$ | async" (click)="onExponentButtonClicked()" (mouseenter)="onHover(true)"
         (mouseleave)="onHover(false)"></evt-note-button>
 
     <ng-container *ngIf="apparatusDetailsShown$ | async">

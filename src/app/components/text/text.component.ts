@@ -44,6 +44,8 @@ export class TextComponent implements OnInit {
             const memo = this.exponentMemo.get(exponentId);
             if (memo.enabled) return memo;
           }
+
+          return { enabled: false };
         }),
         shareReplay(1) // because in the template there are multiple | async
       );

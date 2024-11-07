@@ -1,7 +1,7 @@
 <ng-container>
         <ng-container *ngFor="let entry of (entries$ | async)">
-                <div (click)="selectApparatusEntry(entry.entry)" style="scroll-margin-top: 100px;" #appDetails>
-                        <evt-apparatus-entry-detail *ngIf="true" [data]="entry.entry" class="app-list" 
+                <div #appDetails style="scroll-margin-top: 100px;" (click)="selectApparatusEntry(entry.entry)">
+                        <evt-apparatus-entry-detail *ngIf="true" [data]="entry.entry" class="app-list"
                                 [isSelected]="entry.isSelected"></evt-apparatus-entry-detail>
                 </div>
         </ng-container>
