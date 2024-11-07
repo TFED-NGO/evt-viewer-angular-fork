@@ -1,9 +1,8 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, filter } from 'rxjs';
 import { ApparatusEntry, ApparatusEntryExponent } from '../models/evt-models';
 import { EVTStatusService } from './evt-status.service';
 import { NavigationStart, Router } from '@angular/router';
-import { StructureXmlParserService } from './xml-parsers/structure-xml-parser.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class HoverService {
   constructor(
     private statusService: EVTStatusService,
     private router: Router,
-    private structureService: StructureXmlParserService
+    //private structureService: StructureXmlParserService
   ) {
     this.router.events.pipe(
       filter((event) => event instanceof NavigationStart),

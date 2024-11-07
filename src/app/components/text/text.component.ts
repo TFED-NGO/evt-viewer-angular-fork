@@ -1,10 +1,9 @@
 import { Component, ElementRef, Input, OnInit } from '@angular/core';
-import { ApparatusEntryExponent, Text } from '../../models/evt-models';
+import { Text } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { v4 as uuidv4 } from 'uuid';
-import { defaultIfEmpty, filter, from, interval, map, Observable, of, shareReplay, startWith, take } from 'rxjs';
+import { map, Observable, of, shareReplay } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
-import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
 
 @Component({
   selector: 'evt-text',
@@ -18,12 +17,12 @@ export class TextComponent implements OnInit {
   id: string = uuidv4();
 
   underlineData$: Observable<UnderlineData> = of({ enabled: false, level: 0 });
-  level: 1;
+  level = 1;
 
   constructor(
     private hoverService: HoverService,
     private elementRef: ElementRef<HTMLElement>,
-    private structureService: StructureXmlParserService,
+    //private structureService: StructureXmlParserService,
   ) { }
 
   private exponentMemo = new Map<string, UnderlineData>();
