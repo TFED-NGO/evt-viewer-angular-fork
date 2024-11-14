@@ -1,7 +1,7 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
-import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, map, tap } from 'rxjs/operators';
 import { Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
@@ -13,12 +13,13 @@ import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
   templateUrl: './collation.component.html',
   styleUrls: ['./collation.component.scss'],
 })
-export class CollationComponent {
+export class CollationComponent implements OnDestroy {
   @ViewChild('collationPanel', { static: false }) collationPanel: ElementRef;
   @ViewChild('popover', { static: false }) popover: NgbPopover;
 
   private latestWitnesses$ = new BehaviorSubject<WitnessItem[]>([]);
   private itemsChanged$ = new Subject<void>();
+  private itemsChangedSubs: Subscription;
 
   public currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
     this.evtModelService.witnesses$,
@@ -133,7 +134,7 @@ export class CollationComponent {
     private evtStatusService: EVTStatusService,
     private evtModelService: EVTModelService,
   ) {
-    this.itemsChanged$.pipe(
+    this.itemsChangedSubs = this.itemsChanged$.pipe(
       debounceTime(100)
     ).subscribe(() => {
       const value = this.latestWitnesses$.value
@@ -196,6 +197,9 @@ export class CollationComponent {
     this.changedOptions();
   }
 
+  ngOnDestroy(): void {
+    this.itemsChangedSubs?.unsubscribe();
+  }
 }
 
 interface WitnessItem {
