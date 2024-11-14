@@ -1,8 +1,10 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subject } from 'rxjs';
+import { debounceTime, map, tap } from 'rxjs/operators';
 import { Page } from 'src/app/models/evt-models';
+import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
 
@@ -12,10 +14,61 @@ import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
   styleUrls: ['./collation.component.scss'],
 })
 export class CollationComponent {
-  @ViewChild('collationPanel', { static: true }) collationPanel: ElementRef;
-  @ViewChild('popover', { static: true }) popover: NgbPopover;
+  @ViewChild('collationPanel', { static: false }) collationPanel: ElementRef;
+  @ViewChild('popover', { static: false }) popover: NgbPopover;
 
-  private witnesses: WitnessItem[] = [];
+  private latestWitnesses$ = new BehaviorSubject<WitnessItem[]>([]);
+  private itemsChanged$ = new Subject<void>();
+
+  public currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
+    this.evtModelService.witnesses$,
+    this.evtStatusService.currentStatus$
+  ]).pipe(
+    map(([witnesses, status]) => {
+      const currentWitnessesIds = status.witnesses;
+      const result = witnesses
+        .filter(w => currentWitnessesIds.includes(w.id))
+        .sort((a, b) => currentWitnessesIds.indexOf(a.id) - currentWitnessesIds.indexOf(b.id))
+        .map((w, i) => {
+          if (typeof w.name !== 'string') {
+            throw new Error("Witness name must be a string but was: " + w.name);
+          }
+
+          return {
+            id: w.id,
+            label: w.name,
+            itemConfig: { cols: 1, rows: 1, y: 0, x: i }
+          };
+        });
+      return result;
+    }),
+    tap(witnesses => {
+      this.latestWitnesses$.next(witnesses);
+      this.updateGridsterOptions(witnesses);
+    })
+  );
+
+  public popoverWitnesses$: Observable<PopoverWitnessItem[]> = combineLatest([
+    this.evtModelService.witnesses$,
+    this.evtStatusService.currentStatus$
+  ]).pipe(
+    map(([witnesses, status]) => {
+      const currentWitnessesIds = status.witnesses;
+      const result = witnesses
+        .filter(w => !currentWitnessesIds.includes(w.id))
+        .map(w => {
+          if (typeof w.name !== 'string') {
+            throw new Error("Witness name must be a string but was: " + typeof w.name);
+          }
+
+          return {
+            id: w.id,
+            label: w.name
+          };
+        });
+      return result;
+    }),
+  );
 
   public options: GridsterConfig = {
     gridType: GridType.Fit,
@@ -48,52 +101,67 @@ export class CollationComponent {
       enabled: false,
     },
     mobileBreakpoint: 0,
-    itemResizeCallback: this.updateFixedColWidth.bind(this),
-    itemChangeCallback: this.itemChange.bind(this),
+    itemResizeCallback: () => this.updateFixedColWidth(this.latestWitnesses$.value),
+    itemChangeCallback: () => this.itemsChanged$.next(),
   };
 
   public currentPageID$ = this.evtStatusService.currentStatus$.pipe(
     map(({ page }) => page.id),
   );
 
-  public get witnessBtn(): { label: string, additionalClasses: string, title: string, icon: EvtIconInfo } {
-    return {
-      label: this.witnesses.length > 0 ? '' : 'addWitness',
-      title: this.witnesses.length > 0 ? 'addWitness' : '',
-      additionalClasses: `btn-floating ${this.witnesses.length > 0 ? 'rounded-circle' : ''}`,
-      icon: { iconSet: 'fas', icon: 'plus' },
-    };
-  }
+  public witnessBtn$: Observable<{
+    label: string,
+    additionalClasses: string,
+    title: string,
+    icon: EvtIconInfo,
+    placement: string,
+    floatRight: boolean
+  }> = this.currentWitnesses$.pipe(
+    map(witnesses => {
+      return {
+        label: witnesses.length > 0 ? '' : 'addWitness',
+        title: witnesses.length > 0 ? 'addWitness' : '',
+        additionalClasses: `btn-floating ${witnesses.length > 0 ? 'rounded-circle' : ''}`,
+        icon: { iconSet: 'fas', icon: 'plus' },
+        placement: witnesses.length > 0 ? 'left' : 'right',
+        floatRight: witnesses.length > 0
+      };
+    })
+  );
 
   constructor(
     private evtStatusService: EVTStatusService,
+    private evtModelService: EVTModelService,
   ) {
+    this.itemsChanged$.pipe(
+      debounceTime(100)
+    ).subscribe(() => {
+      const value = this.latestWitnesses$.value
+        .sort((a, b) => a.itemConfig.x - b.itemConfig.x)
+        .map(x => x.id);
+      this.evtStatusService.updateWitnesses$.next(value)
+    })
   }
 
   changePage(selectedPage: Page) {
     this.evtStatusService.updatePage$.next(selectedPage);
   }
 
-  getWitnesses() {
-    return this.witnesses;
-  }
+  addWitness(witnessId: string) {
+    if (this.latestWitnesses$.value.some(w => w.id === witnessId)) {
+      throw new Error("Witness is already present: " + witnessId);
+    }
 
-  addWitness() {
-    const id = (this.witnesses.length + 1).toString(); // TODO: TEMP
-    const newWit = {
-      label: id,
-      itemConfig: { cols: 1, rows: 1, y: 0, x: this.witnesses.length + 1, id },
-    };
-
-    this.witnesses.push(newWit); // TODO: TEMP
-    this.updateGridsterOptions();
+    this.evtStatusService.updateWitnesses$.next(
+      [...this.latestWitnesses$.value.filter(w => w.id !== witnessId).map(w => w.id), witnessId]
+    )
     this.closePopover();
-    // TODO: Come gestiamo la rotta nel caso di testimoni collazionati?
   }
 
-  removeWitness(index) {
-    this.witnesses.splice(index, 1);
-    this.updateGridsterOptions();
+  removeWitness(witnessId: string) {
+    this.evtStatusService.updateWitnesses$.next(
+      [...this.latestWitnesses$.value.filter(w => w.id !== witnessId).map(w => w.id)]
+    )
     this.closePopover();
   }
 
@@ -101,24 +169,14 @@ export class CollationComponent {
     this.popover.close();
   }
 
-  private itemChange() {
-    const updatedWitList: string[] = [];
-    for (const witItem of this.witnesses) {
-      const witIndex = witItem.itemConfig.x;
-      updatedWitList[witIndex] = witItem.label;
-    }
-    // TODO: Use this list to update URL params
-    console.log('TODO! Use this list to update URL params', updatedWitList);
-  }
+  private updateGridsterOptions(witnesses: WitnessItem[]) {
+    this.options.maxCols = witnesses.length <= 1 ? 2 : 3;
+    this.collationPanelItem.cols = witnesses.length <= 1 ? 1 : 2;
 
-  private updateGridsterOptions() {
-    this.options.maxCols = this.witnesses.length <= 1 ? 2 : 3;
-    this.collationPanelItem.cols = this.witnesses.length <= 1 ? 1 : 2;
-
-    this.collationOptions.maxCols = this.witnesses.length;
-    this.collationOptions.gridType = this.witnesses.length <= 2 ? GridType.Fit : GridType.HorizontalFixed;
+    this.collationOptions.maxCols = witnesses.length;
+    this.collationOptions.gridType = witnesses.length <= 2 ? GridType.Fit : GridType.HorizontalFixed;
     this.changedOptions();
-    this.updateFixedColWidth();
+    this.updateFixedColWidth(witnesses);
   }
 
   private changedOptions() {
@@ -130,39 +188,23 @@ export class CollationComponent {
     }
   }
 
-  private updateFixedColWidth() {
+  private updateFixedColWidth(witnesses: WitnessItem[]) {
+    if (!this.collationPanel) return;
     const collationPanelEl = this.collationPanel.nativeElement as HTMLElement;
     const fixedColWidth = collationPanelEl.clientWidth * 0.416666666667;
-    this.collationOptions.fixedColWidth = this.witnesses.length > 2 ? fixedColWidth : undefined;
+    this.collationOptions.fixedColWidth = witnesses.length > 2 ? fixedColWidth : undefined;
     this.changedOptions();
   }
 
 }
 
 interface WitnessItem {
+  id: string,
   label: string;
   itemConfig: GridsterItem;
 }
 
-
-// private currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
-//   this.modelService.witnesses$,
-//   this.evtStatusService.currentWitnesses$
-// ]).pipe(
-//   map(([witnesses, currentWitnessesIds]) => {
-//     const result = witnesses
-//       .filter(w => currentWitnessesIds.includes(w.id))
-//       .map(w => {
-//         if (typeof w.name !== 'string') {
-//           throw new Error("Witness name must be a string but was: " + typeof w.name);
-//         }
-
-//         return {
-//           id: w.id,
-//           label: w.name,
-//           itemConfig: null
-//         };
-//       });
-//     return result;
-//   })
-// );
+interface PopoverWitnessItem {
+  id: string,
+  label: string;
+}

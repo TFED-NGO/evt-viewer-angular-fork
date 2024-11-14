@@ -1,38 +1,32 @@
 <gridster [options]="options">
     <gridster-item [item]="textPanelItem">
-        <evt-text-panel
-            [pageID]="currentPageID$ | async" 
-            (pageChange)="changePage($event)"       
-            [hideEditionLevelSelector]="true" 
-            [editionLevelID]="'critical'"
-        ></evt-text-panel>
+        <evt-text-panel [pageID]="currentPageID$ | async" (pageChange)="changePage($event)"
+            [hideEditionLevelSelector]="true" [editionLevelID]="'critical'"></evt-text-panel>
     </gridster-item>
     <gridster-item [item]="collationPanelItem">
-        <div class="collationPanel" #collationPanel
-        [class.align-self-center]="getWitnesses().length === 0" 
-        [class.empty]="getWitnesses().length === 0">
-            <gridster [options]="collationOptions" *ngIf="getWitnesses().length > 0">
-                <gridster-item [item]="witness.itemConfig" 
-                *ngFor="let witness of getWitnesses(); let i = index">
-                <evt-witness-panel
-                    (hide)="removeWitness(i)" [witness]="witness.label">
-                </evt-witness-panel>
+        <div class="collationPanel" #collationPanel *ngIf="currentWitnesses$ | async as witnesses"
+            [class.align-self-center]="witnesses.length === 0" [class.empty]="witnesses.length === 0">
+            <gridster [options]="collationOptions" *ngIf="witnesses.length > 0">
+                <gridster-item [item]="witness.itemConfig" *ngFor="let witness of currentWitnesses$ | async">
+                    <evt-witness-panel (hide)="removeWitness(witness.id)" [witness]="witness.label">
+                    </evt-witness-panel>
                 </gridster-item>
             </gridster>
-            <evt-button class="btn" [class.btn-float-right]="getWitnesses().length > 0"
-                [additionalClasses]="witnessBtn?.additionalClasses"
-                [label]="witnessBtn?.label | translate" [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate"
-                #popover="ngbPopover" [ngbPopover]="popContent"
-                [autoClose]="'outside'" container="body" [placement]="getWitnesses().length > 0 ? 'left' : 'right'" >
-            </evt-button>
-        </div> 
+            <ng-container *ngIf="witnessBtn$ | async as witnessBtn">
+                <evt-button class="btn" [class.btn-float-right]="witnessBtn.floatRight"
+                    [additionalClasses]="witnessBtn?.additionalClasses" [label]="witnessBtn?.label | translate"
+                    [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate" #popover="ngbPopover"
+                    [ngbPopover]="popContent" [autoClose]="'outside'" container="body"
+                    [placement]="witnessBtn.placement">
+                </evt-button>
+            </ng-container>
+        </div>
     </gridster-item>
 </gridster>
 
 <ng-template #popContent>
-    <div class="text-center">
-        <div role="button" class="popover-item" (click)="addWitness()">Witness 1</div>
-        <div role="button" class="popover-item" (click)="addWitness()">Witness 2</div>
-        <div role="button" class="popover-item" (click)="addWitness()">Witness 3</div>
+    <div class="text-center" style="max-height: 20rem; overflow-y: auto;">
+        <div role="button" class="popover-item" *ngFor="let witness of popoverWitnesses$ | async"
+            (click)="addWitness(witness.id)">{{ witness.label }}</div>
     </div>
 </ng-template>
