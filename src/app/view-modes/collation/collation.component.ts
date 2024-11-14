@@ -1,4 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { map } from 'rxjs/operators';
 import { Page } from 'src/app/models/evt-models';
@@ -12,6 +13,7 @@ import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
 })
 export class CollationComponent {
   @ViewChild('collationPanel', { static: true }) collationPanel: ElementRef;
+  @ViewChild('popover', { static: true }) popover: NgbPopover;
 
   private witnesses: WitnessItem[] = [];
 
@@ -85,12 +87,18 @@ export class CollationComponent {
 
     this.witnesses.push(newWit); // TODO: TEMP
     this.updateGridsterOptions();
+    this.closePopover();
     // TODO: Come gestiamo la rotta nel caso di testimoni collazionati?
   }
 
   removeWitness(index) {
     this.witnesses.splice(index, 1);
     this.updateGridsterOptions();
+    this.closePopover();
+  }
+
+  private closePopover() {
+    this.popover.close();
   }
 
   private itemChange() {
@@ -135,3 +143,26 @@ interface WitnessItem {
   label: string;
   itemConfig: GridsterItem;
 }
+
+
+// private currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
+//   this.modelService.witnesses$,
+//   this.evtStatusService.currentWitnesses$
+// ]).pipe(
+//   map(([witnesses, currentWitnessesIds]) => {
+//     const result = witnesses
+//       .filter(w => currentWitnessesIds.includes(w.id))
+//       .map(w => {
+//         if (typeof w.name !== 'string') {
+//           throw new Error("Witness name must be a string but was: " + typeof w.name);
+//         }
+
+//         return {
+//           id: w.id,
+//           label: w.name,
+//           itemConfig: null
+//         };
+//       });
+//     return result;
+//   })
+// );

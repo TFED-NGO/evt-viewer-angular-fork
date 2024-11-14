@@ -22,7 +22,17 @@
             <evt-button class="btn" [class.btn-float-right]="getWitnesses().length > 0"
                 [additionalClasses]="witnessBtn?.additionalClasses"
                 [label]="witnessBtn?.label | translate" [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate"
-                (btnClick)="addWitness()"></evt-button>
+                #popover="ngbPopover" [ngbPopover]="popContent"
+                [autoClose]="'outside'" container="body" [placement]="getWitnesses().length > 0 ? 'left' : 'right'" >
+            </evt-button>
         </div> 
     </gridster-item>
 </gridster>
+
+<ng-template #popContent>
+    <div class="text-center">
+        <div role="button" class="popover-item" (click)="addWitness()">Witness 1</div>
+        <div role="button" class="popover-item" (click)="addWitness()">Witness 2</div>
+        <div role="button" class="popover-item" (click)="addWitness()">Witness 3</div>
+    </div>
+</ng-template>
