@@ -59,7 +59,7 @@ export class CollationComponent implements OnDestroy {
         .filter(w => !currentWitnessesIds.includes(w.id))
         .map(w => {
           if (typeof w.name !== 'string') {
-            throw new Error("Witness name must be a string but was: " + typeof w.name);
+            throw new Error("Witness name must be a string but was: " + w.name);
           }
 
           return {
