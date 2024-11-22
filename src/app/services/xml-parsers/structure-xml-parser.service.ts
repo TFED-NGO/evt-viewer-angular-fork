@@ -31,7 +31,11 @@ export class StructureXmlParserService {
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
   parsePages(el: XMLElement): EditionStructure {
-    const editionStructure = { pages: [], documentApparatusEntries: new DocumentApparatusEntries() };
+    const editionStructure = {
+      pages: [] as Page[],
+      documentApparatusEntries: new DocumentApparatusEntries()
+    };
+
     if (!el) return editionStructure;
 
     const front: XMLElement = el.querySelector(this.frontTagName);
@@ -46,19 +50,19 @@ export class StructureXmlParserService {
     if (frontPbs.length > 0 && bodyPbs.length > 0) {
       const pages = pbs.map((pb: XMLElement, idx, arr: XMLElement[]) => this.parseDocumentPage(doc, pb, arr[idx + 1], 'text'));
       editionStructure.pages.push(...pages);
-      return editionStructure;
+    }
+    else {
+      const frontPages = frontPbs.length === 0 && front && this.isMarkedAsOrigContent(front)
+        ? [this.parseSinglePage(doc, front, 'page_front', this.frontTagName, 'facs_front')]
+        : frontPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.frontTagName));
+
+      const bodyPages = bodyPbs.length === 0
+        ? [this.parseSinglePage(doc, body, 'page1', 'mainText', 'facs1')] // TODO: tranlsate mainText
+        : bodyPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.bodyTagName));
+
+      editionStructure.pages.push(...frontPages, ...bodyPages);
     }
 
-    const frontPages = frontPbs.length === 0 && front && this.isMarkedAsOrigContent(front)
-      ? [this.parseSinglePage(doc, front, 'page_front', this.frontTagName, 'facs_front')]
-      : frontPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.frontTagName));
-
-    const bodyPages = bodyPbs.length === 0
-      ? [this.parseSinglePage(doc, body, 'page1', 'mainText', 'facs1')] // TODO: tranlsate mainText
-      : bodyPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.bodyTagName));
-
-    editionStructure.pages.push(...frontPages, ...bodyPages);
-    
     this.backApps = back && Array.from(back.querySelectorAll("app"));
     this.processCriticalApparatus(el, editionStructure);
     return editionStructure;
@@ -91,7 +95,7 @@ export class StructureXmlParserService {
         onShouldResetCounter,
       )
     }
-    
+
     function onApparatusEntryReplaced(page: Page, app: ApparatusEntry, exponent: ApparatusEntryExponent): void {
       const exponentId = exponent.id().valueWithoutRef;
       const pageAppEntries = editionStructure.documentApparatusEntries.apps.get(page.id);
@@ -149,13 +153,13 @@ export class StructureXmlParserService {
         const id = this.getExponentId();
         const to = id; // the exponent itself as the To element
         let exponent: ApparatusEntryExponent = null;
-        if (app.lemma) { 
+        if (app.lemma) {
           const from = app.lemma.id; // lemma exist so it will be the From element
           exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
           // the inline apparatus has a lemma so it must be rendered 
           items[i] = app.lemma;
           items.splice(i + 1, 0, exponent);
-        } else { 
+        } else {
           const from = id; // the exponent itself as the To element, because there is no lemma to render
           exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
           // the inline apparatus has no lemma so we just replace the app with the exponent
