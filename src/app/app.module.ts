@@ -155,6 +155,8 @@ import { DisplayFriendlyNamePipe } from './pipes/displayFriendlyName.pipe';
 import { ApparatusEntryExponentComponent } from './components/apparatus-entry/apparatus-entry-exponent/apparatus-entry-exponent.component';
 import { NoteButtonComponent } from './components/note-button/note-button.component';
 
+import 'prismjs/prism';
+
 const routes: Routes = [
 ];
 
