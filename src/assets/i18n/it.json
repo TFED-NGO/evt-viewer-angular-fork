@@ -200,5 +200,6 @@
   "showsDeletions": "Mostra cancellazioni",
   "hidesDeletions": "Nascondi cancellazioni",
   "occurrencesFoundLabel": "{{occurrencesCount}} occorrenze trovate in {{formsCount}} forme",
-  "form": "Forma"
+  "form": "Forma",
+  "noWitnessesAvailable": "Nessun testimone disponibile"
 }

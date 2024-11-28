@@ -25,8 +25,9 @@
 </gridster>
 
 <ng-template #popContent>
-    <div class="text-center" style="max-height: 20rem; overflow-y: auto;">
-        <div role="button" class="popover-item" *ngFor="let witness of popoverWitnesses$ | async"
+    <div class="text-center" style="max-height: 20rem; overflow-y: auto;" *ngIf="popoverWitnesses$ | async as popoverWitnesses">
+        <div *ngIf="!popoverWitnesses.length">{{ 'noWitnessesAvailable' | translate}}</div>
+        <div  role="button" class="popover-item"  *ngFor="let witness of popoverWitnesses"
             (click)="addWitness(witness.id)">{{ witness.label }}</div>
     </div>
 </ng-template>

@@ -201,5 +201,6 @@
     "showsDeletions": "Show deletions",
     "hidesDeletions": "Hide deletions",
     "occurrencesFoundLabel": "{{occurrencesCount}} occurrences found in {{formsCount}} forms",
-    "form": "Form"
+    "form": "Form",
+    "noWitnessesAvailable": "No witness available"
 }
