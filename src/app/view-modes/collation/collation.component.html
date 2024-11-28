@@ -1,6 +1,6 @@
 <gridster [options]="options">
     <gridster-item [item]="textPanelItem">
-        <evt-text-panel [pageID]="currentPageID$ | async" (pageChange)="changePage($event)"
+        <evt-text-panel [pageID]="currentPageID$ | async" (pageChange)="changePage($event.id)"
             [hideEditionLevelSelector]="true" [editionLevelID]="'critical'"></evt-text-panel>
     </gridster-item>
     <gridster-item [item]="collationPanelItem">
@@ -8,7 +8,7 @@
             [class.align-self-center]="witnesses.length === 0" [class.empty]="witnesses.length === 0">
             <gridster [options]="collationOptions" *ngIf="witnesses.length > 0">
                 <gridster-item [item]="witness.itemConfig" *ngFor="let witness of currentWitnesses$ | async">
-                    <evt-witness-panel (hide)="removeWitness(witness.id)" [witness]="witness.label">
+                    <evt-witness-panel [witnessItem]="witness" (hide)="removeWitness(witness.id)" (changePage)="changePage($event)">
                     </evt-witness-panel>
                 </gridster-item>
             </gridster>

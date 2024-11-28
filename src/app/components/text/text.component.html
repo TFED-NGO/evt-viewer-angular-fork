@@ -1,6 +1,11 @@
 <ng-container *ngIf="data">
-    <span [id]="id" class="{{data.class}} evt-span" [class.underline]="(underlineData$ | async)?.enabled"
-        [attr.data-exponent-level]="level" (mouseenter)="onHover(true)" (mouseleave)="onHover(false)">
+    <span *ngIf="attachHoverEvents" [id]="id" class="{{data.class}} evt-span"
+        [class.underline]="(underlineData$ | async)?.enabled" [attr.data-exponent-level]="level"
+        (mouseenter)="onHover(true)" (mouseleave)="onHover(false)">
+        {{ data.text }}
+    </span>
+    <span *ngIf="!attachHoverEvents" [id]="id" class="{{data.class}} evt-span"
+        [class.underline]="(underlineData$ | async)?.enabled" [attr.data-exponent-level]="level">
         {{ data.text }}
     </span>
 </ng-container>

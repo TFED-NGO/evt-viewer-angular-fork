@@ -44,7 +44,7 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  public readonly projectInfo$ =  this.editionSource$.pipe(
+  public readonly projectInfo$ = this.editionSource$.pipe(
     map((source) => this.prefatoryMatterParser.parseProjectInfo(source)),
     shareReplay(1),
   );
@@ -55,7 +55,16 @@ export class EVTModelService {
   );
 
   public readonly parsedEditionStructure$: Observable<EditionStructure> = this.editionSource$.pipe(
-    map((source) => this.editionStructureParser.parsePages(source)),
+    map((source) => {
+      return {
+        source: source,
+        edition: this.editionStructureParser.parsePages(source)
+      };
+    }),
+    map(({ source, edition }) => {
+      this.editionStructureParser.processCriticalApparatus(source, edition)
+      return edition;
+    }),
     shareReplay(1),
   );
 
@@ -184,18 +193,18 @@ export class EVTModelService {
   );
 
   // FACSIMILE
-  public readonly facsimile$ : Observable<Facsimile[]> = this.editionSource$.pipe(
+  public readonly facsimile$: Observable<Facsimile[]> = this.editionSource$.pipe(
     map((source) => this.facsimileParser.parseFacsimile(source)),
     shareReplay(1),
   );
 
   public readonly facsimileImageDouble$: Observable<Facsimile | undefined> = this.facsimile$.pipe(
-    map((facSimiles)=>{
+    map((facSimiles) => {
       const fcRendDouble = facSimiles.find((fs) => fs.attributes['rend'] === 'double');
-      if (fcRendDouble) {return fcRendDouble;}
+      if (fcRendDouble) { return fcRendDouble; }
 
-      const fcWithSurfacesGrp = facSimiles.find((fs)=> fs.surfaceGrps?.length > 0);
-      if (fcWithSurfacesGrp) {return fcWithSurfacesGrp;}
+      const fcWithSurfacesGrp = facSimiles.find((fs) => fs.surfaceGrps?.length > 0);
+      if (fcWithSurfacesGrp) { return fcWithSurfacesGrp; }
 
       return undefined;
     }),
@@ -203,11 +212,11 @@ export class EVTModelService {
 
   public readonly imageDoublePages$: Observable<Page[]> = this.facsimileImageDouble$.pipe(
     combineLatestWith(this.pages$),
-    map(([ facsSimile, pages])=>{
-      if (facsSimile?.graphics?.length > 0){
+    map(([facsSimile, pages]) => {
+      if (facsSimile?.graphics?.length > 0) {
         // Qui abbiamo i graphics
-        return facsSimile.graphics.map((_g, index)=>{
-          const p : Page={
+        return facsSimile.graphics.map((_g, index) => {
+          const p: Page = {
             url: '',
             parsedContent: undefined,
             originalContent: undefined,
@@ -221,18 +230,18 @@ export class EVTModelService {
         });
       }
 
-      return facsSimile?.surfaceGrps.map((sGrp)=> {
+      return facsSimile?.surfaceGrps.map((sGrp) => {
         const titleName = sGrp.surfaces.reduce((pv, cv) => {
-          const fp: Page = pages.find((p)=>p.id === cv.corresp);
+          const fp: Page = pages.find((p) => p.id === cv.corresp);
           if (pv.length === 0) {
 
-            if (fp){
+            if (fp) {
               return pv + fp.label;
             }
 
             return pv + cv.corresp.replace('#', '');
           }
-          if (fp){
+          if (fp) {
             return pv + ' ' + fp.label;
           }
 
@@ -247,7 +256,7 @@ export class EVTModelService {
           return pv + '-' + cv.corresp.replace('#', '');
         }, '');
 
-        const p : Page={
+        const p: Page = {
           url: '',
           parsedContent: undefined,
           originalContent: undefined,
@@ -264,10 +273,10 @@ export class EVTModelService {
     }),
   );
 
-  public readonly imageDouble$: Observable<{ type: string, value:{ xmlImages:XMLImagesValues[]}} | undefined > =
+  public readonly imageDouble$: Observable<{ type: string, value: { xmlImages: XMLImagesValues[] } } | undefined> =
     this.facsimileImageDouble$.pipe(
-      map((fs)=> {
-        if (fs?.graphics?.length > 0){
+      map((fs) => {
+        if (fs?.graphics?.length > 0) {
           //const editionImages = AppConfig.evtSettings.files.editionImagesSource;
           const result: XMLImagesValues[] = fs.graphics.map((g) => {
 
@@ -277,8 +286,8 @@ export class EVTModelService {
             const url = `${imagesFolderUrl}${fileName}`;
             const r: XMLImagesValues = {
               url: url,
-              width: g.width?parseInt(g.width) : 910,
-              height: g.height?parseInt(g.height) : 720,
+              width: g.width ? parseInt(g.width) : 910,
+              height: g.height ? parseInt(g.height) : 720,
             };
 
             return r;

@@ -3,7 +3,6 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, map, tap } from 'rxjs/operators';
-import { Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
@@ -27,7 +26,7 @@ export class CollationComponent implements OnDestroy {
   ]).pipe(
     map(([witnesses, status]) => {
       const currentWitnessesIds = status.witnesses;
-      const result = witnesses
+      const result: WitnessItem[] = witnesses
         .filter(w => currentWitnessesIds.includes(w.id))
         .sort((a, b) => currentWitnessesIds.indexOf(a.id) - currentWitnessesIds.indexOf(b.id))
         .map((w, i) => {
@@ -38,7 +37,8 @@ export class CollationComponent implements OnDestroy {
           return {
             id: w.id,
             label: w.name,
-            itemConfig: { cols: 1, rows: 1, y: 0, x: i }
+            itemConfig: { cols: 1, rows: 1, y: 0, x: i },
+            currentPageId: status.page.id,
           };
         });
       return result;
@@ -144,8 +144,8 @@ export class CollationComponent implements OnDestroy {
     })
   }
 
-  changePage(selectedPage: Page) {
-    this.evtStatusService.updatePage$.next(selectedPage);
+  changePage(pageId: string) {
+    this.evtStatusService.updatePageId$.next(pageId);
   }
 
   addWitness(witnessId: string) {
@@ -202,10 +202,11 @@ export class CollationComponent implements OnDestroy {
   }
 }
 
-interface WitnessItem {
+export interface WitnessItem {
   id: string,
   label: string;
   itemConfig: GridsterItem;
+  currentPageId: string;
 }
 
 interface PopoverWitnessItem {

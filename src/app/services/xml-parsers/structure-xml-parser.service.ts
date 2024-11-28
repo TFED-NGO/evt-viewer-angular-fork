@@ -24,7 +24,7 @@ export class StructureXmlParserService {
   private readonly pageTagName = AppConfig.evtSettings.edition.editionStructureSeparator;
   private readonly bodyTagName = 'body';
   private readonly backTagName = 'back';
-  private backApps: XMLElement[] = [];
+  backApps: XMLElement[] = [];
 
   private readonly appParser = ParserRegister.get('evt-apparatus-entry-parser');
 
@@ -40,7 +40,6 @@ export class StructureXmlParserService {
 
     const front: XMLElement = el.querySelector(this.frontTagName);
     const body: XMLElement = el.querySelector(this.bodyTagName);
-    const back: XMLElement = el.querySelector(this.backTagName);
 
     const pbs = Array.from(el.querySelectorAll(this.pageTagName)).filter((p) => !p.getAttribute('ed'));
     const frontPbs = pbs.filter((p) => isNestedInElem(p, this.frontTagName));
@@ -63,13 +62,26 @@ export class StructureXmlParserService {
       editionStructure.pages.push(...frontPages, ...bodyPages);
     }
 
-    this.backApps = back && Array.from(back.querySelectorAll("app"));
-    this.processCriticalApparatus(el, editionStructure);
     return editionStructure;
   }
 
-  private processCriticalApparatus(el: XMLElement, editionStructure: EditionStructure): void {
-    if (this.backApps) {
+  public processCriticalApparatus(el: XMLElement, editionStructure: EditionStructure): void {
+    if (!this.backApps.length) {
+      const back: XMLElement = el.querySelector(this.backTagName);
+      if (!back) {
+        console.log("There is no back element");
+        return;
+      }
+
+      const apps = back && Array.from(back.querySelectorAll("app"));
+      if (!apps.length) {
+        console.warn("There are no apps in back element")
+      }
+
+      this.backApps = apps as XMLElement[];
+    }
+
+    if (this.backApps.length) {
       const result = this.getDocumentApparatusEntries(editionStructure.pages);
       result.apps.forEach((value, key) => {
         editionStructure.documentApparatusEntries.apps.set(key, value);

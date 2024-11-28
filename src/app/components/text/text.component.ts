@@ -1,9 +1,10 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, Optional } from '@angular/core';
 import { Text } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { v4 as uuidv4 } from 'uuid';
 import { map, Observable, of, shareReplay } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
+import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 
 @Component({
   selector: 'evt-text',
@@ -22,13 +23,18 @@ export class TextComponent implements OnInit {
   constructor(
     private hoverService: HoverService,
     private elementRef: ElementRef<HTMLElement>,
+    @Optional() private witnessPanelService?: WitnessPanelService,
     //private structureService: StructureXmlParserService,
   ) { }
 
   private exponentMemo = new Map<string, UnderlineData>();
 
+  attachHoverEvents: boolean = true;
+
   ngOnInit(): void {
-    if (this.canBeUnderlined(this.elementRef.nativeElement)) return;
+    this.attachHoverEvents = !this.witnessPanelService;
+    if(!this.attachHoverEvents) return;
+    if (this.isChildOfAppDetails(this.elementRef.nativeElement)) return;
 
     this.underlineData$ = this.hoverService.highlightedAppExponents$
       .pipe(
@@ -60,7 +66,7 @@ export class TextComponent implements OnInit {
     this.hoverService.hoveredTextOrDefault$.next(value);
   }
 
-  private canBeUnderlined(element: HTMLElement): boolean {
+  private isChildOfAppDetails(element: HTMLElement): boolean {
     const isChildOfAppDetails = element.closest('evt-apparatus-entry-detail') !== null;
     return isChildOfAppDetails;
   }
