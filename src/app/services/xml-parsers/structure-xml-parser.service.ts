@@ -76,6 +76,7 @@ export class StructureXmlParserService {
       const apps = back && Array.from(back.querySelectorAll("app"));
       if (!apps.length) {
         console.warn("There are no apps in back element")
+        return;
       }
 
       this.backApps = apps as XMLElement[];
