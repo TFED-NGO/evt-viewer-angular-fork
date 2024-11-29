@@ -13,7 +13,9 @@
       <ng-container *ngIf="isInWitnessPanel">
          <evt-reading class="app-entry-lem" *ngIf="selectedReading" [data]="selectedReading" [evtHighlight]="highlightData$ | async" [editionLevel]="editionLevel" [withDeletions]="withDeletions" [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
       </ng-container>
-      <evt-reading class="app-entry-lem" *ngIf="data?.lemma" [data]="data.lemma" [evtHighlight]="highlightData$ | async" [editionLevel]="editionLevel" [withDeletions]="withDeletions" [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
+      <ng-container *ngIf="!isInWitnessPanel">
+         <evt-reading class="app-entry-lem" *ngIf="data?.lemma" [data]="data.lemma" [evtHighlight]="highlightData$ | async" [editionLevel]="editionLevel" [withDeletions]="withDeletions" [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
+      </ng-container>
    
       <!-- The click event in "evt-apparatus-entry-detail" is used to manage nested apps -->
       <evt-apparatus-entry-detail *ngIf="opened" [data]="data" [selectedLayer]="selectedLayer" (click)="stopPropagation($event)"></evt-apparatus-entry-detail>
