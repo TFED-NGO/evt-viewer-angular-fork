@@ -1,9 +1,9 @@
-<evt-panel [comparable]="true" [secondary]="true" [closable]="true" (hide)="emitHide()">
+<evt-panel *ngIf="currentPage$ | async as currentPage" [comparable]="true" [secondary]="true" [closable]="true" (hide)="emitHide()">
     <div header-left>
         Witness {{ witnessItem.label }}
         <evt-page-selector class="px-2" [pageID]="currentPage.id" (selectionChange)="onChangePage($event.id)"></evt-page-selector>
     </div>
     <div content evtAnnotator>
-        <evt-page *ngIf="currentPage" [data]="currentPage"></evt-page>
+        <evt-page [data]="currentPage"></evt-page>
     </div>
 </evt-panel>
