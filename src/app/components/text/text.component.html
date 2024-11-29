@@ -2,9 +2,9 @@
     <!-- Mouse events are conditionally attached, based on the outer context, to improve performance -->
     <!-- Panels who don't require underlining, will skip lots of events firing and their processing -->
     <span *ngIf="attachHoverEvents" [id]="id" class="{{data.class}} evt-span"
-    [class.underline]="(underlineData$ | async)?.enabled" [attr.data-exponent-level]="level"
-    (mouseenter)="onHover(true)" (mouseleave)="onHover(false)">{{ data.text }}</span>
-    
+        [class.underline]="(underlineData$ | async)?.enabled" (mouseenter)="onHover(true)"
+        (mouseleave)="onHover(false)">{{ data.text }}</span>
+
     <span *ngIf="!attachHoverEvents" [id]="id" class="{{data.class}} evt-span"
-        [class.underline]="(underlineData$ | async)?.enabled" [attr.data-exponent-level]="level">{{ data.text }}</span>
+        [class.underline]="(underlineData$ | async)?.enabled">{{ data.text }}</span>
 </ng-container>
