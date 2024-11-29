@@ -23,7 +23,6 @@ export class TextComponent implements OnInit {
     private hoverService: HoverService,
     private elementRef: ElementRef<HTMLElement>,
     @Optional() private witnessPanelService?: WitnessPanelService,
-    //private structureService: StructureXmlParserService,
   ) { }
 
   private exponentMemo = new Map<string, UnderlineData>();
