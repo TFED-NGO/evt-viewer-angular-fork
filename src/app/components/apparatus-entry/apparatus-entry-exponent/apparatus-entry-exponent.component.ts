@@ -13,7 +13,7 @@ import { HoverService } from 'src/app/services/hover.service';
 })
 export class ApparatusEntryExponentComponent implements OnDestroy {
   @Input() data: ApparatusEntryExponent;
-  @ViewChild('evtNoteButton', { read: ElementRef}) evtNoteButton!: ElementRef;
+  @ViewChild('evtNoteButton', { read: ElementRef }) evtNoteButton!: ElementRef;
 
   noteType: string = 'critical'; // Temp, it's probably correct but needs confirmation
   apparatusDetailsShown$ = combineLatest([
@@ -57,7 +57,10 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
         return true;
       }
 
-      if (!hoveredText) return;
+      if (!hoveredText) {
+        this.hoverService.highlightedAppExponents$.next([]);
+        return false;
+      }
 
       const { id, element, isHovering } = hoveredText;
       if (!this.isBetweenElementMemo.has(id)) {
