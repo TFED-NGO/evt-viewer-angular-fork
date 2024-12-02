@@ -5,12 +5,12 @@ import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
 
-@register(ApparatusEntryExponent)
 @Component({
   selector: 'evt-apparatus-entry-exponent',
   templateUrl: './apparatus-entry-exponent.component.html',
   styleUrls: ['./apparatus-entry-exponent.component.scss']
 })
+@register(ApparatusEntryExponent)
 export class ApparatusEntryExponentComponent implements OnDestroy {
   @Input() data: ApparatusEntryExponent;
   @ViewChild('evtNoteButton', { read: ElementRef }) evtNoteButton!: ElementRef;
