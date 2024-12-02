@@ -218,6 +218,7 @@ const DynamicComponents = [
   VerseComponent,
   VersesGroupComponent,
   WordComponent,
+  ApparatusEntryExponentComponent,
 ];
 
 @NgModule({
@@ -294,7 +295,6 @@ const DynamicComponents = [
     NamedEntityOccurrencePagesListComponent,
     DisplayFriendlyNamePipe,
     ...DynamicComponents,
-    ApparatusEntryExponentComponent,
     NoteButtonComponent,
   ],
   imports: [
