@@ -169,6 +169,7 @@ const DynamicComponents = [
   ApparatusEntryComponent,
   ApparatusEntryDetailComponent,
   ApparatusEntryReadingsComponent,
+  ApparatusEntryExponentComponent,
   CharComponent,
   ChoiceComponent,
   DamageComponent,
@@ -218,7 +219,6 @@ const DynamicComponents = [
   VerseComponent,
   VersesGroupComponent,
   WordComponent,
-  ApparatusEntryExponentComponent,
 ];
 
 @NgModule({
