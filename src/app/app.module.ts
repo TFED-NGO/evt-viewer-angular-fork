@@ -223,6 +223,7 @@ const DynamicComponents = [
 
 @NgModule({
   declarations: [
+    ...DynamicComponents,
     AnalogueDetailComponent,
     AnaloguesComponent,
     AnnotatorDirective,
@@ -294,7 +295,6 @@ const DynamicComponents = [
     SynopsisEditionLevelSelectorComponent,
     NamedEntityOccurrencePagesListComponent,
     DisplayFriendlyNamePipe,
-    ...DynamicComponents,
     NoteButtonComponent,
   ],
   imports: [
