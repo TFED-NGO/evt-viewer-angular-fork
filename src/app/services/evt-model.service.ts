@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, map, shareReplay, switchMap } from 'rxjs/operators';
+import { combineLatestWith, map, shareReplay, switchMap, tap } from 'rxjs/operators';
 import {
   ChangeLayerData,
   EditionStructure,
@@ -135,21 +135,17 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  // WITNESSES
-  public readonly witnessesData$ = this.editionSource$.pipe(
-    map((source) => this.witnessesParser.parseWitnessesData(source)),
+  public readonly witnesses$ = this.editionSource$.pipe(
+    map((source) => this.witnessesParser.parseWitnesses(source)),
     shareReplay(1),
   );
 
-  public readonly witnesses$ = this.witnessesData$.pipe(
-    map(({ witnesses }) => witnesses),
+  public readonly flattenedWitnesses$ = this.witnesses$.pipe(
+    map((witnesses) => this.flattenWitnesses(witnesses)),
+    tap(w => console.log("flattened", w)),
     shareReplay(1),
   );
 
-  public readonly groups$ = this.witnessesData$.pipe(
-    map(({ groups }) => groups),
-    shareReplay(1),
-  );
 
   // CHANGES
   public changeData$: Observable<ChangeLayerData> = this.editionSource$.pipe(
@@ -173,7 +169,7 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  public readonly appVariance$ = this.witnesses$.pipe(
+  public readonly appVariance$ = this.flattenedWitnesses$.pipe(
     switchMap((witList) => this.significantReadingsNumber$.pipe(
       map((signRdgsNum) => this.apparatusParser.getAppVariance(signRdgsNum, witList)),
     )),
@@ -401,4 +397,13 @@ export class EVTModelService {
     return this.pages$.pipe(map((pages) => pages.find((page) => page.id === pageId)));
   }
 
+  private flattenWitnesses(witnesses: any[]): any[] {
+    return witnesses.reduce((acc, witness) => {
+      acc.push(witness);
+      if (witness.witnesses && Array.isArray(witness.witnesses)) {
+        acc.push(...this.flattenWitnesses(witness.witnesses));
+      }
+      return acc;
+    }, []);
+  }
 }

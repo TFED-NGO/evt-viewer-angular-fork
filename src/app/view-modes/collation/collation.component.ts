@@ -1,11 +1,15 @@
-import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
-import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, map, tap } from 'rxjs/operators';
+import { Witness } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
+import { ModalComponent } from 'src/app/ui-components/modal/modal.component';
+import { ModalService } from 'src/app/ui-components/modal/modal.service';
+import { ModalWitnessItem } from './modal-witness-item/modal-witness-item.component';
 
 @Component({
   selector: 'evt-collation',
@@ -14,19 +18,22 @@ import { EvtIconInfo } from 'src/app/ui-components/icon/icon.component';
 })
 export class CollationComponent implements OnDestroy {
   @ViewChild('collationPanel', { static: false }) collationPanel: ElementRef;
-  @ViewChild('popover', { static: false }) popover: NgbPopover;
+  @ViewChild('witnessesModal', { static: false }) witnessesModal: ModalComponent;
+  private witnessModalRef: NgbModalRef = null;
 
   private latestWitnesses$ = new BehaviorSubject<WitnessItem[]>([]);
   private itemsChanged$ = new Subject<void>();
   private itemsChangedSubs: Subscription;
 
+  backIcon: EvtIconInfo = { iconSet: 'fas', icon: 'arrow-left' };
+
   public currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
-    this.evtModelService.witnesses$,
+    this.evtModelService.flattenedWitnesses$,
     this.evtStatusService.currentStatus$
   ]).pipe(
-    map(([witnesses, status]) => {
+    map(([allWitnesses, status]) => {
       const currentWitnessesIds = status.witnesses;
-      const result: WitnessItem[] = witnesses
+      const result: WitnessItem[] = allWitnesses
         .filter(w => currentWitnessesIds.includes(w.id))
         .sort((a, b) => currentWitnessesIds.indexOf(a.id) - currentWitnessesIds.indexOf(b.id))
         .map((w, i) => {
@@ -49,27 +56,30 @@ export class CollationComponent implements OnDestroy {
     })
   );
 
-  public popoverWitnesses$: Observable<PopoverWitnessItem[]> = combineLatest([
+  public modalWitnesses$: Observable<ModalWitnessItem[]> = combineLatest([
     this.evtModelService.witnesses$,
     this.evtStatusService.currentStatus$
   ]).pipe(
     map(([witnesses, status]) => {
-      const currentWitnessesIds = status.witnesses;
       const result = witnesses
-        .filter(w => !currentWitnessesIds.includes(w.id))
         .map(w => {
           if (typeof w.name !== 'string') {
             throw new Error("Witness name must be a string but was: " + w.name);
           }
-
-          return {
-            id: w.id,
-            label: w.name
-          };
+          return this.createPopoverWitnessItem(w, status.witnesses);
         });
       return result;
     }),
   );
+
+  private createPopoverWitnessItem(witness: Witness, currentWitnessesIds: string[]): ModalWitnessItem {
+    return {
+      id: witness.id,
+      label: witness.name,
+      witnesses: witness.witnesses.map(w => this.createPopoverWitnessItem(w, currentWitnessesIds)),
+      canSelect: !currentWitnessesIds.includes(witness.id)
+    }
+  }
 
   public options: GridsterConfig = {
     gridType: GridType.Fit,
@@ -133,6 +143,7 @@ export class CollationComponent implements OnDestroy {
   constructor(
     private evtStatusService: EVTStatusService,
     private evtModelService: EVTModelService,
+    private modalService: ModalService,
   ) {
     this.itemsChangedSubs = this.itemsChanged$.pipe(
       debounceTime(100)
@@ -148,6 +159,13 @@ export class CollationComponent implements OnDestroy {
     this.evtStatusService.updatePageId$.next(pageId);
   }
 
+  openModal(content: TemplateRef<any>) {
+    this.witnessModalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' })
+  }
+  closeModal() {
+    this.modalService.close(this.witnessModalRef);
+  }
+
   addWitness(witnessId: string) {
     if (this.latestWitnesses$.value.some(w => w.id === witnessId)) {
       throw new Error("Witness is already present: " + witnessId);
@@ -156,18 +174,13 @@ export class CollationComponent implements OnDestroy {
     this.evtStatusService.updateWitnesses$.next(
       [...this.latestWitnesses$.value.filter(w => w.id !== witnessId).map(w => w.id), witnessId]
     )
-    this.closePopover();
+    this.closeModal();
   }
 
   removeWitness(witnessId: string) {
     this.evtStatusService.updateWitnesses$.next(
       [...this.latestWitnesses$.value.filter(w => w.id !== witnessId).map(w => w.id)]
     )
-    this.closePopover();
-  }
-
-  private closePopover() {
-    this.popover.close();
   }
 
   private updateGridsterOptions(witnesses: WitnessItem[]) {
@@ -207,9 +220,4 @@ export interface WitnessItem {
   label: string;
   itemConfig: GridsterItem;
   currentPageId: string;
-}
-
-interface PopoverWitnessItem {
-  id: string,
-  label: string;
 }

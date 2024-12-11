@@ -192,25 +192,12 @@ export class NamedEntityRef extends GenericElement {
     entityType: NamedEntityType;
 }
 
-export interface Witnesses {
-    witnesses: Witness[];
-    groups: WitnessGroup[];
-}
-
 export interface Witness {
-    id: string;
-    name: string | Array<ParseResult<GenericElement>> | XMLElement;
-    attributes: Attributes;
-    content: Array<ParseResult<GenericElement>>;
-    groupId: string;
-}
-
-export interface WitnessGroup {
     id: string;
     name: string;
     attributes: Attributes;
-    witnesses: string[];
-    groupId: string;
+    content: Array<ParseResult<GenericElement>>;
+    witnesses: Witness[]
 }
 
 export class ApparatusEntry extends GenericElement {

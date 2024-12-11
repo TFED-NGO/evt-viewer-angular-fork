@@ -154,6 +154,7 @@ import { NamedEntityOccurrencePagesListComponent } from './components/named-enti
 import { DisplayFriendlyNamePipe } from './pipes/displayFriendlyName.pipe';
 import { ApparatusEntryExponentComponent } from './components/apparatus-entry/apparatus-entry-exponent/apparatus-entry-exponent.component';
 import { NoteButtonComponent } from './components/note-button/note-button.component';
+import { ModalWitnessItemComponent } from './view-modes/collation/modal-witness-item/modal-witness-item.component';
 
 const routes: Routes = [
 ];
@@ -296,6 +297,7 @@ const DynamicComponents = [
     NamedEntityOccurrencePagesListComponent,
     DisplayFriendlyNamePipe,
     NoteButtonComponent,
+    ModalWitnessItemComponent,
   ],
   imports: [
     AppRoutingModule,
