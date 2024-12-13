@@ -49,9 +49,10 @@
                     </div>
                     <div>
                         <ng-container *ngFor="let rdg of readings">
-                            <div *ngIf="rdg && (rdg.attributes | keyvalue).length !== 0" class="mb-2">
-                                <span>{{'READING' | translate}}: </span>
-                                <ng-container *ngIf="rdg.content.length !== 0">
+                            <div *ngIf="rdg" class="mb-3">
+                                <evt-hr-dotted></evt-hr-dotted>
+                                <span class="fw-semibold">{{'READING' | translate}}: </span>
+                                <ng-container>
                                     <evt-reading *ngIf="data.nestedAppsIDs.length === 0" class="info-rdg" [data]="rdg"></evt-reading>
                                     <ng-container *ngIf="data.nestedAppsIDs.length > 0">
                                         <ng-container *ngFor="let c of rdg.content">
@@ -61,12 +62,12 @@
                                     </ng-container>
                                 </ng-container>
                                 <span *ngIf="rdg.content.length === 0" class="font-italic info-rdg">{{'omit' | translate}}</span>
-                                <span *ngIf="rdg.attributes.wit" class="d-block ms-2">
+                                <span *ngIf="rdg.attributes.wit" class="d-block">
                                     <span class="info-label">{{'wit' | translate}}</span>
                                     <evt-witness-metadata [witnessMetadata]="rdg.attributes.wit"></evt-witness-metadata>
                                 </span>
                                 <ng-container *ngFor="let metadata of rdg.attributes | keyvalue">
-                                    <span class="d-block ms-2" *ngIf="metadata.key !== 'wit'">
+                                    <span class="d-block" *ngIf="metadata.key !== 'wit'">
                                         <span class="info-label">{{ metadata.key }}:</span> {{ metadata.value }}
                                     </span>
                                 </ng-container>
