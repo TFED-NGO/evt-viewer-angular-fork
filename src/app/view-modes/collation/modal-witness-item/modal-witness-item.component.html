@@ -3,10 +3,10 @@
         <evt-icon role="button" *ngIf="witness.witnesses.length" [iconInfo]="chevronIcon" [attr.aria-expanded]="!isCollapsed"></evt-icon>
         <span class="ms-2 fs-5">{{ witness.label }}</span>
         <button *ngIf="witness.canSelect" class="btn btn-outline-primary btn-sm ms-auto" type="button" (click)="onSelectClicked(this.witness.id)">
-            {{ 'Add' | translate }}
+            {{ 'add' | translate }}
         </button>
         <button *ngIf="!witness.canSelect" class="btn btn-outline-secondary btn-sm ms-auto" type="button" (click)="onRemoveClicked(this.witness.id)">
-            {{ 'Remove' | translate }}
+            {{ 'remove' | translate }}
         </button>
     </div>
 

@@ -199,5 +199,7 @@
     "hidesDeletions": "Hide deletions",
     "occurrencesFoundLabel": "{{occurrencesCount}} occurrences found in {{formsCount}} forms",
     "form": "Form",
-    "noWitnessesAvailable": "No witness available"
+    "noWitnessesAvailable": "No witness available",
+    "add": "Add",
+    "remove": "Remove"
 }

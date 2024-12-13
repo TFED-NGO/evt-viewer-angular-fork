@@ -198,5 +198,7 @@
   "hidesDeletions": "Nascondi cancellazioni",
   "occurrencesFoundLabel": "{{occurrencesCount}} occorrenze trovate in {{formsCount}} forme",
   "form": "Forma",
-  "noWitnessesAvailable": "Nessun testimone disponibile"
+  "noWitnessesAvailable": "Nessun testimone disponibile",
+  "add": "Aggiungi",
+  "remove": "Rimuovi"
 }
