@@ -38,16 +38,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   get readings(): Reading[] {
     return [this.data.lemma, ...this.significantRdg, ...this.notSignificantRdg];
   }
-
-  get rdgMetadata() {
-    const result = Object.keys(this.data.attributes).filter((key) => key !== 'id')
-      .reduce((obj, key) => ({
-        ...obj,
-        [key]: this.data.attributes[key],
-      }), {});
-    return result;
-  }
-
+  
   getLayerData(changeData: ChangeLayerData) {
     this.orderedLayers = changeData?.layerOrder;
   }

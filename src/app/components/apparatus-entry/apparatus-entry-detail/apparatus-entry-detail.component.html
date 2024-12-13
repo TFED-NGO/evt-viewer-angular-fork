@@ -44,23 +44,13 @@
                 <a class="app-detail-btn" ngbNavLink>{{'info' | translate}}</a>
                 <ng-template ngbNavContent>
                     <div class="info-lemma-wrapper" *ngIf="data.lemma">
-                        <span>{{'metadataForLemma' | translate}} </span>
-                        <evt-reading *ngIf="data.nestedAppsIDs.length === 0" class="info-rdg" [data]="data.lemma"></evt-reading>
-                        <span *ngIf="data.nestedAppsIDs.length > 0" class="info-rdg">
-                            <ng-container *ngTemplateOutlet="nestedAppsReadingsTemplate; context: { rdgHasCounter: rdgHasCounter }"></ng-container>
-                        </span>
-                        <span class="d-block ms-2" *ngFor="let metadata of rdgMetadata | keyvalue">
-                            <span class="info-label" *ngIf="metadata.key !== 'id'">{{ metadata.key }}:</span> {{ metadata.value }}
-                        </span>
-                        <span class="d-block ms-2" *ngIf="(rdgMetadata | keyvalue).length === 0">
-                            <span class="font-italic">{{'noDataAvailable' | translate}}</span>
-                        </span>
+                        <span>{{'LEMMA' | translate}}: </span>
+                        <evt-reading [data]="data.lemma"></evt-reading>
                     </div>
                     <div>
-                        <span class="more-info-label">{{'moreInfoAboutApp' | translate}}</span>
                         <ng-container *ngFor="let rdg of readings">
                             <div *ngIf="rdg && (rdg.attributes | keyvalue).length !== 0" class="mb-2">
-                                <span>{{'metadataFor' | translate}} </span>
+                                <span>{{'READING' | translate}}: </span>
                                 <ng-container *ngIf="rdg.content.length !== 0">
                                     <evt-reading *ngIf="data.nestedAppsIDs.length === 0" class="info-rdg" [data]="rdg"></evt-reading>
                                     <ng-container *ngIf="data.nestedAppsIDs.length > 0">
@@ -75,7 +65,7 @@
                                     <span class="info-label">{{'wit' | translate}}</span>
                                     <evt-witness-metadata [witnessMetadata]="rdg.attributes.wit"></evt-witness-metadata>
                                 </span>
-                                <ng-container *ngFor="let metadata of rdgMetadata | keyvalue">
+                                <ng-container *ngFor="let metadata of rdg.attributes | keyvalue">
                                     <span class="d-block ms-2" *ngIf="metadata.key !== 'wit'">
                                         <span class="info-label">{{ metadata.key }}:</span> {{ metadata.value }}
                                     </span>
