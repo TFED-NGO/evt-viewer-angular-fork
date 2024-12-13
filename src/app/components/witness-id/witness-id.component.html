@@ -1,0 +1,5 @@
+<span *ngIf="canNavigate$ | async" class="app-wit link" (click)="onWitnessClicked()">
+    <span>{{ formattedWitnessId }}</span>
+    <span *ngIf="exponent" style="vertical-align: super;">{{ exponent }}</span>
+</span>
+<span *ngIf="!(canNavigate$ | async)">{{ formattedWitnessId }}</span>

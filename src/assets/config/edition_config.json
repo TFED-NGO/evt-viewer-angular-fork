@@ -172,5 +172,7 @@
   "defaultImageZoomLevel": 0.8,
   "multiPageEngineForCriticalEdition": false,
   "editionStructureSeparator": "pb, div[type='paragraph']",
-  "exponentEnumerateBy": "div[type='paragraph']"
+  "exponentEnumerateBy": "div[type='paragraph']",
+
+  "transformWitnessId": true
 }

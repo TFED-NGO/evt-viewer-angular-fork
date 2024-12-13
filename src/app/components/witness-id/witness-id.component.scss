@@ -1,0 +1,13 @@
+.app-wit {
+    font-size: 90%;
+    font-weight: 600;
+    font-family: serif;
+
+    &.link {
+
+        &:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+}

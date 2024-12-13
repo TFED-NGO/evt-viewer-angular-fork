@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, map, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { combineLatestWith, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
   ChangeLayerData,
   EditionStructure,
@@ -9,6 +9,7 @@ import {
   NamedEntityOccurrence,
   OriginalEncodingNodeType,
   Page,
+  Witness,
   XMLImagesValues,
   ZoneHotSpot,
   ZoneLine,
@@ -142,7 +143,6 @@ export class EVTModelService {
 
   public readonly flattenedWitnesses$ = this.witnesses$.pipe(
     map((witnesses) => this.flattenWitnesses(witnesses)),
-    tap(w => console.log("flattened", w)),
     shareReplay(1),
   );
 
@@ -397,7 +397,7 @@ export class EVTModelService {
     return this.pages$.pipe(map((pages) => pages.find((page) => page.id === pageId)));
   }
 
-  private flattenWitnesses(witnesses: any[]): any[] {
+  private flattenWitnesses(witnesses: Witness[]): Witness[] {
     return witnesses.reduce((acc, witness) => {
       acc.push(witness);
       if (witness.witnesses && Array.isArray(witness.witnesses)) {

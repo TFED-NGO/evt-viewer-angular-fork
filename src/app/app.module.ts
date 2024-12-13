@@ -155,6 +155,8 @@ import { DisplayFriendlyNamePipe } from './pipes/displayFriendlyName.pipe';
 import { ApparatusEntryExponentComponent } from './components/apparatus-entry/apparatus-entry-exponent/apparatus-entry-exponent.component';
 import { NoteButtonComponent } from './components/note-button/note-button.component';
 import { ModalWitnessItemComponent } from './view-modes/collation/modal-witness-item/modal-witness-item.component';
+import { WitnessIdComponent } from './components/witness-id/witness-id.component';
+import { WitnessMetadataComponent } from './components/witness-metadata/witness-metadata.component';
 
 const routes: Routes = [
 ];
@@ -298,6 +300,8 @@ const DynamicComponents = [
     DisplayFriendlyNamePipe,
     NoteButtonComponent,
     ModalWitnessItemComponent,
+    WitnessIdComponent,
+    WitnessMetadataComponent,
   ],
   imports: [
     AppRoutingModule,

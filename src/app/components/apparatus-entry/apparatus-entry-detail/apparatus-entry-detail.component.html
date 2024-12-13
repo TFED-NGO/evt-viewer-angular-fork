@@ -72,7 +72,8 @@
                                 </ng-container>
                                 <span *ngIf="rdg.content.length === 0" class="font-italic info-rdg">{{'omit' | translate}}</span>
                                 <span *ngIf="rdg.attributes.wit" class="d-block ms-2">
-                                    <span class="info-label">{{'wit' | translate}}</span> {{rdg.attributes.wit}}
+                                    <span class="info-label">{{'wit' | translate}}</span>
+                                    <evt-witness-metadata [witnessMetadata]="rdg.attributes.wit"></evt-witness-metadata>
                                 </span>
                                 <ng-container *ngFor="let metadata of rdgMetadata | keyvalue">
                                     <span class="d-block ms-2" *ngIf="metadata.key !== 'wit'">
