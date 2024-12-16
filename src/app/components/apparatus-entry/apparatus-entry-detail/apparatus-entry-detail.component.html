@@ -11,6 +11,8 @@
         </span>
         <evt-pinner [item]="data" renderer="ApparatusEntryReadings" pinType="ApparatusEntry"></evt-pinner>
     </div>
+
+    <!-- Relevant tabs are only shown if their content is available -->
     <div class="card-footer app-detail-tabs">
         <ul ngbNav #appEntryTab="ngbNav" class="nav-pills" (click)="$event.stopPropagation()">
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
