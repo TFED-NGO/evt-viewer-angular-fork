@@ -61,8 +61,15 @@
 			"iconSet": "evt",
 			"id": "documentalMixed",
 			"label": "Documental",
-			"enable": false
-		}
+			"enable": true
+		},
+		{
+			"icon": "versions",
+			"iconSet": "evt",
+			"id": "synopticEdition",
+			"label": "Synoptic edition",
+			"enable": true
+	    }
 	],
 	"localization": true,
 	"defaultLocalization": "en",
