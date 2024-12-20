@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
@@ -15,11 +15,27 @@ export class AppConfig {
     private readonly fileConfigUrl = 'assets/config/file_config.json';
     private readonly editionConfigUrl = 'assets/config/edition_config.json';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
+    private readonly hostConfig: Observable<HostConfig> = this.http.get<HostConfig>("assets/host_config.json");
+    public readonly requestUrl: Observable<string> = this.hostConfig.pipe(
+        map(config => config.allowedEVTAASConfigBaseUrls),
+        map(allowedUrls => {
+            const params = new URLSearchParams(window.location.search)
+            const paramsUrl = params.get("fileConfigUrl");
+            if (paramsUrl) {
+                const prefixesMatched = allowedUrls.filter(x => paramsUrl.includes(x))
+                console.log("matched prefix: " + prefixesMatched)
+                if (!prefixesMatched.length) throw new Error(paramsUrl + " not allowed");
+            }
+            const url = paramsUrl ?? this.fileConfigUrl;
+            return url;
+        })
+    );
 
     constructor(
         public translate: TranslateService,
         private http: HttpClient,
-    ) { }
+    ) {
+    }
 
     load() {
         return new Promise<void>((resolve) => {
@@ -187,6 +203,10 @@ export interface EditionConfig {
 }
 
 export type EditionImagesSources = 'manifest' | 'graphics';
+
+export interface HostConfig {
+    allowedEVTAASConfigBaseUrls: string[];
+}
 
 export interface FileConfig {
     editionUrls: EditionUrl[];
