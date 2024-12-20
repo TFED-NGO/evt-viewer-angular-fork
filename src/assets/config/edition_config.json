@@ -152,7 +152,9 @@
     "Parallel",
     "parallel"
   ],
-  "sourcesExcludedFromListByParent": ["desc"],
+  "sourcesExcludedFromListByParent": [
+    "desc"
+  ],
   "showSubstitutionMarker": true,
   "showSeparatorBetweenChanges": true,
   "startingFromDefinitiveLayer": true,
@@ -170,6 +172,7 @@
     }
   },
   "defaultImageZoomLevel": 0.8,
+  "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
   "editionStructureSeparator": "pb, div[type='chapter']"
 }
