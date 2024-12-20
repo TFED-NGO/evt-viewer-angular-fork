@@ -69,7 +69,7 @@
 			"id": "synopticEdition",
 			"label": "Synoptic edition",
 			"enable": true
-	    }
+	   }
 	],
 	"localization": true,
 	"defaultLocalization": "en",
