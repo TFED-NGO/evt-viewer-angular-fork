@@ -203,6 +203,7 @@ export interface EditionConfig {
     }>;
     startingFromDefinitiveLayer: boolean;
     defaultImageZoomLevel: number;
+    maxImageZoomLevel: number;
     showSubstitutionMarker: boolean;
     multiPageEngineForCriticalEdition: boolean;
     editionStructureSeparator: string;
@@ -272,4 +273,4 @@ export interface CustomEditorialConvention {
     };
 }
 
-export type TextFlow = 'prose' | 'verses';
+export type TextFlow = 'prose' | 'prose_mixed' | 'verses';
