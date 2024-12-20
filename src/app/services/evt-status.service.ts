@@ -161,6 +161,7 @@ export class EVTStatusService {
         private evtModelService: EVTModelService,
         private router: Router,
         private route: ActivatedRoute,
+        private appConfig: AppConfig,
     ) {
         this.currentStatus$.subscribe((currentStatus) => {
             const { view, params } = this.getUrlFromStatus(currentStatus);
@@ -198,6 +199,7 @@ export class EVTStatusService {
             ws: status.witnesses.join(','),
             vs: status.versions.join(','),
             lr: status.changeLayerData.selectedLayer,
+            url: this.appConfig.requestUrl,
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
