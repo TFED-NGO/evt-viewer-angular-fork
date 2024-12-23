@@ -1,5 +1,5 @@
 import { AppConfig } from 'src/app/app.config';
-import { xmlParser } from '.';
+import { ParserRegister, xmlParser } from '.';
 import { AdditionalAttributes, ApparatusEntry, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
@@ -62,6 +62,10 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     attributeParser = createParser(AttributeParser, this.genericParse);
     noteParser = createParser(NoteParser, this.genericParse);
     rdgParser = createParser(RdgParser, this.genericParse);
+
+    public static create() {
+        return ParserRegister.get('evt-apparatus-entry-parser');
+    }
 
     public parse(appEntry: XMLElement): ApparatusEntry {
 

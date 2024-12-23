@@ -3,10 +3,10 @@ import { map, Observable } from 'rxjs';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from 'src/app/extensions/apparatus.extensions';
 import { ApparatusEntry, Attribute, GenericElement, Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
-import { ParserRegister } from 'src/app/services/xml-parsers';
 import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
 import { WitnessItem } from 'src/app/view-modes/collation/collation.component';
 import { WitnessPanelService } from './witness-panel.service';
+import { AppParser } from 'src/app/services/xml-parsers/app-parser';
 
 @Component({
   selector: 'evt-witness-panel',
@@ -19,6 +19,8 @@ export class WitnessPanelComponent implements OnInit {
   @Output() hide = new EventEmitter<boolean>();
   @Output() changePage = new EventEmitter<string>();
 
+  private appParser = AppParser.create();
+
   pages$: Observable<Page[]> =   this.evtModelService.editionSource$.pipe(
     map(source => this.processSource(source)),
   );
@@ -30,7 +32,7 @@ export class WitnessPanelComponent implements OnInit {
   constructor(
     private evtModelService: EVTModelService,
     private structureParser: StructureXmlParserService,
-    private witnessPanelService: WitnessPanelService
+    private witnessPanelService: WitnessPanelService,
   ) { 
   }
 
@@ -39,11 +41,10 @@ export class WitnessPanelComponent implements OnInit {
   }
 
   private processSource(source: HTMLElement): Page[] {
-    const appParser = ParserRegister.get('evt-apparatus-entry-parser');
     const originalPages = this.structureParser.parsePages(source).pages;
     const appsData = this.structureParser.backApps
       .map(app => {
-        const parsedApp = appParser.parse(app) as ApparatusEntry;
+        const parsedApp = this.appParser.parse(app) as ApparatusEntry;
         const from = Attribute.createOrDefault(getFromAttributeOrDefault(app));
         if (!from) {
           console.error("App has no from attribute", app);

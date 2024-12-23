@@ -4,11 +4,11 @@ import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEnt
 import { deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
-import { ParserRegister } from '.';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from 'src/app/extensions/apparatus.extensions';
 import { FROM_ATTRIBUTE, TO_ATTRIBUTE } from 'src/app/models/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { AlphabetService } from '../alphabet.service';
+import { AppParser } from './app-parser';
 
 @Injectable({
   providedIn: 'root',
@@ -16,17 +16,17 @@ import { AlphabetService } from '../alphabet.service';
 export class StructureXmlParserService {
   constructor(
     private genericParserService: GenericParserService,
-    private alphabet: AlphabetService) {
+    private alphabet: AlphabetService,
+  ) {
   }
 
+  private appParser = AppParser.create();
   private frontOrigContentAttr = 'document_front';
   private readonly frontTagName = 'front';
   private readonly pageTagName = AppConfig.evtSettings.edition.editionStructureSeparator;
   private readonly bodyTagName = 'body';
   private readonly backTagName = 'back';
   backApps: XMLElement[] = [];
-
-  private readonly appParser = ParserRegister.get('evt-apparatus-entry-parser');
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
