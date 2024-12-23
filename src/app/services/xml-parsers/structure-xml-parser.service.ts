@@ -25,8 +25,8 @@ export class StructureXmlParserService {
   private readonly frontTagName = 'front';
   private readonly pageTagName = AppConfig.evtSettings.edition.editionStructureSeparator;
   private readonly bodyTagName = 'body';
-  private readonly backTagName = 'back';
-  backApps: XMLElement[] = [];
+  //private readonly backTagName = 'back';
+  allApps: XMLElement[] = [];
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
@@ -66,23 +66,15 @@ export class StructureXmlParserService {
   }
 
   public processCriticalApparatus(el: XMLElement, editionStructure: EditionStructure): void {
-    if (!this.backApps.length) {
-      const back: XMLElement = el.querySelector(this.backTagName);
-      if (!back) {
-        console.log("There is no back element");
-        return;
-      }
-
-      const apps = back && Array.from(back.querySelectorAll("app"));
+    if (!this.allApps.length) {
+      const apps = Array.from(el.querySelectorAll("app"));
       if (!apps.length) {
-        console.warn("There are no apps in back element")
-        return;
+        console.warn("There are no apps in the element");
       }
-
-      this.backApps = apps as XMLElement[];
+      this.allApps = apps as XMLElement[];
     }
 
-    if (this.backApps.length) {
+    if (this.allApps.length) {
       const result = this.getDocumentApparatusEntries(editionStructure.pages);
       result.apps.forEach((value, key) => {
         editionStructure.documentApparatusEntries.apps.set(key, value);
@@ -259,8 +251,8 @@ export class StructureXmlParserService {
   private getApparatusEntryOrDefault(id: string): ApparatusEntry | null {
     if (!id) return null;
 
-    const backAppsData = this.getBackAppsData();
-    const appData = backAppsData.find(x => x.appFrom?.valueWithoutRef === id || x.appTo?.valueWithoutRef === id);
+    const appsData = this.getAppsData();
+    const appData = appsData.find(x => x.appFrom?.valueWithoutRef === id || x.appTo?.valueWithoutRef === id);
     if (!appData) return null;
 
     const app = this.appParser.parse(appData.app)
@@ -268,9 +260,9 @@ export class StructureXmlParserService {
   }
 
   private getDocumentApparatusEntries(pages: Page[]): DocumentApparatusEntries {
-    const backAppsData = this.getBackAppsData();
+    const appsData = this.getAppsData();
 
-    const searchValues = backAppsData.map(x => x.appTo ?? x.appFrom).map(x => x.valueWithoutRef);
+    const searchValues = appsData.map(x => x.appTo ?? x.appFrom).filter(x => !!x).map(x => x.valueWithoutRef);
     const searchAttribute = "id";
     const attributesNotIncludedInSearch = ['originalEncoding', 'type', 'spanElements', 'includedElements'];
 
@@ -288,29 +280,22 @@ export class StructureXmlParserService {
         if (!element) continue;
 
         const elementId = element.attributes[searchAttribute];
-        const elementApps = backAppsData.filter(x => x.appFrom?.equals(elementId) || x.appTo?.equals(elementId));
-        if (elementApps.length) {
-          const parsedApps = elementApps.map(x => this.appParser.parse(x.app) as ApparatusEntry);
-          elementAppEntries.set(elementId, {
-            elementId,
-            apps: parsedApps
-          });
-        }
+        const elementApps = appsData.filter(x => x.appFrom?.equals(elementId) || x.appTo?.equals(elementId));
+        const parsedApps = elementApps.map(x => this.appParser.parse(x.app) as ApparatusEntry);
+        elementAppEntries.set(elementId, {
+          elementId,
+          apps: [...parsedApps]
+        });
       }
     }
     return documentApparatusEntries;
   }
 
-  private getBackAppsData(): { app: HTMLElement, appFrom: Attribute, appTo: Attribute }[] {
-    return this.backApps
+  private getAppsData(): { app: HTMLElement, appFrom: Attribute, appTo: Attribute }[] {
+    return this.allApps
       .map(app => {
         const appFrom = Attribute.createOrDefault(getFromAttributeOrDefault(app));
         const appTo = Attribute.createOrDefault(getToAttributeOrDefault(app));
-
-        if (!appFrom && !appTo) {
-          console.error("errored app", app);
-          throw new Error(`An apparatus inside 'back' tag, must have a ${FROM_ATTRIBUTE} or ${TO_ATTRIBUTE}`);
-        }
         return {
           app,
           appFrom,

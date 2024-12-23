@@ -42,7 +42,7 @@ export class WitnessPanelComponent implements OnInit {
 
   private processSource(source: HTMLElement): Page[] {
     const originalPages = this.structureParser.parsePages(source).pages;
-    const appsData = this.structureParser.backApps
+    const appsData = this.structureParser.allApps
       .map(app => {
         const parsedApp = this.appParser.parse(app) as ApparatusEntry;
         const from = Attribute.createOrDefault(getFromAttributeOrDefault(app));
