@@ -339,3 +339,11 @@ export function deepSearchByKey(obj: object, propertyName: string): object[] {
   recurse(obj);
   return results;
 }
+
+export function getTopmostAncestor(element: HTMLElement): HTMLElement {
+  let current = element;
+  while (current.parentElement) {
+    current = current.parentElement;
+  }
+  return current;
+}
