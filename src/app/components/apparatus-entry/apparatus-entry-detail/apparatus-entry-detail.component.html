@@ -17,11 +17,22 @@
                     <evt-pinner [item]="data" renderer="ApparatusEntryReadings" pinType="ApparatusEntry"></evt-pinner>
                 </div>
             </div>
+            <div class="row">
+                <div class="col">
+                    <div class="d-flex" *ngFor="let readingItem of readingItems">
+                        <evt-reading *ngIf="readingItem.reading.content.length !== 0" class="info-rdg pe-2 fw-semibold"
+                            [data]="readingItem.reading"></evt-reading>
+                        <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg pe-2 fw-semibold">{{'omit' | translate}}</span>
+                        <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
+                            <evt-witness-metadata
+                                [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
+                        </span>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span>
-
-
-            <!-- <evt-apparatus-entry-readings class="app-detail-readings" [data]="data"
+        <!-- <span>
+             <evt-apparatus-entry-readings class="app-detail-readings" [data]="data"
                 [template]="nestedAppsReadingsTemplate" [rdgHasCounter]="true"></evt-apparatus-entry-readings>
             <div *ngIf="data.nestedAppsIDs.length > 0" class="app-detail-nested-readings-container">
                 <span *ngFor="let nesApp of nestedApps; let i = index" class="app-detail-nested-readings">
@@ -29,9 +40,8 @@
                     <evt-apparatus-entry-readings [data]="nesApp" [template]="nestedAppsReadingsTemplate"
                         [rdgHasCounter]="false"></evt-apparatus-entry-readings>
                 </span>
-            </div> -->
-        </span>
-
+            </div> 
+        </span> -->
     </div>
 
     <!-- Relevant tabs are only shown if their content is available -->
