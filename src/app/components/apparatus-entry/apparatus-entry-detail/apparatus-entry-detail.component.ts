@@ -30,6 +30,11 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   public notSignificantReadings: Reading[] = [];
   public readingItems: ReadingItem[] = [];
 
+  public get isTabContentExpanded(): boolean {
+    return this.currentTab !== undefined;
+  }
+  private currentTab: AppTabType = undefined;
+
   getLayerData(changeData: ChangeLayerData) {
     this.orderedLayers = changeData?.layerOrder;
   }
@@ -79,6 +84,15 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   getNestedAppPos(appId: string): number {
     return this.nestedApps.findIndex((nesApp) => nesApp.id === appId);
   }
+
+  onTabClicked(tab: AppTabType) {
+    if (this.currentTab === tab) {
+      this.currentTab = undefined;
+    }
+    else {
+      this.currentTab = tab;
+    }
+  }
 }
 
 export interface ReadingItem {
@@ -86,3 +100,5 @@ export interface ReadingItem {
   isLemma: boolean;
   isFirst: boolean;
 }
+
+export type AppTabType = 'xml' | 'info' | 'criticalNotes' | 'ortographicVariants' | 'corrSeq' | undefined;

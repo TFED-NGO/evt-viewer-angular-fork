@@ -19,10 +19,13 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="d-flex" *ngFor="let readingItem of readingItems">
-                        <evt-reading *ngIf="readingItem.reading.content.length !== 0" class="info-rdg pe-2 fw-semibold"
-                            [data]="readingItem.reading"></evt-reading>
-                        <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg pe-2 fw-semibold">{{'omit' | translate}}</span>
+                    <div class="d-flex align-items-start" *ngFor="let readingItem of readingItems">
+                        <div class="info-rdg pe-2 fw-semibold">
+                            <evt-reading *ngIf="readingItem.reading.content.length !== 0"
+                                [data]="readingItem.reading"></evt-reading>
+                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' |
+                                translate}}</span>
+                        </div>
                         <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
@@ -48,13 +51,15 @@
     <div class="card-footer app-detail-tabs">
         <ul ngbNav #appEntryTab="ngbNav" class="nav-pills" (click)="$event.stopPropagation()">
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
-                <a class="app-detail-btn" ngbNavLink>{{'criticalNotes' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink (click)="onTabClicked('criticalNotes')">{{'criticalNotes' |
+                    translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-note *ngFor="let note of data.notes" [data]="note"></evt-note>
                 </ng-template>
             </li>
             <li ngbNavItem="notSignificantRdg" *ngIf="this.notSignificantReadings.length > 0">
-                <a class="app-detail-btn" ngbNavLink>{{'ortographicVariants' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink
+                    (click)="onTabClicked('ortographicVariants')">{{'ortographicVariants' | translate}}</a>
                 <ng-template ngbNavContent>
                     <span class="d-block" *ngFor="let el of this.notSignificantReadings">
                         <evt-reading [data]="el"></evt-reading>
@@ -64,7 +69,7 @@
             </li>
 
             <li ngbNavItem="corrSeq" *ngIf="data.changes.length > 0">
-                <a class="source-detail-btn" ngbNavLink>{{'corrSeq' | translate}}</a>
+                <a class="source-detail-btn" ngbNavLink (click)="onTabClicked('corrSeq')">{{'corrSeq' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-mod-sequence [data]="data.changes" [orderedLayers]="orderedLayers"
                         [selectedLayer]="selectedLayer">
@@ -73,7 +78,7 @@
             </li>
 
             <li ngbNavItem="info">
-                <a class="app-detail-btn" ngbNavLink>{{'info' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink (click)="onTabClicked('info')">{{'info' | translate}}</a>
                 <ng-template ngbNavContent>
                     <ng-container *ngFor="let readingItem of readingItems">
                         <div class="mb-2">
@@ -116,14 +121,15 @@
             </li>
 
             <li ngbNavItem="xml">
-                <a class="app-detail-btn" ngbNavLink>{{'xml' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink (click)="onTabClicked('xml')">{{'xml' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-original-encoding-viewer
                         [originalEncoding]="data.originalEncoding"></evt-original-encoding-viewer>
                 </ng-template>
             </li>
         </ul>
-        <div [ngbNavOutlet]="appEntryTab" class="tab-content" [class.bg-white]="this.isSelected"></div>
+        <div [ngbNavOutlet]="appEntryTab" *ngIf="isTabContentExpanded" class="tab-content"
+            [class.bg-white]="this.isSelected" (click)="$event.stopPropagation()"></div>
     </div>
 </div>
 
