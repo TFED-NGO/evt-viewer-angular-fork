@@ -1,9 +1,11 @@
 import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
-import { AdditionalAttributes, ApparatusEntry, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
-import { createParser, getID, Parser } from './parser-models';
+import { createParser, getID, Parser, ParseResult } from './parser-models';
+import { XMLID_ATTRIBUTE } from 'src/app/models/constants';
+import { getTopMostAncestor } from 'src/app/utils/dom-utils';
 
 @xmlParser('rdg', RdgParser)
 export class RdgParser extends EmptyParser implements Parser<XMLElement> {
@@ -52,6 +54,7 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
         return !Array.from(attributes).some(({ name, value }) => notSignificantReading.includes(`${name}=${value}`));
     }
 }
+
 @xmlParser('evt-apparatus-entry-parser', AppParser)
 export class AppParser extends EmptyParser implements Parser<XMLElement> {
     private noteTagName = 'note';
@@ -68,8 +71,34 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     }
 
     public parse(appEntry: XMLElement): ApparatusEntry {
-
+        const root = getTopMostAncestor(appEntry);
         const lemma = this.parseLemma(appEntry);
+        const attributes = this.attributeParser.parse(appEntry);
+        let parsedResult: ParseResult<GenericElement>[] = [];
+
+        const from = Attribute.createOrDefault(attributes.from);
+        const to = Attribute.createOrDefault(attributes.to);
+        const fromEl = root.querySelector(`[*|id='${from.valueWithoutRef}']`) as HTMLElement;
+        if (!to) {
+            parsedResult.push(this.genericParse(fromEl));
+        }
+        else {
+            const fromParent = fromEl.parentElement;
+            if (!fromParent) throw new Error("From parent is required");
+
+            parsedResult = Array
+                .from(fromParent.children)
+                .skipWhile(element => !this.isElementByXmlId(element, from))
+                .takeWhile(element => !this.isElementByXmlId(element, to), { includeLastItem: true })
+                .map(this.genericParse);
+        }
+
+        if (lemma && !lemma.content.length) {
+            lemma.content.push(...parsedResult);
+        }
+
+        const criticalContent = parsedResult;
+
         const readings = this.parseReadings(appEntry);
         const allReadings = (lemma !== undefined) ? readings.concat(lemma) : readings;
         return {
@@ -77,6 +106,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             id: getID(appEntry),
             attributes: this.attributeParser.parse(appEntry),
             content: [],
+            criticalContent: criticalContent,
             lemma: lemma,
             readings: readings,
             notes: this.parseAppNotes(appEntry),
@@ -85,8 +115,20 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             nestedAppsIDs: this.getNestedAppsIDs(appEntry),
             changes: (lemma !== undefined) ? this.orderChanges(allReadings, lemma) : [],
             orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
-            additionalAttributes: new AdditionalAttributes()
+            additionalAttributes: new AdditionalAttributes(),
+            exponent: ''
         };
+    }
+
+    private isElementByXmlId(element: Element, attribute: Attribute) {
+        const xmlId = element.getAttribute(XMLID_ATTRIBUTE);
+        if (!xmlId) {
+            const message = 'Element must have an xml id';
+            console.error(message, element)
+            throw new Error(message);
+        }
+
+        return attribute.equals(xmlId);
     }
 
     private getNestedAppsIDs(app: XMLElement): string[] {
@@ -131,8 +173,8 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
                     lemmaLayer = null;
                 }
             }
-        } )
-        Array.from(readings).map((reading) => reading.content.map(( el ) => {
+        })
+        Array.from(readings).map((reading) => reading.content.map((el) => {
             if (el['type'] && el['type'] === Mod) {
                 el['insideApp'] = [true, lemmaLayer];
                 changes.push(el);

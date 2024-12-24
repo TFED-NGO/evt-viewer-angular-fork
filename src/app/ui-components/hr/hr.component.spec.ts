@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HrDottedComponent } from './hr-dotted.component';
+import { HrComponent } from './hr.component';
 
-describe('HrDottedComponent', () => {
-  let component: HrDottedComponent;
-  let fixture: ComponentFixture<HrDottedComponent>;
+describe('HrComponent', () => {
+  let component: HrComponent;
+  let fixture: ComponentFixture<HrComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HrDottedComponent ]
+      declarations: [ HrComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HrDottedComponent);
+    fixture = TestBed.createComponent(HrComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

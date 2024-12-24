@@ -216,6 +216,8 @@ export class ApparatusEntry extends GenericElement {
      * to store additional attributes. 
      */
     additionalAttributes: AdditionalAttributes;
+    criticalContent: ParseResult<GenericElement>[];
+    exponent: string;
 }
 
 export class AdditionalAttributes {

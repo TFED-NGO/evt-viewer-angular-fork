@@ -157,7 +157,7 @@ import { NoteButtonComponent } from './components/note-button/note-button.compon
 import { ModalWitnessItemComponent } from './view-modes/collation/modal-witness-item/modal-witness-item.component';
 import { WitnessIdComponent } from './components/witness-id/witness-id.component';
 import { WitnessMetadataComponent } from './components/witness-metadata/witness-metadata.component';
-import { HrDottedComponent } from './ui-components/hr/hr-dotted/hr-dotted.component';
+import { HrComponent } from './ui-components/hr/hr.component';
 
 const routes: Routes = [
 ];
@@ -303,7 +303,7 @@ const DynamicComponents = [
     ModalWitnessItemComponent,
     WitnessIdComponent,
     WitnessMetadataComponent,
-    HrDottedComponent,
+    HrComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -174,6 +174,7 @@ export class StructureXmlParserService {
         }
         this.appExponents.set(exponent.id().valueWithoutRef, exponent);
         onApparatusEntryReplaced(item, exponent);
+        app.exponent = exponent.label;
       }
       else if (item.type?.name === 'Anchor') {
         const anchorId = item.attributes['id'];
@@ -200,6 +201,7 @@ export class StructureXmlParserService {
         // insert at index
         items.splice(i + 1, 0, exponent);
         this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+        app.exponent = exponent.label;
       }
       // in other cases exponents are added to the items array, so we skip them
       else if (item.type?.name === 'ApparatusEntryExponent') {
@@ -228,6 +230,7 @@ export class StructureXmlParserService {
           const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
           items.splice(i + 1, 0, exponent); // insert as sibling because this component is not an anchor
           this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+          app.exponent = exponent.label;
         }
         else if (!appTo) {
           const from = itemId; // from itself since the apparatus entry refer to it
@@ -235,6 +238,7 @@ export class StructureXmlParserService {
           const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
           item.content.push(exponent);
           this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+          app.exponent = exponent.label;
         }
       }
       else {

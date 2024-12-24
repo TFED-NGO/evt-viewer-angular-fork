@@ -340,7 +340,7 @@ export function deepSearchByKey(obj: object, propertyName: string): object[] {
   return results;
 }
 
-export function getTopmostAncestor(element: HTMLElement): HTMLElement {
+export function getTopMostAncestor(element: HTMLElement): HTMLElement {
   let current = element;
   while (current.parentElement) {
     current = current.parentElement;

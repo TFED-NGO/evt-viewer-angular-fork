@@ -14,7 +14,6 @@ import { EVTStatusService } from 'src/app/services/evt-status.service';
 
 @register(ApparatusEntryDetailComponent)
 export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
-
   private subscriptions;
 
   @Input() data: ApparatusEntry;
@@ -27,18 +26,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
 
   public orderedLayers: string[];
 
-  get significantRdg(): Reading[] {
-    return this.data.readings.filter((rdg) => rdg?.significant);
-  }
+  public significantReadings: Reading[] = [];
+  public notSignificantReadings: Reading[] = [];
+  public readingItems: ReadingItem[] = [];
 
-  get notSignificantRdg(): Reading[] {
-    return this.data.readings.filter((rdg) => !rdg.significant);
-  }
-
-  get readings(): Reading[] {
-    return [this.data.lemma, ...this.significantRdg, ...this.notSignificantRdg];
-  }
-  
   getLayerData(changeData: ChangeLayerData) {
     this.orderedLayers = changeData?.layerOrder;
   }
@@ -54,6 +45,13 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       this.recoverNestedApps(this.data);
     }
     this.subscriptions = this.evtStatusService.currentChanges$.pipe(distinctUntilChanged()).subscribe(({ next: (data) => this.getLayerData(data) }));
+
+    this.significantReadings = this.data.readings.filter((rdg) => rdg?.significant);
+    this.notSignificantReadings = this.data.readings.filter((rdg) => !rdg.significant);
+    const readings = [this.data.lemma, ...this.significantReadings, ...this.notSignificantReadings];
+    this.readingItems = readings.filter(rdg => !!rdg).map((rdg, i) => {
+      return { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
+    });
   }
 
   ngOnDestroy() {
@@ -81,4 +79,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   getNestedAppPos(appId: string): number {
     return this.nestedApps.findIndex((nesApp) => nesApp.id === appId);
   }
+}
+
+export interface ReadingItem {
+  reading: Reading;
+  isLemma: boolean;
+  isFirst: boolean;
 }
