@@ -12,8 +12,8 @@
 
     <div #collapse="ngbCollapse" [(ngbCollapse)]="isCollapsed">
         <div class="ms-3">
-            <evt-modal-witness-item *ngFor="let childWitness of witness.witnesses" [witness]="childWitness"
-                (onSelect)="onSelectClicked(childWitness.id)"></evt-modal-witness-item>
+            <evt-modal-witness-item *ngFor="let childWitness of witness.witnesses; trackBy:childrenWitnessesTrackBy" [witness]="childWitness"
+                (onSelect)="onSelectClicked($event)" (click)="onRemoveClicked($event)"></evt-modal-witness-item>
         </div>
     </div>
 </div>
