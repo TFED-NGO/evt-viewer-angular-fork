@@ -13,7 +13,7 @@
     <gridster-item *ngIf="apparatusesOpened" [item]="apparatusesItem">
         <evt-panel class="apparatuses" [secondary]="true" [hideFooter]="true" [hideHeader]="true">
             <div content>
-                <ul ngbNav #apparatuses="ngbNav" class="nav-tabs nav-fill">
+                <ul ngbNav #apparatuses="ngbNav" class="nav-tabs nav-fill apparatus-nav">
                     <li [ngbNavItem]="'critical'">
                         <a ngbNavLink>{{'criticalApparatus' | translate}}</a>
                         <ng-template ngbNavContent>
