@@ -233,7 +233,7 @@ export function updateCSS(rules: Array<[string, string]>) {
 }
 
 /**
- * It applies a multiplier to a given css dimension
+ * It applies a multiplier to a given css size
  * @param value - CSS units such as '1rem', '5em', '5px', '6wh'.
  * @params multiplier - Multiplier such as 0.8, 2 ...
  * @returns The resulting units
@@ -243,10 +243,10 @@ export function reduceCssUnit(value: string, multiplier: number): string {
   if (!match) {
       throw new Error("Invalid css unit provided");
   }
-  const [, numero, unita] = match;
-  const numeroFloat = parseFloat(numero);
-  const numeroRidotto = numeroFloat * multiplier;
-  return `${numeroRidotto}${unita}`;
+  const [, number, unit] = match;
+  const numberFloat = parseFloat(number);
+  const numberReduced = numberFloat * multiplier;
+  return `${numberReduced.toFixed(2)}${unit}`;
 }
 
 /**
