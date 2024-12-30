@@ -67,6 +67,7 @@ export class AppConfig {
         rules['.edition-font'] = `font-family: ${ui.mainFontFamily}; font-size: ${ui.mainFontSize};`;
         rules['.ng-select'] = `font-size: ${ui.secondaryFontSize};`;
         rules['.nav-link'] = `font-size: ${ui.secondaryFontSize} !important;`;
+        rules['.tab-content'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)}`;
         rules['.apparatus-nav .nav-link'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)} !important;`;
         rules['evt-biblio-list .msIdentifier, .btn-close, .layerMarker, .app-wit, .mod-layer, .code, .label, .relation-description, .source-detail-btn'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
         rules['evt-original-encoding-viewer code'] = `font-size: ${ui.secondaryFontSize};`;
