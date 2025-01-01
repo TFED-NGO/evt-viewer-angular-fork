@@ -18,6 +18,7 @@ export class ButtonComponent implements OnInit, OnChanges {
   @Input() label: string;
   @Input() additionalClasses: string;
   @Input() type: 'button' | 'submit';
+  @Input() ariaLabel: string;
   @Output() btnClick: EventEmitter<EVTBtnClickEvent> = new EventEmitter();
 
   constructor(private cdRef: ChangeDetectorRef) { }

@@ -174,7 +174,7 @@
   "moreInfoAboutApp": "Maggiori informazioni per l'entrata d'apparato",
   "omit": "omit.",
   "wit": "Wit:",
-  "xml": "XML",
+  "xml": "Codifica XML",
   "criticalApparatus": "Apparato Critico",
   "sources": "Fonti",
   "analogues": "Passi Paralleli",
@@ -201,5 +201,26 @@
   "corrSeq": "Sequenza correzioni",
   "criticalNote": "Nota critica",
   "showsDeletions": "Mostra cancellazioni",
-  "hidesDeletions": "Nascondi cancellazioni"
+  "hidesDeletions": "Nascondi cancellazioni",
+  "ariaLabels": {
+    "goToPrevPage": "Vai alla pagina precedente",
+    "goToNextPage": "Vai alla prossima pagina",
+    "submitNamedEntity": "Invia ricerca named entities",
+    "searchNamedEntity": "Cerca named entities",
+    "switchToViewMode": "Cambia vista",
+    "showOptions": "Mostra le opzioni del menu",
+    "stepBackward": "Vai indietro",
+    "stepForward": "Vai avanti",
+    "caretLeft": "Caret left",
+    "caretRight": "Caret right",
+    "openInfoTab": "Apri il tab delle info",
+    "searchResults": "Risultati della ricerca",
+    "hideDeletionsFromText": "Nascondi le cancellazioni dal testo",
+    "removePinned": "Rimuovi elemento dagli appunti",
+    "pinItem": "Fissa un elemento negli appunti",
+    "closeModal": "Chiudi modal",
+    "hidePanel": "Nascondi questo pannello",
+    "openApparatusTab": "Apri il tab degli apparati",
+    "openPinBoard": "Apri la bacheca degli appunti"
+  }
 }

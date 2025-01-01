@@ -175,7 +175,7 @@
     "moreInfoAboutApp": "More info about the apparatus entry",
     "omit": "omit.",
     "wit": "Wit:",
-    "xml": "XML",
+    "xml": "XML Code",
     "criticalApparatus": "Critical Apparatus",
     "sources": "Sources",
     "analogues": "Analogues",
@@ -202,5 +202,26 @@
     "corrSeq": "Correction sequence",
     "criticalNote": "Critical note",
     "showsDeletions": "Show deletions",
-    "hidesDeletions": "Hide deletions"
+    "hidesDeletions": "Hide deletions",
+    "ariaLabels": {
+        "goToPrevPage": "Go to previous page",
+        "goToNextPage": "Go to next page",
+        "submitNamedEntity": "Submit named-entity search",
+        "searchNamedEntity": "Search named-entity",
+        "switchToViewMode": "Switch to view mode",
+        "showOptions": "Show options menu",
+        "stepBackward": "Step backward",
+        "stepForward": "Step forward",
+        "caretLeft": "Caret left",
+        "caretRight": "Caret right",
+        "openInfoTab": "Open info tab",
+        "searchResults": "Search results",
+        "hideDeletionsFromText": "Hide deletions from text flow",
+        "removePinned": "Remove pinned item",
+        "pinItem": "Pin item",
+        "closeModal": "Close modal",
+        "hidePanel": "Hide this panel",
+        "openApparatusTab": "Open Apparatus Tab",
+        "openPinBoard": "Open Pin Board"
+    }
 }
