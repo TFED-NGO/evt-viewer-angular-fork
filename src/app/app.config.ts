@@ -69,7 +69,8 @@ export class AppConfig {
         rules['.nav-link'] = `font-size: ${ui.secondaryFontSize} !important;`;
         rules['.tab-content'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)}`;
         rules['.apparatus-nav .nav-link'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)} !important;`;
-        rules['evt-biblio-list .msIdentifier, .btn-close, .layerMarker, .app-wit, .mod-layer, .code, .label, .relation-description, .source-detail-btn'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['evt-biblio-list .msIdentifier, .btn-close, .layerMarker, .app-wit'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['.mod-layer, .code, .label, .relation-description, .source-detail-btn'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
         rules['evt-original-encoding-viewer code'] = `font-size: ${ui.secondaryFontSize};`;
         rules['.app-detail-tabs .nav-link'] = `font-family: ${ui.secondaryFontFamily};`;
         rules['.ui-font'] = `font-family: ${ui.secondaryFontFamily}; font-size: ${ui.secondaryFontSize};`;
@@ -79,7 +80,7 @@ export class AppConfig {
         rules['.' + AnalogueClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
         rules['.' + SourceClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
         Object.entries(rules).forEach(([selector,style]) => { updateCSS([[selector,style]]) });
-        console.log('style applied from config', rules);
+        console.log('Style applied from config', rules);
     }
 
 }
