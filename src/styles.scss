@@ -332,6 +332,28 @@ evt-page :not(evt-apparatus-entry-detail) .head {
   padding: 0.5em 0.1em 0.5em 0em;
 }
 
+evt-page :not(evt-apparatus-entry-detail) .closer {
+  display: block;
+}
+
+evt-page :not(evt-apparatus-entry-detail) .signed {
+  display: inline-block;
+  /* font-style: italic; */
+}
+
+evt-page :not(evt-apparatus-entry-detail) .retrace {
+  font-weight: bolder;
+}
+
+evt-page :not(evt-apparatus-entry-detail) .verse-num {
+  color:black !important;
+}
+
+evt-page :not(evt-apparatus-entry-detail) .verse-num:before {
+  border:none !important;
+  background: none !important;
+}
+
 [ng-reflect-text-flow="verses"] evt-verse {
   display: block;
 }
