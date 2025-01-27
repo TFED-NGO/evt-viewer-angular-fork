@@ -1444,7 +1444,7 @@ export class ApparatusEntryExponent extends GenericElement {
      * Avoid calling this directly, use the class factory methods
      * cannot set type if private constructor
      */
-    constructor(public label: string, public appEntries: ApparatusEntry[]) {
+    constructor(public label: string, public appEntry: ApparatusEntry) {
         super();
         this.type = ApparatusEntryExponent;
     }
@@ -1459,15 +1459,15 @@ export class ApparatusEntryExponent extends GenericElement {
         return Attribute.create(this.attributes['to']);
     }
 
-    static create(id: string, from: string, to: string, label: string, appEntries: ApparatusEntry[]): ApparatusEntryExponent {
+    static create(id: string, from: string, to: string, label: string, appEntry: ApparatusEntry): ApparatusEntryExponent {
         if (!this.isValidId(id))
             throw new Error('id is required');
 
         if (!this.isValidId(from))
             throw new Error('from is required');
 
-        appEntries.forEach(x => x.additionalAttributes.addExponentId(id));
-        const anchor = new ApparatusEntryExponent(label, appEntries);
+        appEntry.additionalAttributes.addExponentId(id);
+        const anchor = new ApparatusEntryExponent(label, appEntry);
         anchor.attributes = {
             'name': 'apparatusEntryAnchor',
             'id': id,

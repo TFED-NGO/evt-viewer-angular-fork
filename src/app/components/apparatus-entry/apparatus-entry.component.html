@@ -1,7 +1,7 @@
 <!--
    Check if the app entry is inside an app detail (nested app). In the app detail it's not necessary to render the entire app but only the lemma.
 -->
-<span *ngIf="!isInsideAppDetail" class="app-entry pointer" [attr.data-variance]="variance$ | async" [ngClass]="{ 'app-detail-opened': opened }">
+<span *ngIf="!isInsideAppDetail" class="app-entry pointer" [attr.data-variance]="variance$ | async" [ngClass]="{ 'app-detail-opened': (isOpened$ | async) }">
 
    <ng-container *ngIf="editionLevel === 'changesView'">
       <!-- in changesView all readings are displayed in the textflow and, if present, ordered by @varSeq. 
@@ -18,7 +18,7 @@
       </ng-container>
    
       <!-- The click event in "evt-apparatus-entry-detail" is used to manage nested apps -->
-      <evt-apparatus-entry-detail *ngIf="opened" [data]="data" [selectedLayer]="selectedLayer" (click)="stopPropagation($event)"></evt-apparatus-entry-detail>
+      <evt-apparatus-entry-detail *ngIf="isOpened$ | async" [data]="data" [selectedLayer]="selectedLayer" (click)="stopPropagation($event)"></evt-apparatus-entry-detail>
    </ng-container>
 
 </span>

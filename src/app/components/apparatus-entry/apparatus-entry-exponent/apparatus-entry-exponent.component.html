@@ -1,9 +1,9 @@
-<ng-container *ngIf="data.appEntries.length">
+<ng-container *ngIf="data.appEntry">
     <span class="evt-exponent" [class.text-decoration-underline]="isHighlighted$ | async"
         (click)="onExponentButtonClicked()" (mouseenter)="onHover(true)"
         (mouseleave)="onHover(false)">{{data.label}}</span>
 
     <ng-container *ngIf="apparatusDetailsShown$ | async">
-        <evt-apparatus-entry-detail *ngFor="let app of data.appEntries" [data]="app"></evt-apparatus-entry-detail>
+        <evt-apparatus-entry-detail [data]="data.appEntry"></evt-apparatus-entry-detail>
     </ng-container>
 </ng-container>

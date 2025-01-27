@@ -55,6 +55,7 @@ export class WitnessPanelComponent implements OnInit {
         return { parsedApp, from, to };
       });
 
+    const appExponentsArray = Array.from(this.structureParser.appExponents.values());
     for (const page of originalPages) {
       for (let i = 0; i < page.parsedContent.length; i++) {
         const element = page.parsedContent[i] as GenericElement;
@@ -80,6 +81,12 @@ export class WitnessPanelComponent implements OnInit {
         for (const { parsedApp, from, to, } of foundAppDatas) {
           const fromResult = this.findElementIndexOrDefault(page.parsedContent as GenericElement[], from.valueWithoutRef);
           if (!fromResult) continue;
+
+          const currentAppExponent = appExponentsArray.find(exponent => {
+            const areEqual = exponent.appEntry.originalEncoding.outerHTML === parsedApp.originalEncoding.outerHTML;
+            return areEqual;
+          })
+          parsedApp.exponent = currentAppExponent?.label;
 
           const { index: fromIndex, parent: fromParent } = fromResult;
 

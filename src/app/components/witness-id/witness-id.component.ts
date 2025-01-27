@@ -4,6 +4,7 @@ import { AppConfig } from 'src/app/app.config';
 import { Attribute } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
+import { ApparatusEntryDetailService } from '../apparatus-entry/apparatus-entry-detail/apparatus-entry-detail.service';
 
 @Component({
   selector: 'evt-witness-id',
@@ -30,6 +31,7 @@ export class WitnessIdComponent implements OnInit {
   constructor(
     private statusService: EVTStatusService,
     private modelService: EVTModelService,
+    private apparatusEntryDetailService: ApparatusEntryDetailService
   ) { }
 
   ngOnInit(): void {
@@ -46,8 +48,9 @@ export class WitnessIdComponent implements OnInit {
   }
 
   onWitnessClicked() {
-    const attr = Attribute.create(this.witnessId).valueWithoutRef;
+    const witnessId = Attribute.create(this.witnessId).valueWithoutRef;
     this.statusService.updateViewMode$.next(this.statusService.availableViewModes.find(v => v.id === 'collation'));
-    this.statusService.updateWitnesses$.next([attr]);
+    this.statusService.updateWitnesses$.next([witnessId]);
+    this.statusService.updateApparatusExponent$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
   }
 }

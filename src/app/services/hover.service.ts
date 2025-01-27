@@ -39,8 +39,8 @@ export class HoverService {
     }
   }
 
-  toggleApparatusEntry(apps: ApparatusEntry[]) {
-    const newIds = apps.map(app => ({ app, exponentId: app.additionalAttributes.exponentId }));
+  toggleApparatusEntry(app: ApparatusEntry) {
+    const newIds = [{ app, exponentId: app.additionalAttributes.exponentId }];
     const selectedIds = this.selectedApparatusEntries$.value.map(app => ({ app, exponentId: app.additionalAttributes.exponentId }));
 
     const selectedExponentIds = new Set(selectedIds.map(({ exponentId }) => exponentId));

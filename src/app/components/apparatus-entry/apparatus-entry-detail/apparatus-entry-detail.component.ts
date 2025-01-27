@@ -4,12 +4,15 @@ import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
 import { distinctUntilChanged } from 'rxjs';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
+import { ApparatusEntryDetailService } from './apparatus-entry-detail.service';
+
 
 @Component({
   selector: 'evt-apparatus-entry-detail',
   templateUrl: './apparatus-entry-detail.component.html',
   styleUrls: ['./apparatus-entry-detail.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [ApparatusEntryDetailService]
 })
 
 @register(ApparatusEntryDetailComponent)
@@ -42,10 +45,13 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   constructor(
     public evtModelService: EVTModelService,
     public evtStatusService: EVTStatusService,
+    private apparatusEntryDetailService: ApparatusEntryDetailService,
   ) {
   }
 
   ngOnInit() {
+    this.apparatusEntryDetailService.apparatusEntry = this.data;
+
     if (this.data.nestedAppsIDs.length > 0) {
       this.recoverNestedApps(this.data);
     }

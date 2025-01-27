@@ -8,6 +8,7 @@ import { EVTModelService } from '../../services/evt-model.service';
 import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
 import { ApparatusEntryDetailComponent } from './apparatus-entry-detail/apparatus-entry-detail.component';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
+import { EVTStatusService } from 'src/app/services/evt-status.service';
 
 export interface ApparatusEntryComponent extends EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible { }
 
@@ -22,7 +23,10 @@ export class ApparatusEntryComponent implements OnInit {
   @Input() data: ApparatusEntry;
   @Input() selectedLayer: string;
 
-  public opened = false;
+  public isOpened$ = this.statusService.currentApparatusExponent$.pipe(
+    map(exponent => this.data.exponent === exponent)
+  );
+
   public isInsideAppDetail: boolean;
   public isNestedApp: boolean;
   public nestedApps: ApparatusEntry[] = [];
@@ -45,6 +49,7 @@ export class ApparatusEntryComponent implements OnInit {
 
   constructor(
     private evtModelService: EVTModelService,
+    private statusService: EVTStatusService,
     @Optional() private parentDetailComponent?: ApparatusEntryDetailComponent,
     @Optional() @SkipSelf() private parentAppComponent?: ApparatusEntryComponent,
     @Optional() private witnessPanelService?: WitnessPanelService,
@@ -68,7 +73,7 @@ export class ApparatusEntryComponent implements OnInit {
   }
 
   @HostListener('mouseleave') onMouseLeave() {
-    if (this.opened) {
+    if (this.isNestedApp) {
       this.highlightColor$.next(AppConfig.evtSettings.edition.readingColorDark);
     } else {
       this.highlightColor$.next(AppConfig.evtSettings.edition.readingColorLight)
@@ -77,11 +82,12 @@ export class ApparatusEntryComponent implements OnInit {
 
   toggleAppEntryBox(e: MouseEvent) {
     e.stopPropagation();
-    this.opened = !this.opened;
+    const value = this.statusService.updateApparatusExponent$.value === this.data.exponent ? null : this.data.exponent;
+    this.statusService.updateApparatusExponent$.next(value)
   }
 
   closeAppEntryBox() {
-    this.opened = false;
+    this.statusService.updateApparatusExponent$.next(null)
   }
 
   stopPropagation(e: MouseEvent) {

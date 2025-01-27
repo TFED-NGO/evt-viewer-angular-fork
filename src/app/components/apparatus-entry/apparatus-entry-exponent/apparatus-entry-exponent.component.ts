@@ -87,7 +87,7 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
   }
 
   onExponentButtonClicked() {
-    this.hoverService.toggleApparatusEntry(this.data.appEntries);
+    this.hoverService.toggleApparatusEntry(this.data.appEntry);
   }
 
   onHover(isHovering: boolean) {

@@ -4,5 +4,6 @@ import { Injectable } from "@angular/core";
 export class WitnessPanelService {
   witnessId: string;
 
-  constructor() { }
+  constructor(
+  ) { }
 }

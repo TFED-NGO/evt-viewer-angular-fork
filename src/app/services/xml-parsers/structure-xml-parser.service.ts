@@ -160,13 +160,13 @@ export class StructureXmlParserService {
         let exponent: ApparatusEntryExponent = null;
         if (app.lemma) {
           const from = app.lemma.id; // lemma exist so it will be the From element
-          exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
+          exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
           // the inline apparatus has a lemma so it must be rendered 
           items[i] = app.lemma;
           items.splice(i + 1, 0, exponent);
         } else {
           const from = id; // the exponent itself as the To element, because there is no lemma to render
-          exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
+          exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
           // the inline apparatus has no lemma so we just replace the app with the exponent
           // this is considered an error which handling will be improved in a future feature
           // for now just the exponent is rendered without any preceding text
@@ -197,7 +197,7 @@ export class StructureXmlParserService {
         }
 
         const id = this.getExponentId();
-        const exponent = ApparatusEntryExponent.create(id, appFrom.valueWithoutRef, appTo.valueWithoutRef, getExponentLabel(), [app]);
+        const exponent = ApparatusEntryExponent.create(id, appFrom.valueWithoutRef, appTo.valueWithoutRef, getExponentLabel(), app);
         // insert at index
         items.splice(i + 1, 0, exponent);
         this.appExponents.set(exponent.id().valueWithoutRef, exponent);
@@ -227,7 +227,7 @@ export class StructureXmlParserService {
         if (isToElement) {
           const from = appFrom.valueWithoutRef;
           const to = id; // the exponent will be the To element itself since is placed as next sibling of the current item
-          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
+          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
           items.splice(i + 1, 0, exponent); // insert as sibling because this component is not an anchor
           this.appExponents.set(exponent.id().valueWithoutRef, exponent);
           app.exponent = exponent.label;
@@ -235,7 +235,7 @@ export class StructureXmlParserService {
         else if (!appTo) {
           const from = itemId; // from itself since the apparatus entry refer to it
           const to = id; // the exponent will be place as the last child of the element so it marks the end
-          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), [app]);
+          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
           item.content.push(exponent);
           this.appExponents.set(exponent.id().valueWithoutRef, exponent);
           app.exponent = exponent.label;
