@@ -1,6 +1,20 @@
 <span class="subst">
-    <!-- deletions first -->
-    <ng-container *ngFor="let el of data.content">
+    <!-- deletions first --> 
+     <ng-container *ngIf="data.del">
+        <evt-content-viewer
+            [content]="data.del" [editionLevel]="editionLevel" 
+            [itemsToHighlight]="itemsToHighlight" [evtHighlight]="highlightData" [textFlow]="textFlow"
+            [withDeletions]="true" [selectedLayer]="selectedLayer">
+        </evt-content-viewer>
+     </ng-container>
+     <ng-container *ngIf="data.add">
+        <evt-content-viewer
+            [content]="data.add" [editionLevel]="editionLevel" 
+            [itemsToHighlight]="itemsToHighlight" [evtHighlight]="highlightData" [textFlow]="textFlow"
+            [withDeletions]="withDeletions" [selectedLayer]="selectedLayer">
+        </evt-content-viewer>
+     </ng-container>
+    <!-- <ng-container *ngFor="let el of data.content">
         <evt-content-viewer *ngIf="((withDeletions) && (el?.class === 'del' || el?.class === 'surplus'))"
             [content]="el" [editionLevel]="editionLevel" 
             [itemsToHighlight]="itemsToHighlight" [evtHighlight]="highlightData" [textFlow]="textFlow"
@@ -13,5 +27,5 @@
             [itemsToHighlight]="itemsToHighlight" [evtHighlight]="highlightData" [textFlow]="textFlow"
             [withDeletions]="withDeletions" [selectedLayer]="selectedLayer">
         </evt-content-viewer>
-    </ng-container>
+    </ng-container> -->
 </span>

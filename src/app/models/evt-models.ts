@@ -488,7 +488,9 @@ export class Gap extends GenericElement {
 }
 
 export class Subst extends GenericElement {
-    after: ParseResult<GenericElement>;
+    //after: ParseResult<GenericElement>;
+    del: Deletion;
+    add: Addition;
 }
 
 

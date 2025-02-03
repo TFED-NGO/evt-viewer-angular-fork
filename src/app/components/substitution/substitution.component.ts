@@ -22,5 +22,5 @@ export class SubstitutionComponent {
 
   @Input() selectedLayer: string;
 
-
+  
 }

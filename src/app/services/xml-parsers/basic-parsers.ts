@@ -605,14 +605,22 @@ export class CitParser extends DisambiguationParser implements Parser<XMLElement
 
 @xmlParser('subst', SubstParser)
 export class SubstParser extends GenericElemParser implements Parser<XMLElement> {
+    delParser = createParser(DeletionParser, this.genericParse);
+
+    addParser = createParser(AdditionParser, this.genericParse);
+
     parse(xml: XMLElement): Subst {
-        let parsing = {
+        let parsing : Subst = {
             ...super.parse(xml),
             type: Subst,
-            after: [],
+            add: this.addParser.parse(xml),
+            del: this.delParser.parse(xml.getElementsByTagName('del')[0])
         }
-        parsing.after = parsing.content.filter((el) => (el['type']) && (el['type'] !== Deletion));
+        
+        //parsing.after = parsing.content.filter((el) => (el['type']) && (el['type'] !== Deletion));
 
         return parsing;
     }
+
+
 }
