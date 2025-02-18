@@ -5,7 +5,8 @@
     	<nav class="navbar">
             <div><ng-content select="[header-left]"></ng-content></div>
             <div><ng-content select="[header-right]"></ng-content></div>
-            <evt-button *ngIf="closable" additionalClasses="rounded-circle btn-close" 
+            <evt-button *ngIf="closable" additionalClasses="rounded-circle btn-close"
+                ariaLabel="{{ 'ariaLabels.hidePanel' | translate }}" aria-role="button"
                 (btnClick)="emitHide()" [iconLeft]="{icon: 'times'}">
             </evt-button>
         </nav>

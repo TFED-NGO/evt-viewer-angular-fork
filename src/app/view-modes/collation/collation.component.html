@@ -20,6 +20,7 @@
                 </gridster-item>
             </gridster>
             <evt-button class="btn" [class.btn-float-right]="getWitnesses().length > 0"
+                ariaLabel="{{ 'addWitness' | translate }}" aria-role="button"
                 [additionalClasses]="witnessBtn?.additionalClasses"
                 [label]="witnessBtn?.label | translate" [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate"
                 (btnClick)="addWitness()"></evt-button>

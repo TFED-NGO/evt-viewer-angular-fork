@@ -1,6 +1,8 @@
 <evt-panel [showSecondaryContent]="isSecondaryContentOpened()" (scrollContent)="updatePageFromScroll$.next()">
     <div header-left>
         <evt-button
+            ariaLabel="{{ 'ariaLabels.openInfoTab' | translate }}"
+            aria-role="button"
             label="Info"
             [iconLeft]="{icon: 'info-circle'}"
             additionalClasses="btn-primary me-1"
@@ -37,6 +39,8 @@
 
     <div footer>
         <evt-button
+            ariaLabel="{{ 'ariaLabels.searchResult' | translate }}"
+            aria-role="button"
             [iconLeft]="{icon: 'search'}"
             label="Search"
             additionalClasses="me-1"
@@ -46,6 +50,8 @@
         <evt-entities-select (selectionChange)="itemsToHighlight$.next($event)"></evt-entities-select>
         <evt-verse-prose-select *ngIf="enableProseVersesToggler" (textModeSelectionChange)="toggleProseVerses($event)"></evt-verse-prose-select>
         <evt-button *ngIf="enableHideDeletionsToggler"
+            ariaLabel="{{ 'ariaLabels.hideDeletionsFromText' | translate }}"
+            aria-role="button"
             [iconLeft]="hideDeletionsTogglerIcon"
             [label]="deletionsText | translate "
             additionalClasses="ms-1"
