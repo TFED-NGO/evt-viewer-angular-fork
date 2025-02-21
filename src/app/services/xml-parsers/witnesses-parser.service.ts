@@ -60,14 +60,30 @@ export class WitnessesParserService {
   private parseWitness(wit: XMLElement): Witness {
     const id = getID(wit);
     const lists = Array.from(wit.childNodes).filter(child => child.nodeName === 'listWit');
+    const anchestorIds: string[] = [];
+    this.getWitnessAnchestorsIds(wit, anchestorIds);
     const witness: Witness = {
       id,
       name: id,
       attributes: this.attributeParser.parse(wit),
       content: this.parseWitnessContent(wit),
-      witnesses: lists.flatMap(list => this.parseList(list as XMLElement))
+      witnesses: lists.flatMap(list => this.parseList(list as XMLElement)),
+      anchestorWitnessesIds: anchestorIds
     };
     return witness;
+  }
+
+  private getWitnessAnchestorsIds(wit: HTMLElement, anchestorIds: string[]): void {
+    if(wit.parentElement === null) return;
+
+    if (wit.parentElement.nodeName !== "witness") {
+      this.getWitnessAnchestorsIds(wit.parentElement, anchestorIds);
+    }
+    else if (wit.parentElement.nodeName === "witness") {
+      const parentId = wit.parentElement.getAttribute('xml:id');
+      anchestorIds.push(parentId);
+      this.getWitnessAnchestorsIds(wit.parentElement, anchestorIds);
+    }
   }
 
   private parseWitnessContent(wit: XMLElement): Description {

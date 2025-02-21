@@ -31,21 +31,22 @@ export class CollationComponent implements OnDestroy {
     this.evtModelService.flattenedWitnesses$,
     this.evtStatusService.currentStatus$
   ]).pipe(
-    map(([allWitnesses, status]) => {
+    map(([flattenedWitnesses, status]) => {
       const currentWitnessesIds = status.witnesses;
-      const result: WitnessItem[] = allWitnesses
+      const result: WitnessItem[] = flattenedWitnesses
         .filter(w => currentWitnessesIds.includes(w.id))
         .sort((a, b) => currentWitnessesIds.indexOf(a.id) - currentWitnessesIds.indexOf(b.id))
         .map((w, i) => {
           if (typeof w.name !== 'string') {
             throw new Error("Witness name must be a string but was: " + w.name);
-          }
+          } 
 
           return {
             id: w.id,
             label: w.name,
             itemConfig: { cols: 1, rows: 1, y: 0, x: i },
             currentPageId: status.page.id,
+            anchestorsIds: w.anchestorWitnessesIds
           };
         });
       return result;
@@ -55,7 +56,7 @@ export class CollationComponent implements OnDestroy {
       this.updateGridsterOptions(witnesses);
     })
   );
-
+  
   public modalWitnesses$: Observable<ModalWitnessItem[]> = combineLatest([
     this.evtModelService.witnesses$,
     this.evtStatusService.currentStatus$
@@ -220,4 +221,5 @@ export interface WitnessItem {
   label: string;
   itemConfig: GridsterItem;
   currentPageId: string;
+  anchestorsIds: string[];
 }

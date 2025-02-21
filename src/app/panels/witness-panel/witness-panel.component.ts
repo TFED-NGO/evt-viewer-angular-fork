@@ -38,6 +38,7 @@ export class WitnessPanelComponent implements OnInit {
 
   ngOnInit(): void {
     this.witnessPanelService.witnessId = this.witnessItem.id;
+    this.witnessPanelService.anchestorsIds = this.witnessItem.anchestorsIds;
   }
 
   private processSource(source: HTMLElement): Page[] {
@@ -61,7 +62,9 @@ export class WitnessPanelComponent implements OnInit {
         const element = page.parsedContent[i] as GenericElement;
 
         const foundAppDatas = appsData.filter(({ parsedApp, from, to }) => {
-          const hasAnyReading = parsedApp.orderedReadings.some(r => r.witIDs.includes(this.witnessItem.id));
+          const hasAnyReading = parsedApp.orderedReadings
+            .some(r => r.witIDs.includes(this.witnessItem.id) || r.witIDs.some(x => this.witnessItem.anchestorsIds.includes(x)));
+          
           if (!hasAnyReading) return false;
 
           const elementId = element.attributes['id'];
@@ -99,6 +102,7 @@ export class WitnessPanelComponent implements OnInit {
           const { index: toIndex, parent: toParent } = toResult;
           if (fromParent === toParent) {
             fromParent.splice(fromIndex, fromIndex - toIndex + 1, parsedApp);
+            console.log(parsedApp)
           } else {
             console.error("from and to elements are in different parent nodes. Cannot splice.");
           }

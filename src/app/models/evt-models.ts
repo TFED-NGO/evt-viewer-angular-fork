@@ -197,7 +197,8 @@ export interface Witness {
     name: string;
     attributes: Attributes;
     content: Array<ParseResult<GenericElement>>;
-    witnesses: Witness[]
+    witnesses: Witness[],
+    anchestorWitnessesIds: string[]
 }
 
 export class ApparatusEntry extends GenericElement {
