@@ -50,7 +50,14 @@ export class WitnessIdComponent implements OnInit {
   onWitnessClicked() {
     const witnessId = Attribute.create(this.witnessId).valueWithoutRef;
     this.statusService.updateViewMode$.next(this.statusService.availableViewModes.find(v => v.id === 'collation'));
-    this.statusService.updateWitnesses$.next([witnessId]);
+    let newValue = [...this.statusService.updateWitnesses$.value, witnessId];
+    newValue = newValue.filter(this.onlyUnique);
+    this.statusService.updateWitnesses$.next(newValue);
     this.statusService.updateApparatusExponent$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
   }
+
+  private onlyUnique(value, index, array) {
+    return array.indexOf(value) === index;
+  }
 }
+
