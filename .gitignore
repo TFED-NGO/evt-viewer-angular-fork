@@ -53,3 +53,4 @@ Thumbs.db
 # Ignore custom subfolder used for development resources
 /src/assets/config/custom
 /src/assets/data/custom
+/.vs

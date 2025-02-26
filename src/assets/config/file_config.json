@@ -2,7 +2,7 @@
 	"editionUrls": [
 		{
 			"type": "main",
-			"value": "assets/data/pelavicino.xml",
+			"value": "assets/data/edition.xml",
 			"enable": true
 		}
 	],

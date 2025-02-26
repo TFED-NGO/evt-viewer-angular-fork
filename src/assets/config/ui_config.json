@@ -61,7 +61,7 @@
 			"iconSet": "evt",
 			"id": "documentalMixed",
 			"label": "Documental",
-			"enable": true
+			"enable": false
 		},
 		{
 			"icon": "versions",
@@ -69,7 +69,7 @@
 			"id": "synopticEdition",
 			"label": "Synoptic edition",
 			"enable": true
-	   }
+	    }
 	],
 	"localization": true,
 	"defaultLocalization": "en",
@@ -91,8 +91,8 @@
 	"viscollButton": false,
 	"mainFontFamily": "Junicode, Times, serif",
 	"mainFontSize": "1.1rem",
-	"secondaryfontFamily": "Arial, sans-serif",
-	"secondaryfontSize": "1.1em",
+	"secondaryFontFamily": "Arial, sans-serif",
+	"secondaryFontSize": "0.8rem",
 	"theme": "modern",
 	"syncZonesHighlightButton": true,
 	"defaultBibliographicStyle": "chicago",

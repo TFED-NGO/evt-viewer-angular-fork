@@ -6,7 +6,7 @@ import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { Attributes, EditorialConventionLayout } from './models/evt-models';
-import { updateCSS } from './utils/dom-utils';
+import { reduceCssUnit, updateCSS } from './utils/dom-utils';
 
 @Injectable()
 export class AppConfig {
@@ -85,7 +85,15 @@ export class AppConfig {
      */
     updateStyleFromConfig(edition: EditionConfig, ui: UiConfig) {
         const rules = [];
+        rules['html'] = `font-size: ${ui.mainFontSize};`;
         rules['.edition-font'] = `font-family: ${ui.mainFontFamily}; font-size: ${ui.mainFontSize};`;
+        rules['.ng-select'] = `font-size: ${ui.secondaryFontSize};`;
+        rules['.nav-link'] = `font-size: ${ui.secondaryFontSize} !important;`;
+        rules['.tab-content'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)}`;
+        rules['.apparatus-nav .nav-link'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)} !important;`;
+        rules['evt-biblio-list .msIdentifier, .btn-close, .layerMarker, .app-wit'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['.mod-layer, .code, .label, .relation-description, .source-detail-btn'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['evt-original-encoding-viewer code'] = `font-size: ${ui.secondaryFontSize};`;
         rules['.app-detail-tabs .nav-link'] = `font-family: ${ui.secondaryFontFamily};`;
         rules['.ui-font'] = `font-family: ${ui.secondaryFontFamily}; font-size: ${ui.secondaryFontSize};`;
         rules['.app-detail-tabs'] = `font-family: ${ui.secondaryFontFamily};`;
@@ -93,7 +101,8 @@ export class AppConfig {
         rules['.' + SourceClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
         rules['.' + AnalogueClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
         rules['.' + SourceClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
-        Object.entries(rules).forEach(([selector, style]) => { updateCSS([[selector, style]]) });
+        Object.entries(rules).forEach(([selector,style]) => { updateCSS([[selector,style]]) });
+        console.log('Style applied from config', rules);
     }
 
 }

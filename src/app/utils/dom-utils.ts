@@ -233,6 +233,23 @@ export function updateCSS(rules: Array<[string, string]>) {
 }
 
 /**
+ * It applies a multiplier to a given css size
+ * @param value - CSS units such as '1rem', '5em', '5px', '6wh'.
+ * @params multiplier - Multiplier such as 0.8, 2 ...
+ * @returns The resulting units
+ */
+export function reduceCssUnit(value: string, multiplier: number): string {
+  const match = value.match(/^(\d*\.?\d+)([a-zA-Z%]+)$/);
+  if (!match) {
+      throw new Error("Invalid css unit provided");
+  }
+  const [, number, unit] = match;
+  const numberFloat = parseFloat(number);
+  const numberReduced = numberFloat * multiplier;
+  return `${numberReduced.toFixed(2)}${unit}`;
+}
+
+/**
  * This function searches inside every property of an object for the provided attribute
  * it has one of the provided list of values. It stops after a customizable number of iterations to avoid waste of resources.
  * The limit counter could be inserted in a config, same as the ignoredProperties

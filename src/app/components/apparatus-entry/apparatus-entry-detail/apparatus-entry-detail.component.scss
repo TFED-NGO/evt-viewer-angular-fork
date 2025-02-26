@@ -14,7 +14,7 @@
 .app-detail-content,
 .app-detail-tabs {
     background-color: transparent;
-    font-size: 1.063rem;
+    //font-size: 1.063rem;
 }
 
 .app-detail-content {
@@ -31,16 +31,16 @@
 .app-detail-nested-readings {
     display: block;
     margin-left: 0.938rem;
-    font-size: 1rem;
+    //font-size: 1rem;
 }
 
 .app-detail-tabs {
-    font-size: 1rem;
+    //font-size: 1rem;
     margin: 0;
     padding: 0 0.4em 0 0.4em;
     border-top: 3px double #000 !important;
     .nav-link {
-        font-size: 0.85em;
+        //font-size: 0.85em;
         padding-top: 0.8em;
         display:inline-block;
         background-color: transparent;
@@ -78,23 +78,23 @@
         .info-rdg {
             font-style: italic;
             font-weight: 600;
-            font-size: 1.063rem;
+            //font-size: 1.063rem;
         }
         .info-label {
-            font-size: 0.813rem;
+            //font-size: 0.813rem;
             text-transform: uppercase;
             font-weight: 600;
         }
         .more-info-label {
             display: block;
-            font-size: 0.813rem;
+            //font-size: 0.813rem;
             font-weight: 600;
             text-transform: uppercase;
             margin-bottom: 0.25rem;
         }
         pre {
             white-space: pre-wrap;
-            font-size: 75%;
+            //font-size: 75%;
             margin-bottom: 0;
             margin-top: -1rem;
         }

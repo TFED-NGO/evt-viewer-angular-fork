@@ -14,13 +14,13 @@
     <div class="card-footer app-detail-tabs">
         <ul ngbNav #appEntryTab="ngbNav" class="nav-pills">
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
-                <a class="app-detail-btn" ngbNavLink>{{'criticalNotes' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink href="#">{{'criticalNotes' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-note *ngFor="let note of data.notes" [data]="note"></evt-note>
                 </ng-template>
             </li>
             <li ngbNavItem="notSignificantRdg" *ngIf="notSignificantRdg.length > 0">
-                <a class="app-detail-btn" ngbNavLink>{{'ortographicVariants' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink href="#">{{'ortographicVariants' | translate}}</a>
                 <ng-template ngbNavContent>
                     <span class="d-block" *ngFor="let el of notSignificantRdg">
                         <evt-reading [data]="el"></evt-reading>
@@ -30,7 +30,7 @@
             </li>
 
             <li ngbNavItem="corrSeq" *ngIf="data.changes.length > 0">
-                <a class="source-detail-btn" ngbNavLink>{{'corrSeq' | translate}}</a>
+                <a class="source-detail-btn" ngbNavLink href="#">{{'corrSeq' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-mod-sequence 
                         [data]="data.changes" 
@@ -41,7 +41,7 @@
             </li>
 
             <li ngbNavItem="info">
-                <a class="app-detail-btn" ngbNavLink>{{'info' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink href="#">{{'info' | translate}}</a>
                 <ng-template ngbNavContent>
                     <div class="info-lemma-wrapper" *ngIf="data.lemma">
                         <span>{{'metadataForLemma' | translate}} </span>
@@ -86,7 +86,7 @@
             </li>
 
             <li ngbNavItem="xml">
-                <a class="app-detail-btn" ngbNavLink>{{'xml' | translate}}</a>
+                <a class="app-detail-btn" ngbNavLink href="#">{{'xml' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-original-encoding-viewer [originalEncoding]="data.originalEncoding"></evt-original-encoding-viewer>
                 </ng-template>
