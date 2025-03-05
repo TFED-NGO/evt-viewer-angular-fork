@@ -108,6 +108,7 @@ export class CollationComponent implements OnDestroy {
       enabled: true,
       ignoreContent: true,
       dragHandleClass: 'panel-header',
+      ignoreContentClass: 'no-drag'
     },
     resizable: {
       enabled: false,
