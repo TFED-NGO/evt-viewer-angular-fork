@@ -62,7 +62,14 @@
 			"id": "documentalMixed",
 			"label": "Documental",
 			"enable": false
-		}
+		},
+		{
+			"icon": "versions",
+			"iconSet": "evt",
+			"id": "synopticEdition",
+			"label": "Synoptic edition",
+			"enable": false
+	    }
 	],
 	"localization": true,
 	"defaultLocalization": "en",
