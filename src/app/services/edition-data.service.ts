@@ -72,7 +72,9 @@ export class EditionDataService {
             const fileXpointer = element.getAttribute('xpointer');
             let includedTextElem: Node;
             if (fileXpointer) {
-              includedTextElem = doc.querySelector(`[*|id="${fileXpointer}"]`) || includedDoc.querySelector('text');
+              includedTextElem = doc.querySelector(`[*|id="${fileXpointer}"]`) 
+                || includedDoc.querySelector(`[*|id="${fileXpointer}"]`)  
+                || includedDoc.querySelector('text');
             } else {
               includedTextElem = includedDoc.querySelector('text');
             }
