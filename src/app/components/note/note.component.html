@@ -5,7 +5,7 @@
             </evt-content-viewer>
         </ng-container>
         <ng-container *ngSwitchDefault>
-            <button #popover="ngbPopover" type="button" class="btn btn-link popover-toggle evt-trigger" [ngbPopover]="popContent"
+            <button #popover="ngbPopover" type="button" class="btn btn-link popover-toggle evt-trigger" [ngbPopover]="popContent" aria-label="Open note" aria-role="button"
                 [autoClose]="'outside'" popoverClass="evt-note-popover {{data?.noteType}}" container="body" [placement]="['auto']"
                 (click)="onTriggerClicked($event)" [attr.data-note-type]="data.noteType">
                 <span class="note-icon">

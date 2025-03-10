@@ -147,10 +147,6 @@ export class EVTStatusService {
         }),
     );
 
-    public currentUrl$: Observable<{ view: string; params: URLParams }> = this.currentStatus$.pipe(
-        map((currentStatus) => this.getUrlFromStatus(currentStatus)),
-    );
-
     public currentNamedEntityId$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
     public currentQuotedId$: BehaviorSubject<string> = new BehaviorSubject(undefined);
@@ -161,9 +157,13 @@ export class EVTStatusService {
         private evtModelService: EVTModelService,
         private router: Router,
         private route: ActivatedRoute,
+        private appConfig: AppConfig,
     ) {
-        this.currentStatus$.subscribe((currentStatus) => {
-            const { view, params } = this.getUrlFromStatus(currentStatus);
+        combineLatest([
+            this.appConfig.fileConfigUrl$,
+            this.currentStatus$
+        ]).subscribe(([fileConfigUrl, currentStatus]) => {
+            const { view, params } = this.getUrlFromStatus(fileConfigUrl, currentStatus);
             if (Object.keys(params).length > 0) {
                 this.router.navigate([`/${view}`], { queryParams: params });
             } else {
@@ -190,7 +190,7 @@ export class EVTStatusService {
         ).subscribe(() => this.currentNamedEntityId$.next(undefined));
     }
 
-    getUrlFromStatus(status: AppStatus) {
+    getUrlFromStatus(fileConfigUrl: string, status: AppStatus) {
         const params = {
             d: status.document || '',
             p: status.page?.id ?? '',
@@ -198,6 +198,7 @@ export class EVTStatusService {
             ws: status.witnesses.join(','),
             vs: status.versions.join(','),
             lr: status.changeLayerData.selectedLayer,
+            fileConfigUrl: fileConfigUrl
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
