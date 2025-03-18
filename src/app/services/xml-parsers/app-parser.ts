@@ -18,6 +18,7 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             id: getID(rdg),
             attributes: this.attributeParser.parse(rdg),
             witIDs: this.parseReadingWitnesses(rdg) || [],
+            excludedWitIDs: this.parseExcludedWitnesses(rdg),
             content: this.parseAppReadingContent(rdg),
             significant: this.isReadingSignificant(rdg),
             class: rdg.tagName.toLowerCase(),
@@ -29,6 +30,13 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
         return rdg.getAttribute('wit')?.split('#')
             .map((el) => removeSpaces(el))
             .filter((el) => el.length !== 0);
+    }
+
+    private parseExcludedWitnesses(rdg: XMLElement) {
+        const result = rdg.getAttribute('exclude')?.split('#')
+            .map((el) => removeSpaces(el))
+            .filter((el) => el.length !== 0);
+        return result ?? [];
     }
 
     private parseAppReadingContent(rdg: XMLElement) {
@@ -116,7 +124,8 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             changes: (lemma !== undefined) ? this.orderChanges(allReadings, lemma) : [],
             orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
             additionalAttributes: new AdditionalAttributes(),
-            exponent: ''
+            exponent: '',
+            isWitnessExcluded: ApparatusEntry.prototype.isWitnessExcluded
         };
     }
 

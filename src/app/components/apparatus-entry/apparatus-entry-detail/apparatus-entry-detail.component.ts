@@ -5,6 +5,7 @@ import { EVTModelService } from '../../../services/evt-model.service';
 import { distinctUntilChanged } from 'rxjs';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { ApparatusEntryDetailService } from './apparatus-entry-detail.service';
+import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 
 
 @Component({
@@ -36,16 +37,19 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   public get isTabContentExpanded(): boolean {
     return this.currentTab !== undefined;
   }
-  private currentTab: AppTabType = undefined;
+  currentTab: AppTabType = undefined;
 
   getLayerData(changeData: ChangeLayerData) {
     this.orderedLayers = changeData?.layerOrder;
   }
 
+  showLemma: boolean = false;
+
   constructor(
     public evtModelService: EVTModelService,
     public evtStatusService: EVTStatusService,
     private apparatusEntryDetailService: ApparatusEntryDetailService,
+    private witnessPanelService: WitnessPanelService,
   ) {
   }
 
@@ -63,6 +67,8 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     this.readingItems = readings.filter(rdg => !!rdg).map((rdg, i) => {
       return { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
     });
+    const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
+    this.showLemma = !!this.data.lemma && !isWitnessExcluded;
   }
 
   ngOnDestroy() {
@@ -99,6 +105,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       this.currentTab = tab;
     }
   }
+
 }
 
 export interface ReadingItem {

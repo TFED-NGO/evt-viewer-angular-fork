@@ -61,8 +61,10 @@ export class ApparatusEntryComponent implements OnInit {
   ngOnInit(): void {
     this.isInWitnessPanel = !!this.witnessPanelService;
     if (this.isInWitnessPanel) {
-      this.selectedReading = this.data.orderedReadings
-        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId) || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
+      const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
+      this.selectedReading = isWitnessExcluded ? this.data.lemma : this.data.orderedReadings
+        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId) 
+        || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
     }
   }
 

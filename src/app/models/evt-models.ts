@@ -219,6 +219,11 @@ export class ApparatusEntry extends GenericElement {
     additionalAttributes: AdditionalAttributes;
     criticalContent: ParseResult<GenericElement>[];
     exponent: string;
+
+    isWitnessExcluded(witnessId: string): boolean {
+        const isWitnessExcluded = this.readings.some(x => x.excludedWitIDs.includes(witnessId));
+        return isWitnessExcluded;
+    }
 }
 
 export class AdditionalAttributes {
@@ -323,6 +328,7 @@ export class Analogue extends GenericElement {
 export class Reading extends GenericElement {
     id: string;
     witIDs: string[];
+    excludedWitIDs: string [];
     significant: boolean;
     varSeq?: number;
 }
