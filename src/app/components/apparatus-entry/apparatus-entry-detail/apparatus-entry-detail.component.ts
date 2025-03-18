@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
@@ -49,7 +49,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     public evtModelService: EVTModelService,
     public evtStatusService: EVTStatusService,
     private apparatusEntryDetailService: ApparatusEntryDetailService,
-    private witnessPanelService: WitnessPanelService,
+    @Optional() private witnessPanelService?: WitnessPanelService,
   ) {
   }
 
@@ -67,8 +67,14 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     this.readingItems = readings.filter(rdg => !!rdg).map((rdg, i) => {
       return { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
     });
-    const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
-    this.showLemma = !!this.data.lemma && !isWitnessExcluded;
+
+    if (this.witnessPanelService) {
+      const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
+      this.showLemma = !!this.data.lemma && !isWitnessExcluded;
+    }
+    else{
+      this.showLemma = false;
+    }
   }
 
   ngOnDestroy() {
