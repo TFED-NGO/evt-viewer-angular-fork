@@ -21,6 +21,11 @@
                 <div class="col">
                     <div class="d-flex align-items-center" *ngFor="let readingItem of readingItems">
                         <div class="info-rdg pe-2 fw-semibold align-self-start">
+                            <ng-container *ngIf="readingItem === readingItems[0]">
+                                <span class="me-1" *ngFor="let content of data.criticalContent">
+                                    <evt-content-viewer [content]="content"></evt-content-viewer>
+                                </span>
+                            </ng-container>
                             <evt-reading *ngIf="readingItem.reading.content.length !== 0"
                                 [data]="readingItem.reading"></evt-reading>
                             <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' | translate}}</span>
@@ -29,6 +34,12 @@
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                         </span>
+                        <ng-container *ngFor="let note of readingItem.reading.notes">
+                                <div class="px-2">{{'notes' | translate | uppercase }}:
+                                    <evt-content-viewer  *ngFor="let element of note.content" 
+                                    [content]="element"></evt-content-viewer>
+                                </div>
+                            </ng-container>
                         <span *ngIf="readingItem.reading.excludedWitIDs.length">
                             <span class="fw-bold ps-3">Exclude: </span>
                             <ng-container *ngFor="let excludedWitId of readingItem.reading.excludedWitIDs">
@@ -93,6 +104,9 @@
                         <div class="mb-2">
                             <ng-container *ngIf="readingItem.isLemma; else readingLabel">
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
+                                    <span class="me-1 info-rdg" *ngFor="let content of data.criticalContent">
+                                        <evt-content-viewer [content]="content"></evt-content-viewer>
+                                    </span>
                             </ng-container>
                             <ng-template #readingLabel>
                                 <div class="mb-2">
@@ -114,12 +128,11 @@
                             </ng-container>
                             <ng-container *ngFor="let note of readingItem.reading.notes">
                                 <div>{{'notes' | translate | uppercase }}:
-                                    <evt-content-viewer *ngFor="let element of note.content"
+                                    <evt-content-viewer  *ngFor="let element of note.content"
                                         [content]="element"></evt-content-viewer>
                                 </div>
                             </ng-container>
-                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg">{{'omit'
-                                | translate}}</span>
+                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg">{{'omit' | translate}}</span>
                             <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
                                 <span class="info-label">{{'wit' | translate}}</span>
                                 <evt-witness-metadata
