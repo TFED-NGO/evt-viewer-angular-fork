@@ -65,7 +65,8 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     this.notSignificantReadings = this.data.readings.filter((rdg) => !rdg.significant);
     const readings = [this.data.lemma, ...this.significantReadings, ...this.notSignificantReadings];
     this.readingItems = readings.filter(rdg => !!rdg).map((rdg, i) => {
-      return { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
+      const result = { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
+      return result;
     });
 
     if (this.witnessPanelService) {

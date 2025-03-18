@@ -331,6 +331,7 @@ export class Reading extends GenericElement {
     excludedWitIDs: string [];
     significant: boolean;
     varSeq?: number;
+    notes: Note[]
 }
 
 export interface GridItem {
