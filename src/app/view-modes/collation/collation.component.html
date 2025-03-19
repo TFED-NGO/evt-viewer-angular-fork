@@ -26,7 +26,7 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ 'addWitness' | translate }}</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click'); onSearchChanged('')"></button>
     </div>
     <div class="modal-body">
         <input type="text" class="form-control mb-2" placeholder="Search Witness (case sensitive)" [ngModel]="searchWitness" (ngModelChange)="onSearchChanged($event)"  />

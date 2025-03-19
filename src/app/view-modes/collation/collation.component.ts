@@ -28,10 +28,6 @@ export class CollationComponent implements OnDestroy {
 
   backIcon: EvtIconInfo = { iconSet: 'fas', icon: 'arrow-left' };
 
-  onSearchChanged(searchTerm: string) {
-    this.updateSearchTerm$.next(searchTerm);
-  }
-
   public currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
     this.evtModelService.flattenedWitnesses$,
     this.evtStatusService.currentStatus$
@@ -69,53 +65,52 @@ export class CollationComponent implements OnDestroy {
   ]).pipe(
     map(([witnesses, status, searchTerm]) => {
       if (!searchTerm) {
-        // If there is no search term, we keep the hierarchical structure
+        // No search → Return the hierarchical structure
         return witnesses.map(w => this.createPopoverWitnessItem(w, status.witnesses));
       }
 
-      // If searchTerm exists we flatten hierarchy and return only matching witnesses and children
-      const flatResult: ModalWitnessItem[] = [];
-      witnesses.forEach(w => this.flattenMatchingWitnesses(w, status.witnesses, searchTerm, flatResult));
-      return flatResult;
+      // Search term exists → Return only matching witnesses and their children (flattened)
+      const flatResult: Map<string, ModalWitnessItem> = new Map();
+      witnesses.forEach(w => this.collectMatchingWitnesses(w, status.witnesses, searchTerm, flatResult));
+      return Array.from(flatResult.values());
     })
   );
 
   /**
-   * Recursively checks if a witness or its children match the search term,
-   * and if so, adds them to the result as a flat list.
+   * Recursively finds matching witnesses and their children,
+   * adding ONLY them to the result (excluding parents unless they match search term).
    */
-  private flattenMatchingWitnesses(witness: Witness, currentWitnessesIds: string[], searchTerm: string, result: ModalWitnessItem[]): boolean {
-    let isMatching = witness.name.includes(searchTerm);
+  private collectMatchingWitnesses(witness: Witness, currentWitnessesIds: string[], searchTerm: string, result: Map<string, ModalWitnessItem>): void {
+    let matches = witness.name.includes(searchTerm);
 
-    let filteredChildren: ModalWitnessItem[] = [];
+    // Recursively check all children
     for (let child of witness.witnesses) {
-      if (this.flattenMatchingWitnesses(child, currentWitnessesIds, searchTerm, result)) {
-        isMatching = true;
-        filteredChildren.push({
-          id: child.id,
-          label: child.name,
-          witnesses: [],
-          canSelect: !currentWitnessesIds.includes(child.id)
-        });
+      this.collectMatchingWitnesses(child, currentWitnessesIds, searchTerm, result);
+
+      if (child.name.includes(searchTerm)) {
+        matches = true;
+        if (!result.has(child.id)) {
+          result.set(child.id, {
+            id: child.id,
+            label: child.name,
+            witnesses: [],
+            canSelect: !currentWitnessesIds.includes(child.id)
+          });
+        }
       }
     }
 
-    if (isMatching) {
-      result.push({
+    // If the witness itself matches, add it
+    if (matches && !result.has(witness.id)) {
+      result.set(witness.id, {
         id: witness.id,
         label: witness.name,
         witnesses: [],
         canSelect: !currentWitnessesIds.includes(witness.id)
       });
-      return true;
     }
-
-    return false;
   }
 
-  /**
-   * Creates a hierarchical structure when no search term is present.
-   */
   private createPopoverWitnessItem(witness: Witness, currentWitnessesIds: string[]): ModalWitnessItem {
     return {
       id: witness.id,
@@ -123,6 +118,10 @@ export class CollationComponent implements OnDestroy {
       witnesses: witness.witnesses.map(w => this.createPopoverWitnessItem(w, currentWitnessesIds)),
       canSelect: !currentWitnessesIds.includes(witness.id)
     };
+  }
+
+  onSearchChanged(searchTerm: string) {
+    this.updateSearchTerm$.next(searchTerm);
   }
 
 
