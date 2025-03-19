@@ -48,8 +48,8 @@ export class WitnessPanelComponent implements OnInit {
         const parsedApp = this.appParser.parse(app) as ApparatusEntry;
         const from = Attribute.createOrDefault(getFromAttributeOrDefault(app));
         if (!from) {
-          console.error("App has no from attribute", app);
-          throw new Error("From attribute is required");
+          console.error("App has no from attribute, is it inline?", app);
+          return {parsedApp, from: null, to: null}
         }
 
         const to = Attribute.createOrDefault(getToAttributeOrDefault(app));
@@ -101,7 +101,8 @@ export class WitnessPanelComponent implements OnInit {
 
           const { index: toIndex, parent: toParent } = toResult;
           if (fromParent === toParent) {
-            fromParent.splice(fromIndex, fromIndex - toIndex + 1, parsedApp);
+            const deleteCount = Math.abs(toIndex - fromIndex) + 1; 
+            fromParent.splice(fromIndex, deleteCount, parsedApp);
           } else {
             console.error("from and to elements are in different parent nodes. Cannot splice.");
           }
