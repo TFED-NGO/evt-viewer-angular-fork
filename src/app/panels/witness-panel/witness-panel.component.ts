@@ -102,7 +102,6 @@ export class WitnessPanelComponent implements OnInit {
           const { index: toIndex, parent: toParent } = toResult;
           if (fromParent === toParent) {
             fromParent.splice(fromIndex, fromIndex - toIndex + 1, parsedApp);
-            console.log(parsedApp)
           } else {
             console.error("from and to elements are in different parent nodes. Cannot splice.");
           }
