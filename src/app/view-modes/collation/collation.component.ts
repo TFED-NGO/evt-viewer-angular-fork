@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, TemplateRef, ViewChild } from '@angul
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { Witness } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
@@ -20,12 +20,17 @@ export class CollationComponent implements OnDestroy {
   @ViewChild('collationPanel', { static: false }) collationPanel: ElementRef;
   @ViewChild('witnessesModal', { static: false }) witnessesModal: ModalComponent;
   private witnessModalRef: NgbModalRef = null;
-
+  searchWitness = '';
+  updateSearchTerm$ = new BehaviorSubject<string>('');
   private latestWitnesses$ = new BehaviorSubject<WitnessItem[]>([]);
   private itemsChanged$ = new Subject<void>();
   private itemsChangedSubs: Subscription;
 
   backIcon: EvtIconInfo = { iconSet: 'fas', icon: 'arrow-left' };
+
+  onSearchChanged(searchTerm: string) {
+    this.updateSearchTerm$.next(searchTerm);
+  }
 
   public currentWitnesses$: Observable<WitnessItem[]> = combineLatest([
     this.evtModelService.flattenedWitnesses$,
@@ -39,7 +44,7 @@ export class CollationComponent implements OnDestroy {
         .map((w, i) => {
           if (typeof w.name !== 'string') {
             throw new Error("Witness name must be a string but was: " + w.name);
-          } 
+          }
 
           return {
             id: w.id,
@@ -56,31 +61,70 @@ export class CollationComponent implements OnDestroy {
       this.updateGridsterOptions(witnesses);
     })
   );
-  
+
   public modalWitnesses$: Observable<ModalWitnessItem[]> = combineLatest([
     this.evtModelService.witnesses$,
-    this.evtStatusService.currentStatus$
+    this.evtStatusService.currentStatus$,
+    this.updateSearchTerm$.pipe(debounceTime(300), distinctUntilChanged())
   ]).pipe(
-    map(([witnesses, status]) => {
-      const result = witnesses
-        .map(w => {
-          if (typeof w.name !== 'string') {
-            throw new Error("Witness name must be a string but was: " + w.name);
-          }
-          return this.createPopoverWitnessItem(w, status.witnesses);
-        });
-      return result;
-    }),
+    map(([witnesses, status, searchTerm]) => {
+      if (!searchTerm) {
+        // If there is no search term, we keep the hierarchical structure
+        return witnesses.map(w => this.createPopoverWitnessItem(w, status.witnesses));
+      }
+
+      // If searchTerm exists we flatten hierarchy and return only matching witnesses and children
+      const flatResult: ModalWitnessItem[] = [];
+      witnesses.forEach(w => this.flattenMatchingWitnesses(w, status.witnesses, searchTerm, flatResult));
+      return flatResult;
+    })
   );
 
+  /**
+   * Recursively checks if a witness or its children match the search term,
+   * and if so, adds them to the result as a flat list.
+   */
+  private flattenMatchingWitnesses(witness: Witness, currentWitnessesIds: string[], searchTerm: string, result: ModalWitnessItem[]): boolean {
+    let isMatching = witness.name.includes(searchTerm);
+
+    let filteredChildren: ModalWitnessItem[] = [];
+    for (let child of witness.witnesses) {
+      if (this.flattenMatchingWitnesses(child, currentWitnessesIds, searchTerm, result)) {
+        isMatching = true;
+        filteredChildren.push({
+          id: child.id,
+          label: child.name,
+          witnesses: [],
+          canSelect: !currentWitnessesIds.includes(child.id)
+        });
+      }
+    }
+
+    if (isMatching) {
+      result.push({
+        id: witness.id,
+        label: witness.name,
+        witnesses: [],
+        canSelect: !currentWitnessesIds.includes(witness.id)
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Creates a hierarchical structure when no search term is present.
+   */
   private createPopoverWitnessItem(witness: Witness, currentWitnessesIds: string[]): ModalWitnessItem {
     return {
       id: witness.id,
       label: witness.name,
       witnesses: witness.witnesses.map(w => this.createPopoverWitnessItem(w, currentWitnessesIds)),
       canSelect: !currentWitnessesIds.includes(witness.id)
-    }
+    };
   }
+
 
   public options: GridsterConfig = {
     gridType: GridType.Fit,
