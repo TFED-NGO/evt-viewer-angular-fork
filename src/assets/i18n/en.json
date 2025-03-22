@@ -201,5 +201,6 @@
     "form": "Form",
     "noWitnessesAvailable": "No witness available",
     "add": "Add",
-    "remove": "Remove"
+    "remove": "Remove",
+    "searchWitness": "Search Witnesses"
 }

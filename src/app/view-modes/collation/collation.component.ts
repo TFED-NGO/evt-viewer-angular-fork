@@ -81,13 +81,13 @@ export class CollationComponent implements OnDestroy {
    * adding ONLY them to the result (excluding parents unless they match search term).
    */
   private collectMatchingWitnesses(witness: Witness, currentWitnessesIds: string[], searchTerm: string, result: Map<string, ModalWitnessItem>): void {
-    let matches = witness.name.includes(searchTerm);
+    let matches = witness.name.toLowerCase().includes(searchTerm.toLowerCase());
 
     // Recursively check all children
     for (let child of witness.witnesses) {
       this.collectMatchingWitnesses(child, currentWitnessesIds, searchTerm, result);
 
-      if (child.name.includes(searchTerm)) {
+      if (child.name.toLowerCase().includes(searchTerm.toLowerCase())) {
         matches = true;
         if (!result.has(child.id)) {
           result.set(child.id, {

@@ -200,5 +200,6 @@
   "form": "Forma",
   "noWitnessesAvailable": "Nessun testimone disponibile",
   "add": "Aggiungi",
-  "remove": "Rimuovi"
+  "remove": "Rimuovi",
+  "searchWitness": "Cerca testimoni"
 }
