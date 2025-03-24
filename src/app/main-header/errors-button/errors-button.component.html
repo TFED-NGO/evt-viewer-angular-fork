@@ -1,0 +1,28 @@
+<button class="btn btn-secondary" *ngIf="(errors | async) as errorsList" (click)="openModal()">
+    <span>Errors</span>
+    <evt-icon class="ms-2" [ngStyle]="{'color': getColor(errorsList)}"
+        [iconInfo]="{ icon: getIcon(errorsList), iconSet: 'fas' }">
+    </evt-icon>
+</button>
+
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">{{ 'Errors' | translate }}</h4>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');"></button>
+    </div>
+    <div class="modal-body" *ngIf="(errors | async) as errorsList">
+        <ng-container *ngIf="errorsList?.length > 0; else noErrors">
+            <p>The source document have the following errors:</p>
+            <div *ngFor="let error of errorsList">
+                <evt-icon class="me-2" [iconInfo]="{ icon: getErrorIcon(error), iconSet: 'fas' }"
+                    [ngStyle]="{'color': getErrorColor(error)}">
+                </evt-icon>
+                <span>{{ error.error }}</span>
+            </div>
+        </ng-container>
+        <ng-template #noErrors>
+            <p>No errors found.</p>
+        </ng-template>
+    </div>
+</ng-template>
