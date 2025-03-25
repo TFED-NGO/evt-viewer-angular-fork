@@ -11,20 +11,23 @@ import { ModalService } from 'src/app/ui-components/modal/modal.service';
 export class ErrorsButtonComponent implements OnInit {
   @ViewChild('content', { static: true }) content!: TemplateRef<any>;
   private witnessModalRef: NgbModalRef = null;
-  errors = this.errorService.errors$.asObservable();
-
+  errors$ = this.errorService.errors$;
+  
   constructor(
     private modalService: ModalService,
     private errorService: ErrorsService,
   ) { 
+  }
 
+  isLoading() {
+    return this.errorService.isLoading;
   }
 
   ngOnInit(): void {
   }
 
   openModal() {
-    this.witnessModalRef = this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title' })
+    this.witnessModalRef = this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'lg' })
   }
 
   closeModal() {

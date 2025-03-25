@@ -5,27 +5,52 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ErrorsService {
+  private errors$$ = new BehaviorSubject<SourceError[]>([]);
+  errors$ = this.errors$$.asObservable();
 
-  errors$ = new BehaviorSubject<SourceError[]>([]);
+  private _isLoading = true;
+
+  get isLoading() {
+    return this._isLoading;
+  }
 
   constructor() { }
 
-  onError(error: string) {
-    console.error(error);
-    const sourceError: SourceError = { error, type: 'error' }
-    const errors = this.errors$.getValue();
-    this.errors$.next([...errors, sourceError]);
+  onError(error: string, elements?: HTMLElement[]) {
+    const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
+    const sourceError: SourceError = { errorMessage: error, type: 'error', outerHTMLs: outherHtmlsOrDefault }
+    const errors = this.errors$$.getValue();
+    if(errors.some(e => e.errorMessage === sourceError.errorMessage)){
+      return;
+    }
+    
+    console.error(error, elements);
+    this.errors$$.next([...errors, sourceError]);
   }
 
-  onWarning(error: string) {
-    console.warn(error);
-    const sourceError: SourceError = { error, type: 'warning' }
-    const errors = this.errors$.getValue();
-    this.errors$.next([...errors, sourceError]);
+  onWarning(error: string, elements?: HTMLElement[]) {
+    const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
+    const sourceError: SourceError = { errorMessage: error, type: 'warning', outerHTMLs: outherHtmlsOrDefault }
+    const errors = this.errors$$.getValue();
+    if(errors.some(e => e.errorMessage === sourceError.errorMessage)){
+      return;
+    }
+    
+    console.warn(error, elements);
+    this.errors$$.next([...errors, sourceError]);
+  }
+
+  loadingStart() {
+    this._isLoading = true;
+  }
+
+  loadingEnd() {
+    this._isLoading = false;
   }
 }
 
 export interface SourceError {
-  error: String,
-  type: 'error' | 'warning'
+  errorMessage: String,
+  outerHTMLs: string[];
+  type: 'error' | 'warning',
 }

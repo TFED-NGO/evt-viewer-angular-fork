@@ -1,28 +1,37 @@
-<button class="btn btn-secondary" *ngIf="(errors | async) as errorsList" (click)="openModal()">
+<button class="btn btn-secondary" *ngIf="(errors$ | async) as errorsList" (click)="openModal()">
     <span>Errors</span>
-    <evt-icon class="ms-2" [ngStyle]="{'color': getColor(errorsList)}"
-        [iconInfo]="{ icon: getIcon(errorsList), iconSet: 'fas' }">
-    </evt-icon>
+    <div class="spinner-border spinner-border-sm text-tertiary ms-2" role="status" *ngIf="isLoading(); else errorIcon">
+        <span class="sr-only">Loading...</span>
+    </div>
+    <ng-template #errorIcon>
+        <evt-icon class="ms-2 h5" [ngStyle]="{'color': getColor(errorsList)}"
+            [iconInfo]="{ icon: getIcon(errorsList), iconSet: 'fas' }">
+        </evt-icon>
+    </ng-template>
 </button>
 
 
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ 'Errors' | translate }}</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click');"></button>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <div class="modal-body" *ngIf="(errors | async) as errorsList">
+    <div class="modal-body" *ngIf="(errors$ | async) as errorsList">
         <ng-container *ngIf="errorsList?.length > 0; else noErrors">
             <p>The source document have the following errors:</p>
             <div *ngFor="let error of errorsList">
                 <evt-icon class="me-2" [iconInfo]="{ icon: getErrorIcon(error), iconSet: 'fas' }"
                     [ngStyle]="{'color': getErrorColor(error)}">
                 </evt-icon>
-                <span>{{ error.error }}</span>
+                <span>{{ error.errorMessage }}</span>
+                <div *ngFor="let outerHTML of error.outerHTMLs">
+                    <handy-syntax-highlighter language="markup"
+                        [content]="outerHTML | xmlBeautify"></handy-syntax-highlighter>
+                </div>
             </div>
         </ng-container>
         <ng-template #noErrors>
-            <p>No errors found.</p>
+            <p>No error found.</p>
         </ng-template>
     </div>
 </ng-template>

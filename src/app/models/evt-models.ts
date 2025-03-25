@@ -1,6 +1,7 @@
 import { Type } from '@angular/core';
 import { EditionLevelType } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
+import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
 
 export interface EditorialConvention {
     element: string;
@@ -109,7 +110,7 @@ export class Attribute {
     valueWithoutRef: string;
 
     private constructor(value: string) {
-        if(!value) throw new Error('value is required');
+        if (!value) throw new Error('value is required');
 
         this.valueWithoutRef = value.withoutSelectorCharacter();
         this.valueRef = value.withSelectorCharacter();
@@ -131,6 +132,16 @@ export class Attribute {
 
     static createOrDefault(value: string): Attribute | null {
         return value ? new Attribute(value) : null;
+    }
+
+    static createFromOrDefault(app: HTMLElement): Attribute | null {
+        const from = getFromAttributeOrDefault(app);
+        return Attribute.createOrDefault(from);
+    }
+
+    static createToOrDefault(app: HTMLElement): Attribute | null {
+        const to = getToAttributeOrDefault(app);
+        return Attribute.createOrDefault(to);
     }
 }
 
@@ -328,7 +339,7 @@ export class Analogue extends GenericElement {
 export class Reading extends GenericElement {
     id: string;
     witIDs: string[];
-    excludedWitIDs: string [];
+    excludedWitIDs: string[];
     significant: boolean;
     varSeq?: number;
     notes: Note[]
@@ -1060,6 +1071,14 @@ export class StyleDefDecl extends GenericElement {
     schemeVersion: string;
 }
 
+export type VariantEncodingType = 'double-end-point' | 'inline';
+export type VariantEncodingLocationType = 'external' | 'internal';
+
+export interface VariantEncoding {
+    method: VariantEncodingType;
+    location: VariantEncodingLocationType;
+}
+
 export class EncodingDesc extends GenericElement {
     structuredData: boolean;
     projectDesc: ProjectDesc[];
@@ -1073,6 +1092,7 @@ export class EncodingDesc extends GenericElement {
     unitDecl: Array<ParseResult<GenericElement>>; // TODO: Add specific type when unitDecl is handled
     schemaSpec: Array<ParseResult<GenericElement>>; // TODO: Add specific type when schemaSpec is handled
     schemaRef: Array<ParseResult<GenericElement>>; // TODO: Add specific type when schemaRef is handled
+    variantEncoding: VariantEncoding;
 }
 
 export class ProjectDesc extends GenericElement {
