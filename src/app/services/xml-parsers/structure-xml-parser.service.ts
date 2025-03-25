@@ -9,6 +9,7 @@ import { FROM_ATTRIBUTE, TO_ATTRIBUTE } from 'src/app/models/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { AlphabetService } from '../alphabet.service';
 import { AppParser } from './app-parser';
+import { ErrorsService } from '../errors.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class StructureXmlParserService {
   constructor(
     private genericParserService: GenericParserService,
     private alphabet: AlphabetService,
+    private errorService: ErrorsService,
   ) {
   }
 
@@ -26,6 +28,7 @@ export class StructureXmlParserService {
   private readonly pageTagName = AppConfig.evtSettings.edition.editionStructureSeparator;
   private readonly bodyTagName = 'body';
   //private readonly backTagName = 'back';
+
   allApps: XMLElement[] = [];
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
@@ -65,25 +68,81 @@ export class StructureXmlParserService {
     return editionStructure;
   }
 
-  public processCriticalApparatus(el: XMLElement, editionStructure: EditionStructure): void {
+
+  public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
     if (!this.allApps.length) {
-      const apps = Array.from(el.querySelectorAll("app"));
-      if (!apps.length) {
-        console.warn("There are no apps in the element");
+      this.allApps = Array.from(source.querySelectorAll("app"));
+      if (!this.allApps.length) {
+        this.errorService.onWarning('There are no apps in the source');
+        return;
       }
-      this.allApps = apps as XMLElement[];
+
+      // this can load after some times as errors can be available later
+      setTimeout(() => {
+        this.errorService.loadingStart();
+
+        for (const app of this.allApps) {
+          const from = Attribute.createFromOrDefault(app as HTMLElement);
+          if (!from) {
+            this.errorService.onError('From attribute is missing:', [app as HTMLElement]);
+            continue;
+          }
+
+          const to = Attribute.createToOrDefault(app);
+          if (!to) {
+            continue;
+          }
+
+          const fromElement = source.querySelector(`[*|id='${from.valueWithoutRef}']`);
+          const toElement = source.querySelector(`[*|id='${to.valueWithoutRef}']`);
+
+          // intersecting apps
+          const otherApps = this.allApps.filter(x => !x.isEqualNode(app));
+          for (const otherApp of otherApps) {
+            const otherFrom = Attribute.createFromOrDefault(otherApp as HTMLElement);
+            const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
+            if (!otherElement) {
+              this.errorService.onError(`There is no element with xml:id ${otherFrom.valueWithoutRef}`, [otherApp]);
+              continue;
+            }
+
+            const isAfterFromInclusive =
+              (fromElement.compareDocumentPosition(otherElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+              otherElement.isEqualNode(fromElement);
+
+            const isBeforeToInclusive =
+              (otherElement.compareDocumentPosition(toElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+              otherElement.isEqualNode(toElement);
+
+            if (isAfterFromInclusive && isBeforeToInclusive) {
+              const wit = 'wit';
+              const withSelector = `[${wit}]`;
+              const splitBy = ' ';
+
+              const appWits = Array.from(app.querySelectorAll(withSelector)).flatMap(x => x.getAttribute(wit).split(splitBy));
+              const otherAppWits = Array.from(otherApp.querySelectorAll(withSelector)).flatMap(x => x.getAttribute(wit).split(splitBy));
+              const allWits = appWits.concat(otherAppWits);
+              const duplicates = findDuplicates(allWits)
+              if (duplicates.length) {
+                this.errorService.onError(`The following elements have a duplicated 
+                  witness while intersecting each others: ${duplicates}`, [app, otherApp]);
+              }
+            }
+          }
+        }
+
+        this.errorService.loadingEnd();
+      }, 1_000);
     }
 
-    if (this.allApps.length) {
-      const result = this.getDocumentApparatusEntries(editionStructure.pages);
-      result.apps.forEach((value, key) => {
-        editionStructure.documentApparatusEntries.apps.set(key, value);
-      });
-    }
+    const result = this.getDocumentApparatusEntries(editionStructure.pages);
+    result.apps.forEach((value, key) => {
+      editionStructure.documentApparatusEntries.apps.set(key, value);
+    });
 
     let counter = 0;
     const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
-    const enumeratedByElements = Array.from(el.querySelectorAll(enumerateBy));
+    const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
     const enumeratedByJsonElements: string[] = [];
     for (let enumeratedByElement of enumeratedByElements) {
       const enumeratedByParsed = this.genericParserService.parse(enumeratedByElement as XMLElement);
@@ -129,6 +188,21 @@ export class StructureXmlParserService {
       if (enumerateBy !== 'global' && matchesSelector) {
         counter = 0;
       }
+    }
+
+    function findDuplicates(array: string[]): string[] {
+      const uniqueElements = new Set();
+      const duplicates = [];
+
+      array.forEach(item => {
+        if (uniqueElements.has(item)) {
+          duplicates.push(item);
+        } else {
+          uniqueElements.add(item);
+        }
+      });
+
+      return duplicates;
     }
   }
 

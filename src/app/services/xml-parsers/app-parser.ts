@@ -11,9 +11,11 @@ import { getTopMostAncestor } from 'src/app/utils/dom-utils';
 export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     private readingGroupTagName = 'rdgGrp';
     attributeParser = createParser(AttributeParser, this.genericParse);
+    noteParser = createParser(NoteParser, this.genericParse);
+
 
     public parse(rdg: XMLElement): Reading {
-        return {
+        const result = {
             type: Reading,
             id: getID(rdg),
             attributes: this.attributeParser.parse(rdg),
@@ -23,7 +25,9 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             significant: this.isReadingSignificant(rdg),
             class: rdg.tagName.toLowerCase(),
             varSeq: parseInt(rdg.getAttribute('varSeq')),
+            notes: this.parseReadingNotes(rdg),
         };
+        return result;
     }
 
     private parseReadingWitnesses(rdg: XMLElement) {
@@ -60,6 +64,12 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
 
     private isSignificant(notSignificantReading: string[], attributes: NamedNodeMap): boolean {
         return !Array.from(attributes).some(({ name, value }) => notSignificantReading.includes(`${name}=${value}`));
+    }
+
+    private parseReadingNotes(rdg: XMLElement): Note[] {
+        const notes = Array.from(rdg.querySelectorAll('note'))
+            .map((note: XMLElement) => this.noteParser.parse(note))
+        return notes;
     }
 }
 
@@ -147,10 +157,8 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     }
 
     private parseAppNotes(appEntry: XMLElement): Note[] {
-        const notes = Array.from(appEntry.children)
-            .filter(({ tagName }) => tagName === this.noteTagName)
+        const notes = Array.from(appEntry.querySelectorAll(this.noteTagName))
             .map((note: XMLElement) => this.noteParser.parse(note));
-
         return notes;
     }
 

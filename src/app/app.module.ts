@@ -158,6 +158,7 @@ import { ModalWitnessItemComponent } from './view-modes/collation/modal-witness-
 import { WitnessIdComponent } from './components/witness-id/witness-id.component';
 import { WitnessMetadataComponent } from './components/witness-metadata/witness-metadata.component';
 import { HrComponent } from './ui-components/hr/hr.component';
+import { ErrorsButtonComponent } from './main-header/errors-button/errors-button.component';
 
 const routes: Routes = [
 ];
@@ -304,6 +305,7 @@ const DynamicComponents = [
     WitnessIdComponent,
     WitnessMetadataComponent,
     HrComponent,
+    ErrorsButtonComponent,
   ],
   imports: [
     AppRoutingModule,

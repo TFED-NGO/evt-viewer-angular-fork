@@ -21,6 +21,11 @@
                 <div class="col">
                     <div class="d-flex align-items-center" *ngFor="let readingItem of readingItems">
                         <div class="info-rdg pe-2 fw-semibold align-self-start">
+                            <ng-container *ngIf="readingItem === readingItems[0]">
+                                <span class="me-1" *ngFor="let content of data.criticalContent">
+                                    <evt-content-viewer [content]="content"></evt-content-viewer>
+                                </span>
+                            </ng-container>
                             <evt-reading *ngIf="readingItem.reading.content.length !== 0"
                                 [data]="readingItem.reading"></evt-reading>
                             <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' | translate}}</span>
@@ -29,10 +34,16 @@
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                         </span>
+                        <ng-container *ngFor="let note of readingItem.reading.notes">
+                                <div class="px-2">{{'notes' | translate | uppercase }}:
+                                    <evt-content-viewer  *ngFor="let element of note.content" 
+                                    [content]="element"></evt-content-viewer>
+                                </div>
+                            </ng-container>
                         <span *ngIf="readingItem.reading.excludedWitIDs.length">
                             <span class="fw-bold ps-3">Exclude: </span>
                             <ng-container *ngFor="let excludedWitId of readingItem.reading.excludedWitIDs">
-                               <evt-witness-id [witnessId]="excludedWitId"></evt-witness-id>
+                                <evt-witness-id [witnessId]="excludedWitId"></evt-witness-id>
                             </ng-container>
                         </span>
                     </div>
@@ -56,10 +67,12 @@
     <div class="card-footer app-detail-tabs">
         <ul ngbNav #appEntryTab="ngbNav" class="nav-pills" (click)="$event.stopPropagation()">
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
-                <a class="app-detail-btn" [class.active]="this.currentTab === 'criticalNotes'" ngbNavLink (click)="onTabClicked('criticalNotes')">{{'criticalNotes' |
-                    translate}}</a>
+                <a class="app-detail-btn" [class.active]="this.currentTab === 'criticalNotes'" ngbNavLink
+                    (click)="onTabClicked('criticalNotes')">{{'criticalNotes' | translate}}</a>
                 <ng-template ngbNavContent>
-                    <evt-note *ngFor="let note of data.notes" [data]="note"></evt-note>
+                    <div *ngFor="let note of data.notes">
+                        <evt-note [data]="note"></evt-note>
+                    </div>
                 </ng-template>
             </li>
             <li ngbNavItem="notSignificantRdg" *ngIf="this.notSignificantReadings.length > 0">
@@ -74,7 +87,8 @@
             </li>
 
             <li ngbNavItem="corrSeq" *ngIf="data.changes.length > 0">
-                <a class="source-detail-btn" [class.active]="this.currentTab === 'corrSeq'" ngbNavLink (click)="onTabClicked('corrSeq')">{{'corrSeq' | translate}}</a>
+                <a class="source-detail-btn" [class.active]="this.currentTab === 'corrSeq'" ngbNavLink
+                    (click)="onTabClicked('corrSeq')">{{'corrSeq' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-mod-sequence [data]="data.changes" [orderedLayers]="orderedLayers"
                         [selectedLayer]="selectedLayer">
@@ -82,13 +96,17 @@
                 </ng-template>
             </li>
 
-            <li ngbNavItem="info"> 
-                <a class="app-detail-btn" [class.active]="this.currentTab === 'info'" ngbNavLink (click)="onTabClicked('info')">{{'info' | translate}}</a>
+            <li ngbNavItem="info">
+                <a class="app-detail-btn" [class.active]="this.currentTab === 'info'" ngbNavLink
+                    (click)="onTabClicked('info')">{{'info' | translate}}</a>
                 <ng-template ngbNavContent>
                     <ng-container *ngFor="let readingItem of readingItems">
                         <div class="mb-2">
                             <ng-container *ngIf="readingItem.isLemma; else readingLabel">
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
+                                    <span class="me-1 info-rdg" *ngFor="let content of data.criticalContent">
+                                        <evt-content-viewer [content]="content"></evt-content-viewer>
+                                    </span>
                             </ng-container>
                             <ng-template #readingLabel>
                                 <div class="mb-2">
@@ -108,8 +126,13 @@
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
-                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg">{{'omit'
-                                | translate}}</span>
+                            <ng-container *ngFor="let note of readingItem.reading.notes">
+                                <div>{{'notes' | translate | uppercase }}:
+                                    <evt-content-viewer  *ngFor="let element of note.content"
+                                        [content]="element"></evt-content-viewer>
+                                </div>
+                            </ng-container>
+                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg">{{'omit' | translate}}</span>
                             <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
                                 <span class="info-label">{{'wit' | translate}}</span>
                                 <evt-witness-metadata
@@ -117,8 +140,8 @@
                             </span>
                             <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
                                 <span class="d-block" *ngIf="metadata.key !== 'wit'">
-                                    <span class="info-label">{{ metadata.key }}:</span> 
-                                    <evt-witness-metadata [witnessMetadata]="metadata.value"></evt-witness-metadata> 
+                                    <span class="info-label">{{ metadata.key }}:</span>
+                                    <evt-witness-metadata [witnessMetadata]="metadata.value"></evt-witness-metadata>
                                 </span>
                             </ng-container>
                         </div>
@@ -127,7 +150,8 @@
             </li>
 
             <li ngbNavItem="xml">
-                <a class="app-detail-btn" [class.active]="this.currentTab === 'xml'" ngbNavLink (click)="onTabClicked('xml')">{{'xml' | translate}}</a>
+                <a class="app-detail-btn" [class.active]="this.currentTab === 'xml'" ngbNavLink
+                    (click)="onTabClicked('xml')">{{'xml' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-original-encoding-viewer
                         [originalEncoding]="data.originalEncoding"></evt-original-encoding-viewer>
