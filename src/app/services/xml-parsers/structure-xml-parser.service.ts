@@ -131,8 +131,8 @@ export class StructureXmlParserService {
               const allWits = appWits.concat(otherAppWits);
               const duplicates = findDuplicates(allWits)
               if (duplicates.length) {
-                this.errorService.onError(`The following elements have a duplicated 
-                  witness while intersecting each others: ${duplicates}`, [app, otherApp]);
+                this.errorService.onError(
+                  `The following elements have a duplicated witness while intersecting each others: ${duplicates}`, [app, otherApp]);
               }
             }
           }
