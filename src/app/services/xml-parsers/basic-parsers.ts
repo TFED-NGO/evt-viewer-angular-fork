@@ -613,8 +613,8 @@ export class SubstParser extends GenericElemParser implements Parser<XMLElement>
         let parsing : Subst = {
             ...super.parse(xml),
             type: Subst,
-            add: this.addParser.parse(xml),
-            del: this.delParser.parse(xml.getElementsByTagName('del')[0])
+            add: this.addParser.parse(xml.getElementsByTagName('add')[0] as XMLElement),
+            del: this.delParser.parse(xml.getElementsByTagName('del')[0] as XMLElement)
         }
         
         //parsing.after = parsing.content.filter((el) => (el['type']) && (el['type'] !== Deletion));
