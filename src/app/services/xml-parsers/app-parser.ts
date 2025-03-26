@@ -118,7 +118,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         const criticalContent = parsedResult;
 
         const readings = this.parseReadings(appEntry);
-        const allReadings = (lemma !== undefined) ? readings.concat(lemma) : readings;
+        const allReadings = (lemma !== undefined) ? [lemma].concat(readings) : readings;
         return {
             type: ApparatusEntry,
             id: getID(appEntry),
