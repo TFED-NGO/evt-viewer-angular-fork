@@ -1,5 +1,5 @@
 <button class="btn btn-secondary" *ngIf="(errors$ | async) as errorsList" (click)="openModal()">
-    <span>Errors</span>
+    <span>{{ "errors" | translate }}</span>
     <div class="spinner-border spinner-border-sm text-tertiary ms-2" role="status" *ngIf="isLoading(); else errorIcon">
         <span class="sr-only">Loading...</span>
     </div>
@@ -13,12 +13,12 @@
 
 <ng-template #content let-modal>
     <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">{{ 'Errors' | translate }}</h4>
+        <h4 class="modal-title" id="modal-basic-title">{{ 'errors' | translate }}</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
     <div class="modal-body overflow-auto" style="max-height: 80vh;" *ngIf="(errors$ | async) as errorsList">
         <ng-container *ngIf="errorsList?.length > 0; else noErrors">
-            <p>The source document have the following errors:</p>
+            <p>{{ "errorsModalSubtitle" | translate }}:</p>
             <div *ngFor="let error of errorsList">
                 <evt-icon class="me-2" [iconInfo]="{ icon: getErrorIcon(error), iconSet: 'fas' }"
                     [ngStyle]="{'color': getErrorColor(error)}">
@@ -31,7 +31,7 @@
             </div>
         </ng-container>
         <ng-template #noErrors>
-            <p>No error found.</p>
+            <p>{{ "noErrorFound" | translate }}</p>
         </ng-template>
     </div>
 </ng-template>
