@@ -105,8 +105,8 @@
                         <div class="mb-2">
                             <ng-container *ngIf="readingItem.isLemma; else readingLabel">
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
-                                    <span class="me-1 info-rdg" *ngFor="let content of data.criticalContent">
-                                        <evt-content-viewer [content]="content"></evt-content-viewer>
+                                    <span class="me-1 info-rdg">
+                                        <evt-content-viewer [content]="data.lemma.content"></evt-content-viewer>
                                     </span>
                             </ng-container>
                             <ng-template #readingLabel>
