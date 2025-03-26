@@ -16,7 +16,7 @@
         <h4 class="modal-title" id="modal-basic-title">{{ 'Errors' | translate }}</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
     </div>
-    <div class="modal-body" *ngIf="(errors$ | async) as errorsList">
+    <div class="modal-body overflow-auto" style="max-height: 80vh;" *ngIf="(errors$ | async) as errorsList">
         <ng-container *ngIf="errorsList?.length > 0; else noErrors">
             <p>The source document have the following errors:</p>
             <div *ngFor="let error of errorsList">
