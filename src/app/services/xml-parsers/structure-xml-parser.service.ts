@@ -118,9 +118,16 @@ export class StructureXmlParserService {
               const wit = 'wit';
               const withSelector = `[${wit}]`;
               const splitBy = ' ';
+              const exceptParent = 'lem'
 
-              const appWits = Array.from(app.querySelectorAll(withSelector)).flatMap(x => x.getAttribute(wit).split(splitBy));
-              const otherAppWits = Array.from(otherApp.querySelectorAll(withSelector)).flatMap(x => x.getAttribute(wit).split(splitBy));
+              let appWitsElements = Array.from(app.querySelectorAll(withSelector));
+              appWitsElements = appWitsElements.filter(x => !x.closest(exceptParent));
+              const appWits = appWitsElements.flatMap(x => x.getAttribute(wit).split(splitBy));
+
+              let otherAppWitsElements = Array.from(otherApp.querySelectorAll(withSelector));
+              otherAppWitsElements = otherAppWitsElements.filter(x => !x.closest(exceptParent));
+              const otherAppWits = otherAppWitsElements.flatMap(x => x.getAttribute(wit).split(splitBy));
+
               const allWits = appWits.concat(otherAppWits);
               const duplicates = findDuplicates(allWits)
               if (duplicates.length) {

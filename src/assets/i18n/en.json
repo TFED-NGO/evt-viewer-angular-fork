@@ -202,5 +202,8 @@
     "noWitnessesAvailable": "No witness available",
     "add": "Add",
     "remove": "Remove",
-    "searchWitness": "Search Witnesses"
+    "searchWitness": "Search Witnesses",
+    "errorsModalSubtitle" : "The source document have the following errors",
+    "noErrorFound": "No error found",
+    "errors": "Errors"
 }

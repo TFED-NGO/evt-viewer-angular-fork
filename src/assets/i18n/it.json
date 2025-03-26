@@ -201,5 +201,8 @@
   "noWitnessesAvailable": "Nessun testimone disponibile",
   "add": "Aggiungi",
   "remove": "Rimuovi",
-  "searchWitness": "Cerca testimoni"
+  "searchWitness": "Cerca testimoni",
+  "errorsModalSubtitle" : "Il documento sorgente ha i seguenti errori",
+  "noErrorFound": "Nessun errore trovato",
+  "errors": "Errori"
 }

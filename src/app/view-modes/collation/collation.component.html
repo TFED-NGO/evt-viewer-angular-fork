@@ -28,7 +28,7 @@
         <h4 class="modal-title" id="modal-basic-title">{{ 'addWitness' | translate }}</h4>
         <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click'); onSearchChanged('')"></button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body overflow-auto" style="max-height: 80vh;">
         <input type="text" class="form-control mb-2" [placeholder]="('searchWitness' | translate)" [ngModel]="searchWitness" (ngModelChange)="onSearchChanged($event)"  />
         
         <ng-container *ngIf="modalWitnesses$ | async as modalWitnesses">

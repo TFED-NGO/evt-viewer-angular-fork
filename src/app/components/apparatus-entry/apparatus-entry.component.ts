@@ -24,7 +24,7 @@ export class ApparatusEntryComponent implements OnInit {
   @Input() selectedLayer: string;
 
   public isOpened$ = this.statusService.currentApparatusExponent$.pipe(
-    map(exponent => this.data.exponent === exponent)
+    map(exponent => this.data.exponent && this.data.exponent === exponent)
   );
 
   public isInsideAppDetail: boolean;
