@@ -26,6 +26,7 @@
                                     <evt-content-viewer [content]="content"></evt-content-viewer>
                                 </span>
                             </ng-container> -->
+                            
                             <evt-reading *ngIf="readingItem.reading.content.length !== 0"
                                 [data]="readingItem.reading"></evt-reading>
                             <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' | translate}}</span>
