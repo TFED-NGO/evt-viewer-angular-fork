@@ -1,8 +1,8 @@
 <div class="card app-detail-container" [class.selected]="this.isSelected">
     <div class="card-body app-detail-content" [class.bg-white]="this.isSelected">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col text-truncate">
+            <div class="row text-truncate">
+                <div class="col">
                     <span class="fw-bold me-1">{{ data.exponent }}</span>
                     <evt-reading class="info-rdg" *ngIf="this.showLemma; else criticalContent"
                         [data]="data.lemma"></evt-reading>
@@ -19,7 +19,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="d-flex align-items-center" *ngFor="let readingItem of readingItems">
+                    <div class="d-flex align-items-center text-truncate" *ngFor="let readingItem of readingItems">
                         <div class="info-rdg pe-2 fw-semibold align-self-start">
                             <ng-container *ngIf="readingItem === readingItems[0]">
                                 <span class="me-1" *ngFor="let content of data.criticalContent">
