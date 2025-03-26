@@ -27,8 +27,7 @@
                                 </span>
                             </ng-container> -->
                             
-                            <evt-reading *ngIf="readingItem.reading.content.length !== 0"
-                                [data]="readingItem.reading"></evt-reading>
+                            <evt-reading *ngIf="readingItem.reading.content.length !== 0" [data]="readingItem.reading" [withDeletions]="true"></evt-reading>
                             <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' | translate}}</span>
                         </div>
                         <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
@@ -36,11 +35,11 @@
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                         </span>
                         <ng-container *ngFor="let note of readingItem.reading.notes">
-                                <div class="px-2">{{'notes' | translate | uppercase }}:
-                                    <evt-content-viewer  *ngFor="let element of note.content" 
+                            <div class="px-2">{{'notes' | translate | uppercase }}:
+                                <evt-content-viewer  *ngFor="let element of note.content"
                                     [content]="element"></evt-content-viewer>
-                                </div>
-                            </ng-container>
+                            </div>
+                        </ng-container>
                         <span *ngIf="readingItem.reading.excludedWitIDs.length">
                             <span class="fw-bold ps-3">Exclude: </span>
                             <ng-container *ngFor="let excludedWitId of readingItem.reading.excludedWitIDs">
@@ -105,9 +104,9 @@
                         <div class="mb-2">
                             <ng-container *ngIf="readingItem.isLemma; else readingLabel">
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
-                                    <span class="me-1 info-rdg">
-                                        <evt-content-viewer [content]="data.lemma.content"></evt-content-viewer>
-                                    </span>
+                                <span class="me-1 info-rdg">
+                                    <evt-content-viewer [content]="data.lemma.content"></evt-content-viewer>
+                                </span>
                             </ng-container>
                             <ng-template #readingLabel>
                                 <div class="mb-2">
