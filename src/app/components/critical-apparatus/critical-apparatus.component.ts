@@ -26,7 +26,13 @@ export class CriticalApparatusComponent {
         const selectedApp = selectedAppEntries.find(app => app.additionalAttributes.exponentId === entry.additionalAttributes.exponentId);
         return { entry, isSelected: !!selectedApp };
       });
-      const orderedApps = apps.sort((a, b) => a.entry.exponent.localeCompare(b.entry.exponent))
+      const orderedApps = apps.sort((a, b) => {
+        const lengthComparison = a.entry.exponent.length - b.entry.exponent.length;
+        if (lengthComparison !== 0) {
+          return lengthComparison;
+        }
+        return a.entry.exponent.localeCompare(b.entry.exponent);
+      });
       return orderedApps;
     }),
     tap(result => {
