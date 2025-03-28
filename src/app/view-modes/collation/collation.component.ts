@@ -205,7 +205,11 @@ export class CollationComponent implements OnDestroy {
   }
 
   openModal(content: TemplateRef<any>) {
-    this.witnessModalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' })
+    this.witnessModalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+    setTimeout(() => {
+      const input = document.getElementById('search-input');
+      input?.focus();
+    }, 500);
   }
   closeModal() {
     this.modalService.close(this.witnessModalRef);
