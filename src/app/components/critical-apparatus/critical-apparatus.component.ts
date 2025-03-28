@@ -22,11 +22,12 @@ export class CriticalApparatusComponent {
   ]).pipe(
     map(([appEntries, selectedAppEntries]) => {
       const apparatusEntries = appEntries as ApparatusEntry[];
-      const result = apparatusEntries.map(entry => {
+      const apps = apparatusEntries.map(entry => {
         const selectedApp = selectedAppEntries.find(app => app.additionalAttributes.exponentId === entry.additionalAttributes.exponentId);
         return { entry, isSelected: !!selectedApp };
       });
-      return result;
+      const orderedApps = apps.sort((a, b) => a.entry.exponent.localeCompare(b.entry.exponent))
+      return orderedApps;
     }),
     tap(result => {
       const selectedIndex = result.findIndex(x => x.isSelected);
