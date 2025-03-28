@@ -259,30 +259,32 @@ export class StructureXmlParserService {
       }
       else if (item.type?.name === 'Anchor') {
         const anchorId = item.attributes['id'];
-        const app = this.getApparatusEntryOrDefault(anchorId);
-        if (!app) {
+        const apps = this.getApparatusEntriesOrDefault(anchorId);
+        if (!apps.length) {
           console.warn("This anchor has not apparatus entry associated with its id and will be skipped", item);
           continue;
         }
 
-        const appFrom = Attribute.createOrDefault(app.attributes[FROM_ATTRIBUTE]);
-        if (!appFrom) {
-          throw new Error(`A standoff apparatus entry must have a valid ${FROM_ATTRIBUTE} attribute`);
-        }
+        for (const app of apps) {
+          const appFrom = Attribute.createOrDefault(app.attributes[FROM_ATTRIBUTE]);
+          if (!appFrom) {
+            throw new Error(`A standoff apparatus entry must have a valid ${FROM_ATTRIBUTE} attribute`);
+          }
 
-        const appTo = Attribute.createOrDefault(app.attributes[TO_ATTRIBUTE]);
-        const isToAnchor = appTo && appTo.equals(anchorId);
-        if (!isToAnchor) {
-          //console.log("This anchor will be skipped because is the starting anchor, exponent will be place on the ending anchor", item);
-          continue;
-        }
+          const appTo = Attribute.createOrDefault(app.attributes[TO_ATTRIBUTE]);
+          const isToAnchor = appTo && appTo.equals(anchorId);
+          if (!isToAnchor) {
+            //console.log("This anchor will be skipped because is the starting anchor, exponent will be place on the ending anchor", item);
+            continue;
+          }
 
-        const id = this.getExponentId();
-        const exponent = ApparatusEntryExponent.create(id, appFrom.valueWithoutRef, appTo.valueWithoutRef, getExponentLabel(), app);
-        // insert at index
-        items.splice(i + 1, 0, exponent);
-        this.appExponents.set(exponent.id().valueWithoutRef, exponent);
-        app.exponent = exponent.label;
+          const id = this.getExponentId();
+          const exponent = ApparatusEntryExponent.create(id, appFrom.valueWithoutRef, appTo.valueWithoutRef, getExponentLabel(), app);
+          // insert at index
+          items.splice(i + 1, 0, exponent);
+          this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+          app.exponent = exponent.label;
+        }
       }
       // in other cases exponents are added to the items array, so we skip them
       else if (item.type?.name === 'ApparatusEntryExponent') {
@@ -295,31 +297,33 @@ export class StructureXmlParserService {
 
         // now check if the item itself has an apparatus entry and add it's exponent as last child
         const itemId = item.attributes['id'];
-        const app = this.getApparatusEntryOrDefault(itemId);
-        if (!app) {
+        const apps = this.getApparatusEntriesOrDefault(itemId);
+        if (!apps.length) {
           //console.log("This item has no apparatus entry, skipping", item);
           continue;
         }
 
-        const id = this.getExponentId();
-        const appFrom = Attribute.createOrDefault(app.attributes[FROM_ATTRIBUTE]);
-        const appTo = Attribute.createOrDefault(app.attributes[TO_ATTRIBUTE]);
-        const isToElement = appTo && appTo.valueWithoutRef === itemId;
-        if (isToElement) {
-          const from = appFrom.valueWithoutRef;
-          const to = id; // the exponent will be the To element itself since is placed as next sibling of the current item
-          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
-          items.splice(i + 1, 0, exponent); // insert as sibling because this component is not an anchor
-          this.appExponents.set(exponent.id().valueWithoutRef, exponent);
-          app.exponent = exponent.label;
-        }
-        else if (!appTo) {
-          const from = itemId; // from itself since the apparatus entry refer to it
-          const to = id; // the exponent will be place as the last child of the element so it marks the end
-          const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
-          item.content.push(exponent);
-          this.appExponents.set(exponent.id().valueWithoutRef, exponent);
-          app.exponent = exponent.label;
+        for (const app of apps) {
+          const id = this.getExponentId();
+          const appFrom = Attribute.createOrDefault(app.attributes[FROM_ATTRIBUTE]);
+          const appTo = Attribute.createOrDefault(app.attributes[TO_ATTRIBUTE]);
+          const isToElement = appTo && appTo.valueWithoutRef === itemId;
+          if (isToElement) {
+            const from = appFrom.valueWithoutRef;
+            const to = id; // the exponent will be the To element itself since is placed as next sibling of the current item
+            const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
+            items.splice(i + 1, 0, exponent); // insert as sibling because this component is not an anchor
+            this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+            app.exponent = exponent.label;
+          }
+          else if (!appTo) {
+            const from = itemId; // from itself since the apparatus entry refer to it
+            const to = id; // the exponent will be place as the last child of the element so it marks the end
+            const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
+            item.content.push(exponent);
+            this.appExponents.set(exponent.id().valueWithoutRef, exponent);
+            app.exponent = exponent.label;
+          }
         }
       }
       else {
@@ -333,15 +337,21 @@ export class StructureXmlParserService {
     return 'app-exponent-' + uuid;
   }
 
-  private getApparatusEntryOrDefault(id: string): ApparatusEntry | null {
-    if (!id) return null;
+  private getApparatusEntriesOrDefault(id: string): ApparatusEntry[] {
+    console.log('getApparatusEntriesOrDefault', id);
+    if (!id)
+       return [];
 
-    const appsData = this.getAppsData();
-    const appData = appsData.find(x => x.appFrom?.valueWithoutRef === id || x.appTo?.valueWithoutRef === id);
-    if (!appData) return null;
+    let appDatas = this.getAppsData();
+    appDatas = appDatas.filter(x => x.appFrom?.valueWithoutRef === id || x.appTo?.valueWithoutRef === id);
+    if (!appDatas) return [];
 
-    const app = this.appParser.parse(appData.app)
-    return app as ApparatusEntry;
+    const apps = []
+    for (const appData of appDatas) {
+      const app = this.appParser.parse(appData.app);
+      apps.push(app as ApparatusEntry);
+    }
+    return apps;
   }
 
   private getDocumentApparatusEntries(pages: Page[]): DocumentApparatusEntries {
