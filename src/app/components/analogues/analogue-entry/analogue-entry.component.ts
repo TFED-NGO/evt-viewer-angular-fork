@@ -4,7 +4,7 @@ import { scan, startWith } from 'rxjs/operators';
 
 import { EditorialConventionLayoutData } from '../../../directives/editorial-convention-layout.directive';
 
-import { Analogue, AnalogueClass, Note } from '../../../models/evt-models';
+import { Analogue, AnalogueClass, Note, NoteClass } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTStatusService } from '../../../services/evt-status.service';
 import { EditionLevelType } from 'src/app/app.config';
@@ -70,6 +70,7 @@ export class AnalogueEntryComponent implements OnInit {
       noteType: 'analogue',
       noteLayout: 'popover',
       exponent: v.path || '',
+      class: NoteClass,
       content: v.extLinkedElements.concat(v.extSources, v.sources) || {},
       attributes: v.attributes || [],
     }
