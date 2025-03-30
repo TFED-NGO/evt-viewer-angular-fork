@@ -141,7 +141,7 @@ export interface UiConfig {
     mainFontSize: string;
     secondaryFontFamily: string;
     secondaryFontSize: string;
-    theme: 'neutral' | 'modern' | 'classic';
+    theme: string;
     syncZonesHighlightButton: boolean;
 }
 export type CitingRanges = 'issue' | 'volume' | 'page';
