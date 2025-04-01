@@ -82,64 +82,80 @@ export class StructureXmlParserService {
         this.errorService.loadingStart();
 
         for (const app of this.allApps) {
-          const from = Attribute.createFromOrDefault(app as HTMLElement);
+
+          const from = Attribute.createFromOrDefault(app);
           if (!from) {
-            this.errorService.onError('From attribute is missing:', [app as HTMLElement]);
+            this.errorService.onError('From attribute is missing:', [app]);
             continue;
           }
 
           const to = Attribute.createToOrDefault(app);
-          if (!to) {
-            continue;
-          }
+          if (!to) continue;
 
           const fromElement = source.querySelector(`[*|id='${from.valueWithoutRef}']`);
           const toElement = source.querySelector(`[*|id='${to.valueWithoutRef}']`);
 
-          // intersecting apps
-          const otherApps = this.allApps.filter(x => !x.isEqualNode(app));
-          for (const otherApp of otherApps) {
-            const otherFrom = Attribute.createFromOrDefault(otherApp as HTMLElement);
-            const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
-            if (!otherElement) {
-              this.errorService.onError(`There is no element with xml:id ${otherFrom.valueWithoutRef}`, [otherApp]);
-              continue;
-            }
+          if (!fromElement || !toElement) continue;
 
-            const isAfterFromInclusive =
-              (fromElement.compareDocumentPosition(otherElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
-              otherElement.isEqualNode(fromElement);
+          // instead of loading all errors right away, this avoid blocking the ui
+          setTimeout(() => {
+            const otherApps = this.allApps.filter(x => !x.isEqualNode(app));
+            for (const otherApp of otherApps) {
+              const otherFrom = Attribute.createFromOrDefault(otherApp);
+              if (!otherFrom) continue;
 
-            const isBeforeToInclusive =
-              (otherElement.compareDocumentPosition(toElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
-              otherElement.isEqualNode(toElement);
-
-            if (isAfterFromInclusive && isBeforeToInclusive) {
-              const wit = 'wit';
-              const withSelector = `[${wit}]`;
-              const splitBy = ' ';
-              const exceptParent = 'lem'
-
-              let appWitsElements = Array.from(app.querySelectorAll(withSelector));
-              appWitsElements = appWitsElements.filter(x => !x.closest(exceptParent));
-              const appWits = appWitsElements.flatMap(x => x.getAttribute(wit).split(splitBy));
-
-              let otherAppWitsElements = Array.from(otherApp.querySelectorAll(withSelector));
-              otherAppWitsElements = otherAppWitsElements.filter(x => !x.closest(exceptParent));
-              const otherAppWits = otherAppWitsElements.flatMap(x => x.getAttribute(wit).split(splitBy));
-
-              const allWits = appWits.concat(otherAppWits);
-              const duplicates = findDuplicates(allWits)
-              if (duplicates.length) {
+              const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
+              if (!otherElement) {
                 this.errorService.onError(
-                  `The following elements have a duplicated witness while intersecting each others: ${duplicates}`, [app, otherApp]);
+                  `No element found with xml:id ${otherFrom.valueWithoutRef}`,
+                  [otherApp]
+                );
+                continue;
+              }
+
+              if (isIntersecting(fromElement, toElement, otherElement)) {
+                const duplicates = findDuplicateWitnesses(app, otherApp);
+                if (duplicates.length) {
+                  this.errorService.onError(
+                    `Duplicated witness found in intersecting elements: ${duplicates.join(', ')}`,
+                    [app, otherApp]
+                  );
+                }
               }
             }
-          }
+          },  1);
         }
 
         this.errorService.loadingEnd();
       }, 1_000);
+
+      function isIntersecting(fromElement: Element, toElement: Element, otherElement: Element) {
+        const isAfterFromInclusive =
+          (fromElement.compareDocumentPosition(otherElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+          otherElement.isEqualNode(fromElement);
+
+        const isBeforeToInclusive =
+          (otherElement.compareDocumentPosition(toElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+          otherElement.isEqualNode(toElement);
+
+        return isAfterFromInclusive && isBeforeToInclusive;
+      }
+
+      function findDuplicateWitnesses(app: HTMLElement, otherApp: HTMLElement): string[] {
+        const wit = 'wit';
+        const withSelector = `[${wit}]`;
+        const exceptParent = 'lem';
+
+        const extractWits = (element: HTMLElement) =>
+          Array.from(element.querySelectorAll(withSelector))
+            .filter(x => !x.closest(exceptParent))
+            .flatMap(x => x.getAttribute(wit)?.split(' ') || []);
+
+        const appWits = extractWits(app);
+        const otherAppWits = extractWits(otherApp);
+
+        return findDuplicates([...appWits, ...otherAppWits]);
+      }
     }
 
     const result = this.getDocumentApparatusEntries(editionStructure.pages);
@@ -338,9 +354,7 @@ export class StructureXmlParserService {
   }
 
   private getApparatusEntriesOrDefault(id: string): ApparatusEntry[] {
-    console.log('getApparatusEntriesOrDefault', id);
-    if (!id)
-       return [];
+    if (!id) return [];
 
     let appDatas = this.getAppsData();
     appDatas = appDatas.filter(x => x.appFrom?.valueWithoutRef === id || x.appTo?.valueWithoutRef === id);

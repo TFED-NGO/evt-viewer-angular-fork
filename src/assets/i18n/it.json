@@ -204,5 +204,7 @@
   "searchWitness": "Cerca testimoni",
   "errorsModalSubtitle" : "Il documento sorgente ha i seguenti errori",
   "noErrorFound": "Nessun errore trovato",
-  "errors": "Errori"
+  "errors": "Errori",
+  "dismissAll": "Rimuovi tutti",
+  "dismiss": "Rimuovi"
 }

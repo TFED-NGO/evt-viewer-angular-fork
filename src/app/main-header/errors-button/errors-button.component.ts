@@ -12,11 +12,11 @@ export class ErrorsButtonComponent implements OnInit {
   @ViewChild('content', { static: true }) content!: TemplateRef<any>;
   private witnessModalRef: NgbModalRef = null;
   errors$ = this.errorService.errors$;
-  
+
   constructor(
     private modalService: ModalService,
     private errorService: ErrorsService,
-  ) { 
+  ) {
   }
 
   isLoading() {
@@ -40,19 +40,27 @@ export class ErrorsButtonComponent implements OnInit {
     }
     return errorsList.some(e => e.type === 'error') ? 'circle-exclamation' : 'triangle-exclamation';
   }
-  
+
   getColor(errorsList: SourceError[]): string {
     if (!errorsList || errorsList.length === 0) {
       return 'white';
     }
     return errorsList.some(e => e.type === 'error') ? 'red' : 'rgb(255, 168, 54)';
   }
-  
+
   getErrorColor(error: SourceError): string {
     return error.type === 'error' ? 'red' : 'rgb(255, 168, 54)';
   }
 
   getErrorIcon(error: SourceError): string {
     return error.type === 'error' ? 'circle-exclamation' : 'triangle-exclamation';
+  }
+
+  dismissAll() {
+    this.errorService.dismissAll();
+  }
+
+  dismiss(error: SourceError) {
+    this.errorService.dismiss(error);
   }
 }

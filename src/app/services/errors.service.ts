@@ -5,8 +5,8 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class ErrorsService {
-  private errors$$ = new BehaviorSubject<SourceError[]>([]);
-  errors$ = this.errors$$.asObservable();
+  private _errors$ = new BehaviorSubject<SourceError[]>([]);
+  errors$ = this._errors$.asObservable();
 
   private _isLoading = true;
 
@@ -19,25 +19,25 @@ export class ErrorsService {
   onError(error: string, elements?: HTMLElement[]) {
     const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
     const sourceError: SourceError = { errorMessage: error, type: 'error', outerHTMLs: outherHtmlsOrDefault }
-    const errors = this.errors$$.getValue();
-    if(errors.some(e => e.errorMessage === sourceError.errorMessage)){
+    const errors = this._errors$.getValue();
+    if (errors.some(e => e.errorMessage === sourceError.errorMessage)) {
       return;
     }
-    
+
     console.error(error, elements);
-    this.errors$$.next([...errors, sourceError]);
+    this._errors$.next([...errors, sourceError]);
   }
 
   onWarning(error: string, elements?: HTMLElement[]) {
     const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
     const sourceError: SourceError = { errorMessage: error, type: 'warning', outerHTMLs: outherHtmlsOrDefault }
-    const errors = this.errors$$.getValue();
-    if(errors.some(e => e.errorMessage === sourceError.errorMessage)){
+    const errors = this._errors$.getValue();
+    if (errors.some(e => e.errorMessage === sourceError.errorMessage)) {
       return;
     }
-    
+
     console.warn(error, elements);
-    this.errors$$.next([...errors, sourceError]);
+    this._errors$.next([...errors, sourceError]);
   }
 
   loadingStart() {
@@ -46,6 +46,15 @@ export class ErrorsService {
 
   loadingEnd() {
     this._isLoading = false;
+  }
+
+  dismissAll() {
+    this._errors$.next([]);
+  }
+
+  dismiss(error: SourceError) {
+    const newValue = this._errors$.value.filter(x => x !== error);
+    this._errors$.next(newValue);
   }
 }
 
