@@ -1,14 +1,15 @@
 <div class="card app-detail-container" [class.selected]="this.isSelected">
     <div class="card-body app-detail-content" [class.bg-white]="this.isSelected">
         <div class="container-fluid">
-            <div class="row text-truncate">
+            <div class="row" style="overflow-x: auto;">
                 <div class="col">
                     <span class="fw-bold me-1">{{ data.exponent }}</span>
-                    <evt-reading class="info-rdg" *ngIf="this.showLemma; else criticalContent"
-                        [data]="data.lemma"></evt-reading>
+                    <evt-reading class="info-rdg" *ngIf="this.showLemma; else criticalContent" [data]="data.lemma"
+                        [editionLevel]="editionLevel$ | async"></evt-reading>
                     <ng-template #criticalContent>
                         <span class="me-1" *ngFor="let content of data.criticalContent">
-                            <evt-content-viewer [content]="content"></evt-content-viewer>
+                            <evt-content-viewer [content]="content"
+                                [editionLevel]="editionLevel$ | async"></evt-content-viewer>
                         </span>
                     </ng-template>
                     <span>]</span>
@@ -19,32 +20,16 @@
             </div>
             <div class="row">
                 <div class="col">
-                    <div class="d-flex align-items-center text-truncate" *ngFor="let readingItem of readingItems">
+                    <div class="d-flex align-items-center" *ngFor="let readingItem of readingItems">
                         <div class="info-rdg pe-2 fw-semibold align-self-start">
-                            <!-- <ng-container *ngIf="readingItem === readingItems[0]">
-                                <span class="me-1" *ngFor="let content of data.criticalContent">
-                                    <evt-content-viewer [content]="content"></evt-content-viewer>
-                                </span>
-                            </ng-container> -->
-                            
-                            <evt-reading *ngIf="readingItem.reading.content.length !== 0" [data]="readingItem.reading" [withDeletions]="true"></evt-reading>
-                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{'omit' | translate}}</span>
+                            <evt-reading *ngIf="readingItem.reading.content.length !== 0" [data]="readingItem.reading"
+                                [withDeletions]="true" [editionLevel]="editionLevel$ | async"></evt-reading>
+                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{ 'omit' |
+                                translate }}</span>
                         </div>
                         <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
-                        </span>
-                        <ng-container *ngFor="let note of readingItem.reading.notes">
-                            <div class="px-2">{{'notes' | translate | uppercase }}:
-                                <evt-content-viewer  *ngFor="let element of note.content"
-                                    [content]="element"></evt-content-viewer>
-                            </div>
-                        </ng-container>
-                        <span *ngIf="readingItem.reading.excludedWitIDs.length">
-                            <span class="fw-bold ps-3">Exclude: </span>
-                            <ng-container *ngFor="let excludedWitId of readingItem.reading.excludedWitIDs">
-                                <evt-witness-id [witnessId]="excludedWitId"></evt-witness-id>
-                            </ng-container>
                         </span>
                     </div>
                 </div>
@@ -105,7 +90,8 @@
                             <ng-container *ngIf="readingItem.isLemma; else readingLabel">
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
                                 <span class="me-1 info-rdg">
-                                    <evt-content-viewer [content]="data.lemma.content"></evt-content-viewer>
+                                    <evt-content-viewer [content]="data.lemma.content"
+                                        [editionLevel]="editionLevel$ | async"></evt-content-viewer>
                                 </span>
                             </ng-container>
                             <ng-template #readingLabel>
@@ -116,32 +102,38 @@
                             </ng-template>
                             <ng-container>
                                 <evt-reading *ngIf="data.nestedAppsIDs.length === 0" class="info-rdg"
-                                    [data]="readingItem.reading"></evt-reading>
+                                    [data]="readingItem.reading" [editionLevel]="editionLevel$ | async"></evt-reading>
                                 <ng-container *ngIf="data.nestedAppsIDs.length > 0">
                                     <ng-container *ngFor="let c of readingItem.reading.content">
-                                        <evt-content-viewer class="info-rdg" *ngIf="!isAppEntry(c)"
-                                            [content]="c"></evt-content-viewer>
-                                        <evt-reading class="info-rdg" *ngIf="isAppEntry(c)"
-                                            [data]="c.lemma"></evt-reading>
+                                        <evt-content-viewer class="info-rdg" *ngIf="!isAppEntry(c)" [content]="c"
+                                            [editionLevel]="editionLevel$ | async"></evt-content-viewer>
+                                        <evt-reading class="info-rdg" *ngIf="isAppEntry(c)" [data]="c.lemma"
+                                            [editionLevel]="editionLevel$ | async"></evt-reading>
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngFor="let note of readingItem.reading.notes">
                                 <div>{{'notes' | translate | uppercase }}:
-                                    <evt-content-viewer  *ngFor="let element of note.content"
-                                        [content]="element"></evt-content-viewer>
+                                    <evt-content-viewer *ngFor="let element of note.content" [content]="element"
+                                        [editionLevel]="editionLevel$ | async"></evt-content-viewer>
                                 </div>
                             </ng-container>
-                            <span *ngIf="readingItem.reading.content.length === 0" class="font-italic info-rdg">{{'omit' | translate}}</span>
-                            <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
-                                <span class="info-label">{{'wit' | translate}}</span>
+                            <span *ngIf="readingItem.reading.excludedWitIDs.length">
+                                <span class="fw-bold ps-3">Exclude: </span>
+                                <ng-container *ngFor="let excludedWitId of readingItem.reading.excludedWitIDs">
+                                    <evt-witness-id [witnessId]="excludedWitId"></evt-witness-id>
+                                </ng-container>
+                            </span>
+                            <span *ngIf="readingItem.reading.content.length === 0"
+                                class="font-italic info-rdg">{{'omit'| translate}}</span>
+                            <span *ngIf="readingItem.reading.attributes.wit" class="d-flex align-items-start">
+                                <span class="info-label pe-2">{{'wit' | translate}}</span>
                                 <evt-witness-metadata
                                     [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                             </span>
                             <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
-                                <span class="d-block" *ngIf="metadata.key !== 'wit'">
-                                    <span class="info-label">{{ metadata.key }}:</span>
-                                    <evt-witness-metadata [witnessMetadata]="metadata.value"></evt-witness-metadata>
+                                <span class="d-block pe-2" *ngIf="metadata.key !== 'wit'">
+                                    <evt-reading-metadata [metadata]="metadata"></evt-reading-metadata>
                                 </span>
                             </ng-container>
                         </div>

@@ -11,7 +11,7 @@ export type EditorialConventionDefaults = 'addition' | 'additionAbove' | 'additi
   providedIn: 'root',
 })
 export class EditorialConventionsService {
-  defaultLayouts: { [T in EditorialConventionDefaults]: Partial<EditorialConventionLayouts> } = {
+  private readonly defaultLayouts: { [T in EditorialConventionDefaults]: Partial<EditorialConventionLayouts> } = {
     addition: {
       diplomatic: {
         style: {
@@ -226,7 +226,8 @@ export class EditorialConventionsService {
     const defaultKeys = this.defaultLayouts[defaultsKey];
     let layouts: Partial<EditorialConventionLayouts> = defaultKeys;
 
-    const externalLayouts = this._getExternalConfigs().find((c) => c.element === name &&
+    const externalConfig = this.getExternalConfigs()
+    const externalLayouts = externalConfig.find((c) => c.element === name &&
       (excludedFromAttributeControl.includes(name) || !attributes || Object.keys(attributes).concat(
         Object.keys(c.attributes)).every((k) => attributes[k] === c.attributes[k])))?.layouts ?? undefined;
 
@@ -239,7 +240,7 @@ export class EditorialConventionsService {
     return layouts;
   }
 
-  private _getExternalConfigs(): EditorialConvention[] {
+  private getExternalConfigs(): EditorialConvention[] {
     const customs = AppConfig.evtSettings.editorialConventions;
 
     return Object.keys(customs).map((key) => ({

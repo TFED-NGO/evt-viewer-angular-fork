@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, Optional 
 import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, map, Observable, shareReplay } from 'rxjs';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { ApparatusEntryDetailService } from './apparatus-entry-detail.service';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
+import { EditionLevelType } from 'src/app/app.config';
 
 
 @Component({
@@ -44,6 +45,11 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   }
 
   showLemma: boolean = false;
+
+  editionLevel$: Observable<EditionLevelType> = this.evtStatusService.currentEditionLevels$.pipe(
+    map(x => x[0]),
+    shareReplay(1)
+  );
 
   constructor(
     public evtModelService: EVTModelService,
