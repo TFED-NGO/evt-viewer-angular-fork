@@ -28,6 +28,10 @@
     display: block;
 }
 
+*[rend="sup"] {
+    vertical-align: text-bottom;
+}
+
 *[place="superscript"] {
     vertical-align: text-bottom;
 }
