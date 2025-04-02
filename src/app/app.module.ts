@@ -159,6 +159,8 @@ import { WitnessIdComponent } from './components/witness-id/witness-id.component
 import { WitnessMetadataComponent } from './components/witness-metadata/witness-metadata.component';
 import { HrComponent } from './ui-components/hr/hr.component';
 import { ErrorsButtonComponent } from './main-header/errors-button/errors-button.component';
+import { ReadingMetadataComponent } from './components/reading-metadata/reading-metadata.component';
+import { LabelComponent } from './components/label/label.component';
 
 const routes: Routes = [
 ];
@@ -306,6 +308,8 @@ const DynamicComponents = [
     WitnessMetadataComponent,
     HrComponent,
     ErrorsButtonComponent,
+    ReadingMetadataComponent,
+    LabelComponent,
   ],
   imports: [
     AppRoutingModule,

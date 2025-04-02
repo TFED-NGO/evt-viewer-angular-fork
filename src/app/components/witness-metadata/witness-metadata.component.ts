@@ -16,7 +16,7 @@ export class WitnessMetadataComponent implements OnInit {
     const witnessMetadata = this.witnessMetadata;
     if (witnessMetadata.includes(' ')) {
       const witnessIds = witnessMetadata.split(' ');
-      this.witnessIds = witnessIds;
+      this.witnessIds = witnessIds.filter(x => !!x);
     }
     else {
       this.witnessIds = [witnessMetadata];
