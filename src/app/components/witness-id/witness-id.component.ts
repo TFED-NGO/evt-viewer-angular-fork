@@ -1,29 +1,38 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { map, shareReplay } from 'rxjs';
-import { AppConfig } from 'src/app/app.config';
-import { Attribute } from 'src/app/models/evt-models';
+import { Component, Input } from '@angular/core';
+import { map, Observable, shareReplay } from 'rxjs';
+import { Attribute, GenericElement } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { ApparatusEntryDetailService } from '../apparatus-entry/apparatus-entry-detail/apparatus-entry-detail.service';
+import { ParseResult } from 'src/app/services/xml-parsers/parser-models';
 
 @Component({
   selector: 'evt-witness-id',
   templateUrl: './witness-id.component.html',
   styleUrls: ['./witness-id.component.scss']
 })
-export class WitnessIdComponent implements OnInit {
+export class WitnessIdComponent {
 
   @Input() witnessId: string;
 
-  exponent: string = null;
-  formattedWitnessId: string;
-
-  canNavigate$ = this.modelService.flattenedWitnesses$.pipe(
+  witnessItem$: Observable<WitnessItem> = this.modelService.flattenedWitnesses$.pipe(
     map(witnesses => {
-      if(!this.witnessId) return false;
+      const witnessId = Attribute.create(this.witnessId);
+      const witness = witnesses.find(y => witnessId.equals(y.id));
+      if(!witness) {
+        console.warn("Cannot find witness with id: ", this.witnessId)
+        return;
+      }
 
-      const attr = Attribute.create(this.witnessId).valueWithoutRef;
-      return witnesses.some(w => w.id == attr)
+      if (witness.label) {
+        return {
+          id: null,
+          label: witness.label
+        }
+      } 
+      else {
+        return { id: witness.id }
+      }
     }),
     shareReplay(1)
   );
@@ -33,19 +42,6 @@ export class WitnessIdComponent implements OnInit {
     private modelService: EVTModelService,
     private apparatusEntryDetailService: ApparatusEntryDetailService
   ) { }
-
-  ngOnInit(): void {
-    if(!this.witnessId) return;
-
-    this.formattedWitnessId = Attribute.create(this.witnessId).valueWithoutRef;
-    if (AppConfig.evtSettings.edition.transformWitnessId) {
-      if (this.formattedWitnessId.includes('.')) {
-        const parts = this.formattedWitnessId.split('.');
-        this.formattedWitnessId = parts.slice(0, -1).join()
-        this.exponent = parts[parts.length - 1];
-      }
-    }
-  }
 
   onWitnessClicked() {
     const witnessId = Attribute.create(this.witnessId).valueWithoutRef;
@@ -61,3 +57,7 @@ export class WitnessIdComponent implements OnInit {
   }
 }
 
+export interface WitnessItem {
+  id?: string,
+  label?: ParseResult<GenericElement>
+} 

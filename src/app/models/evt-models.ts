@@ -206,6 +206,7 @@ export class NamedEntityRef extends GenericElement {
 export interface Witness {
     id: string;
     name: string;
+    label?: ParseResult<GenericElement>,
     attributes: Attributes;
     content: Array<ParseResult<GenericElement>>;
     witnesses: Witness[],

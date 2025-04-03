@@ -111,15 +111,16 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
                 .map(this.genericParse);
         }
 
-        if (lemma && !lemma.content.length) {
+        if (lemma) {
+            lemma.content = [];
             lemma.content.push(...parsedResult);
         }
 
         const criticalContent = parsedResult;
         const readings = this.parseReadings(appEntry);
-        
+
         const allReadings = (lemma !== undefined) ? [lemma].concat(readings) : readings;
-        return {
+        const result = {
             type: ApparatusEntry,
             id: getID(appEntry),
             attributes: this.attributeParser.parse(appEntry),
@@ -137,6 +138,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             exponent: '',
             isWitnessExcluded: ApparatusEntry.prototype.isWitnessExcluded
         };
+        return result;
     }
 
     private isElementByXmlId(element: Element, attribute: Attribute) {

@@ -10,7 +10,6 @@
     </ng-template>
 </button>
 
-
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ 'errors' | translate }}</h4>
@@ -18,12 +17,18 @@
     </div>
     <div class="modal-body overflow-auto" style="max-height: 80vh;" *ngIf="(errors$ | async) as errorsList">
         <ng-container *ngIf="errorsList?.length > 0; else noErrors">
-            <p>{{ "errorsModalSubtitle" | translate }}:</p>
+            <div class="d-flex justify-content-between pb-3">
+                <div>{{ "errorsModalSubtitle" | translate }}:</div>
+                <evt-button type="button" class="ms-auto" additionalClasses="btn-sm btn-floating" [label]="'dismissAll' | translate " (btnClick)="dismissAll()"></evt-button>
+            </div>
             <div *ngFor="let error of errorsList">
-                <evt-icon class="me-2" [iconInfo]="{ icon: getErrorIcon(error), iconSet: 'fas' }"
-                    [ngStyle]="{'color': getErrorColor(error)}">
-                </evt-icon>
-                <span>{{ error.errorMessage }}</span>
+                <div class="d-flex">
+                    <evt-icon class="me-2" [iconInfo]="{ icon: getErrorIcon(error), iconSet: 'fas' }"
+                        [ngStyle]="{'color': getErrorColor(error)}">
+                    </evt-icon>
+                    <span>{{ error.errorMessage }}</span>
+                    <evt-button type="button" class="ms-auto" additionalClasses="btn-sm btn-floating" [label]="'dismiss' | translate" (btnClick)="dismiss(error)" ></evt-button>
+                </div>
                 <div *ngFor="let outerHTML of error.outerHTMLs">
                     <handy-syntax-highlighter language="markup"
                         [content]="outerHTML | xmlBeautify"></handy-syntax-highlighter>
