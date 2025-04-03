@@ -1,4 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Attribute } from 'src/app/models/evt-models';
+import { EVTStatusService } from 'src/app/services/evt-status.service';
+import { ApparatusEntryDetailService } from '../apparatus-entry/apparatus-entry-detail/apparatus-entry-detail.service';
 
 @Component({
   selector: 'evt-witness-metadata',
@@ -10,7 +13,10 @@ export class WitnessMetadataComponent implements OnInit {
 
   witnessIds: string[] = [];
 
-  constructor() { }
+  constructor(
+    private statusService: EVTStatusService,
+    private apparatusEntryDetailService: ApparatusEntryDetailService
+  ) { }
 
   ngOnInit(): void {
     const witnessMetadata = this.witnessMetadata;
@@ -21,5 +27,18 @@ export class WitnessMetadataComponent implements OnInit {
     else {
       this.witnessIds = [witnessMetadata];
     }
+  }
+
+  onWitnessClicked(witnessId: string) {
+    const witnessAttrId = Attribute.create(witnessId).valueWithoutRef;
+    this.statusService.updateViewMode$.next(this.statusService.availableViewModes.find(v => v.id === 'collation'));
+    let newValue = [...this.statusService.updateWitnesses$.value, witnessAttrId];
+    newValue = newValue.filter(this.onlyUnique);
+    this.statusService.updateWitnesses$.next(newValue);
+    this.statusService.updateApparatusExponent$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
+  }
+
+  private onlyUnique(value, index, array) {
+    return array.indexOf(value) === index;
   }
 }
