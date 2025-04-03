@@ -73,7 +73,7 @@ export class StructureXmlParserService {
     if (!this.allApps.length) {
       this.allApps = Array.from(source.querySelectorAll("app"));
       if (!this.allApps.length) {
-        this.errorService.onWarning('There are no apps in the source');
+        this.errorService.logWarning('There are no apps in the source');
         return;
       }
 
@@ -85,7 +85,7 @@ export class StructureXmlParserService {
 
           const from = Attribute.createFromOrDefault(app);
           if (!from) {
-            this.errorService.onError('From attribute is missing:', [app]);
+            this.errorService.logError('From attribute is missing:', [app]);
             continue;
           }
 
@@ -106,7 +106,7 @@ export class StructureXmlParserService {
 
               const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
               if (!otherElement) {
-                this.errorService.onError(
+                this.errorService.logError(
                   `No element found with xml:id ${otherFrom.valueWithoutRef}`,
                   [otherApp]
                 );
@@ -116,7 +116,7 @@ export class StructureXmlParserService {
               if (isIntersecting(fromElement, toElement, otherElement)) {
                 const duplicates = findDuplicateWitnesses(app, otherApp);
                 if (duplicates.length) {
-                  this.errorService.onError(
+                  this.errorService.logError(
                     `Duplicated witness found in intersecting elements: ${duplicates.join(', ')}`,
                     [app, otherApp]
                   );
