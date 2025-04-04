@@ -1,40 +1,38 @@
 import { Injectable } from '@angular/core';
 import { AttributesMap } from 'ng-dynamic-component';
 import { AppConfig } from '../app.config';
-import { EditorialConvention, EditorialConventionLayouts } from '../models/evt-models';
-
-// List of handled editorial convention
-export type EditorialConventionDefaults = 'addition' | 'additionAbove' | 'additionBelow' | 'additionInline' | 'additionLeft' | 'additionRight' |
-  'damage' | 'deletion' | 'sicCrux' | 'surplus' | 'sources' | 'analogues' | 'mod' ;
+import { EditorialConvention } from '../models/evt-models';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EditorialConventionsService {
-  getLayouts(name: string, attributes: AttributesMap) {
-    const excludedFromAttributeControl = ['sources', 'analogues'];
-    let layouts: Partial<EditorialConventionLayouts> = null;
+  getConfigOrDefault(name: string, attributes: AttributesMap): EditorialConvention {
+    const externalConfigs = this.getExternalConfigsOrEmpty().filter(x => x.element === name);
+    if (!externalConfigs.length) return null;
 
-    const externalConfig = this.getExternalConfigs()
-    const externalLayouts = externalConfig.find((c) => c.element === name &&
-      (excludedFromAttributeControl.includes(name) || !attributes || Object.keys(attributes).concat(
-        Object.keys(c.attributes)).every((k) => attributes[k] === c.attributes[k])))?.layouts ?? undefined;
-
-    if (externalLayouts) {
-      layouts = {
-        ...externalLayouts || {},
+    for (const config of externalConfigs) {
+      for (const cAttribute of Object.values(config.attributes)) {
+        const keys = Object.keys(cAttribute);
+        const isMatch = keys.every(key => {
+          const cValue = cAttribute[key];
+          const value = attributes[key];
+          return cValue.includes(value);
+        });
+        if (isMatch) return config;
       }
     }
 
-    return layouts;
+    return externalConfigs[0];
   }
 
-  private getExternalConfigs(): EditorialConvention[] {
+  private getExternalConfigsOrEmpty(): EditorialConvention[] {
     const customs = AppConfig.evtSettings.editorialConventions;
+    if (!customs) return [];
 
     return Object.keys(customs).map((key) => ({
-      element: customs[key].markup?.element ?? key,
-      attributes: customs[key].markup?.attributes ?? {},
+      element: customs[key].markup.element,
+      attributes: customs[key].markup.attributes,
       layouts: customs[key].layouts ?? {},
     }));
   }
