@@ -417,6 +417,18 @@ export class StructureXmlParserService {
     /* If there is a next page we retrieve the elements between two page nodes
     otherweise we retrieve the nodes between the page node and the last node of the body node */
     // TODO: check if querySelectorAll can return an empty array in this case
+    if (pb.tagName !== 'pb') {
+      return {
+        id: getID(pb, 'page'),
+        label: pb.getAttribute('n') || 'page',
+        facs: (pb.getAttribute('facs') || 'page').split('#').slice(-1)[0],
+        originalContent: [pb],
+        parsedContent: this.parsePageContent(doc, [pb]),
+        url: this.getPageUrl(getID(pb, 'page')),
+        facsUrl: this.getPageUrl((pb.getAttribute('facs') || getID(pb, 'page')).split('#').slice(-1)[0]),
+      };
+    }
+
     const nextNode = nextPb || Array.from(doc.querySelectorAll(ancestorTagName)).reverse()[0].lastChild;
     const originalContent = getElementsBetweenTreeNode(pb, nextNode)
       .filter((n) => n.tagName !== this.pageTagName)
