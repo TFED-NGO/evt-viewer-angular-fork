@@ -41,7 +41,7 @@ export class EditorialConventionLayoutDirective implements OnInit, OnChanges {
   }
 
   private _setLayout() {
-    const layouts = this.editorialConventionsService.getLayouts(this.data.name, this.data.attributes, this.data.defaultsKey);
+    const layouts = this.editorialConventionsService.getLayouts(this.data.name, this.data.attributes);
     this._cleanPreviousLayout();
     if (layouts && this.data.editionLevel) {
       const editionLayout = layouts[this.data.editionLevel];

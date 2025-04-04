@@ -15,12 +15,12 @@
    <ng-container *ngIf="editionLevel !== 'changesView'">
       <ng-container *ngIf="isInWitnessPanel">
          <evt-reading class="app-entry-lem" *ngIf="selectedReading" [data]="selectedReading"
-            [evtHighlight]="highlightData$ | async" [editionLevel]="editionLevel" [withDeletions]="withDeletions"
+            [evtHighlight]="highlightData$ | async" [editionLevel]='editionLevel' [withDeletions]="withDeletions"
             [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
       </ng-container>
       <ng-container *ngIf="!isInWitnessPanel">
          <evt-reading class="app-entry-lem" *ngIf="data?.lemma" [data]="data.lemma"
-            [evtHighlight]="highlightData$ | async" [editionLevel]="editionLevel" [withDeletions]="withDeletions"
+            [evtHighlight]="highlightData$ | async" [editionLevel]='editionLevel' [withDeletions]="withDeletions"
             [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
       </ng-container>
 
