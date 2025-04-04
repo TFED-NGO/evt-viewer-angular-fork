@@ -1,9 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
 import { Attribute, GenericElement } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
-import { EVTStatusService } from 'src/app/services/evt-status.service';
-import { ApparatusEntryDetailService } from '../apparatus-entry/apparatus-entry-detail/apparatus-entry-detail.service';
 import { ParseResult } from 'src/app/services/xml-parsers/parser-models';
 
 @Component({
@@ -12,14 +10,14 @@ import { ParseResult } from 'src/app/services/xml-parsers/parser-models';
   styleUrls: ['./witness-id.component.scss']
 })
 export class WitnessIdComponent {
-
   @Input() witnessId: string;
+  @Output() witnessClicked = new EventEmitter<string>();
 
   witnessItem$: Observable<WitnessItem> = this.modelService.flattenedWitnesses$.pipe(
     map(witnesses => {
       const witnessId = Attribute.create(this.witnessId);
       const witness = witnesses.find(y => witnessId.equals(y.id));
-      if(!witness) {
+      if (!witness) {
         console.warn("Cannot find witness with id: ", this.witnessId)
         return;
       }
@@ -29,7 +27,7 @@ export class WitnessIdComponent {
           id: null,
           label: witness.label
         }
-      } 
+      }
       else {
         return { id: witness.id }
       }
@@ -37,23 +35,16 @@ export class WitnessIdComponent {
     shareReplay(1)
   );
 
+  get isClickable() {
+    return this.witnessClicked.observed; // checks if the EventEmitter has been binded in the parent
+  }
+
   constructor(
-    private statusService: EVTStatusService,
     private modelService: EVTModelService,
-    private apparatusEntryDetailService: ApparatusEntryDetailService
   ) { }
 
   onWitnessClicked() {
-    const witnessId = Attribute.create(this.witnessId).valueWithoutRef;
-    this.statusService.updateViewMode$.next(this.statusService.availableViewModes.find(v => v.id === 'collation'));
-    let newValue = [...this.statusService.updateWitnesses$.value, witnessId];
-    newValue = newValue.filter(this.onlyUnique);
-    this.statusService.updateWitnesses$.next(newValue);
-    this.statusService.updateApparatusExponent$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
-  }
-
-  private onlyUnique(value, index, array) {
-    return array.indexOf(value) === index;
+    this.witnessClicked.emit(this.witnessId);
   }
 }
 

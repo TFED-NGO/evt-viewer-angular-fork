@@ -8,7 +8,6 @@ import { ApparatusEntryDetailService } from './apparatus-entry-detail.service';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 import { EditionLevelType } from 'src/app/app.config';
 
-
 @Component({
   selector: 'evt-apparatus-entry-detail',
   templateUrl: './apparatus-entry-detail.component.html',
@@ -118,7 +117,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       this.currentTab = tab;
     }
   }
-
 }
 
 export interface ReadingItem {
