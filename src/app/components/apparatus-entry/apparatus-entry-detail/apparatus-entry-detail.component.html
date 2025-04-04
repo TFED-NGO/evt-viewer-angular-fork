@@ -31,6 +31,10 @@
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                         </span>
+                        <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
+                            <span class="info-label px-2 fw-bold">Resp:</span>
+                            <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -131,8 +135,13 @@
                                 <evt-witness-metadata
                                     [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                             </span>
+                            <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
+                                <span class="info-label pe-2">Resp:</span>
+                                <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
+                            </span>
+
                             <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
-                                <span class="d-block pe-2" *ngIf="metadata.key !== 'wit'">
+                                <span class="d-block pe-2" *ngIf="metadata.key !== 'wit' && metadata.key !== 'resp'">
                                     <evt-reading-metadata [metadata]="metadata"></evt-reading-metadata>
                                 </span>
                             </ng-container>

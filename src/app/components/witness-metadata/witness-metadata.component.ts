@@ -11,7 +11,7 @@ import { ApparatusEntryDetailService } from '../apparatus-entry/apparatus-entry-
 export class WitnessMetadataComponent implements OnInit {
   @Input() witnessMetadata: string;
 
-  witnessIds: string[] = [];
+  ids: string[] = [];
 
   constructor(
     private statusService: EVTStatusService,
@@ -22,10 +22,10 @@ export class WitnessMetadataComponent implements OnInit {
     const witnessMetadata = this.witnessMetadata;
     if (witnessMetadata.includes(' ')) {
       const witnessIds = witnessMetadata.split(' ');
-      this.witnessIds = witnessIds.filter(x => !!x);
+      this.ids = witnessIds.filter(x => !!x);
     }
     else {
-      this.witnessIds = [witnessMetadata];
+      this.ids = [witnessMetadata];
     }
   }
 

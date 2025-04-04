@@ -161,6 +161,7 @@ import { HrComponent } from './ui-components/hr/hr.component';
 import { ErrorsButtonComponent } from './main-header/errors-button/errors-button.component';
 import { ReadingMetadataComponent } from './components/reading-metadata/reading-metadata.component';
 import { LabelComponent } from './components/label/label.component';
+import { WitnessRespMetadataComponent } from './components/witness-metadata/witness-resp-metadata/witness-resp-metadata.component';
 
 const routes: Routes = [
 ];
@@ -310,6 +311,7 @@ const DynamicComponents = [
     ErrorsButtonComponent,
     ReadingMetadataComponent,
     LabelComponent,
+    WitnessRespMetadataComponent,
   ],
   imports: [
     AppRoutingModule,
