@@ -338,7 +338,7 @@ export class StructureXmlParserService {
             const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
             item.content.push(exponent);
             this.appExponents.set(exponent.id().valueWithoutRef, exponent);
-            app.exponent = exponent.label;
+            app.exponent = exponent.label; 
           }
         }
       }
