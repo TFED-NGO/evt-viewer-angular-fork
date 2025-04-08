@@ -328,7 +328,7 @@ export class StructureXmlParserService {
             const from = appFrom.valueWithoutRef;
             const to = id; // the exponent will be the To element itself since is placed as next sibling of the current item
             const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
-            items.splice(i + 1, 0, exponent); // insert as sibling because this component is not an anchor
+            item.content.push(exponent); // insert as sibling because this component is not an anchor
             this.appExponents.set(exponent.id().valueWithoutRef, exponent);
             app.exponent = exponent.label;
           }
