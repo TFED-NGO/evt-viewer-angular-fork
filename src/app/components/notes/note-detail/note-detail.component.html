@@ -9,6 +9,7 @@
             </evt-content-viewer>
         </span>
     </div>
+    <evt-pinner class="note-tab-pinner" [item]="note" pinType="Notes"></evt-pinner>
     <div class="card-footer app-detail-tabs" *ngIf="detailVisible">
         <ul ngbNav #quoteEntryTab="ngbNav" class="nav-pills">
             <li ngbNavItem="analoguesView" *ngIf="note.analogue">
