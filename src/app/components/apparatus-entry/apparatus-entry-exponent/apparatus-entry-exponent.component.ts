@@ -4,6 +4,7 @@ import { register } from 'src/app/services/component-register.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { BehaviorSubject, combineLatest, map, tap } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
+import { isElementBetween } from 'src/app/utils/dom-utils';
 
 @Component({
   selector: 'evt-apparatus-entry-exponent',
@@ -65,8 +66,8 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
       const { id, element, isHovering } = hoveredText;
       if (!this.isBetweenElementMemo.has(id)) {
         const { fromEl, toEl } = this.hoverService.getDepaElements(this.data);
-        const isElementBetween = this.hoverService.isElementBetween(fromEl, element, toEl);
-        this.isBetweenElementMemo.set(id, isElementBetween);
+        const result = isElementBetween(fromEl, element, toEl);
+        this.isBetweenElementMemo.set(id, result);
       }
 
       const result = isHovering && this.isBetweenElementMemo.get(id);
