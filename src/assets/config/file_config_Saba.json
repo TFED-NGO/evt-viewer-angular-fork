@@ -1,6 +1,11 @@
 {
 	"editionUrls": [
-		"assets/data/saba.xml"
+		{
+			"type": "main",
+			"value": "assets/data/saba.xml",
+			"enable": true
+		}
+		
 	],
 	"editionImagesSource": {
 		"manifest": {
