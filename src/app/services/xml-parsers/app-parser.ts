@@ -1,18 +1,19 @@
 import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
-import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser, ParseResult } from './parser-models';
 import { XMLID_ATTRIBUTE } from 'src/app/models/constants';
-import { getTopMostAncestor } from 'src/app/utils/dom-utils';
+import { getTopMostAncestor, getXPath } from 'src/app/utils/dom-utils';
+import { v4 as uuidv4 } from 'uuid';
 
 @xmlParser('rdg', RdgParser)
 export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     private readingGroupTagName = 'rdgGrp';
     attributeParser = createParser(AttributeParser, this.genericParse);
     noteParser = createParser(NoteParser, this.genericParse);
-
+    lacunaParser = createParser(LacunaParser, this.genericParse);
 
     public parse(rdg: XMLElement): Reading {
         const result = {
@@ -26,6 +27,8 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             class: rdg.tagName.toLowerCase(),
             varSeq: parseInt(rdg.getAttribute('varSeq')),
             notes: this.parseReadingNotes(rdg),
+            lacunas: this.parseLacunas(rdg),
+            xPath: getXPath(rdg),
         };
         return result;
     }
@@ -71,7 +74,59 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             .map((note: XMLElement) => this.noteParser.parse(note))
         return notes;
     }
+
+    private parseLacunas(rdg: XMLElement): Lacunas {
+        const lacuna = this.lacunaParser.parse(rdg);
+        if (!lacuna) return { lacunaStart: null, lacunaEnd: null };
+
+        const result = lacuna.isLacunaStart ? { lacunaStart: lacuna } : { lacunaEnd: lacuna };
+        return result;
+    }
 }
+
+@xmlParser('evt-lacuna-parser', Lacuna)
+export class LacunaParser extends EmptyParser implements Parser<XMLElement> {
+    private readonly attributeParser = createParser(AttributeParser, this.genericParse);
+
+    parse(reading: HTMLElement): Lacuna | null {
+        let isLacunaStart: boolean = false;
+        let lacunaElement = reading.getElementsByTagName('lacunaStart')[0];
+        if (lacunaElement) {
+            isLacunaStart = true;
+        } else {
+            lacunaElement = reading.getElementsByTagName('lacunaEnd')[0];
+            if (lacunaElement) {
+                isLacunaStart = false;
+            } else {
+                return null;
+            }
+        }
+
+        const id = 'lacuna-' + uuidv4();
+        const attributes = this.attributeParser.parse(lacunaElement as HTMLElement)
+        const lacunaWitnessIds = attributes?.['wit'] ? attributes['wit'].split(' ')
+            : reading.getAttribute('wit')?.split(' ') || [];
+            
+        let witnessesIds: string[];
+        if (lacunaWitnessIds.length) {
+            witnessesIds = lacunaWitnessIds;
+        } else {
+            console.error('No witness has been found for Lacuna', reading);
+            witnessesIds = [];
+        }
+
+        return {
+            id,
+            witnessesIds,
+            isLacunaStart,
+            content: [],
+            attributes,
+            type: Lacuna,
+            xPath: getXPath(lacunaElement),
+        };
+    }
+}
+
 
 @xmlParser('evt-apparatus-entry-parser', AppParser)
 export class AppParser extends EmptyParser implements Parser<XMLElement> {
@@ -136,7 +191,8 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
             additionalAttributes: new AdditionalAttributes(),
             exponent: '',
-            isWitnessExcluded: ApparatusEntry.prototype.isWitnessExcluded
+            isWitnessExcluded: ApparatusEntry.prototype.isWitnessExcluded,
+            xPath: getXPath(appEntry),
         };
         return result;
     }
@@ -203,3 +259,4 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return changes;
     }
 }
+

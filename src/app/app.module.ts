@@ -161,6 +161,8 @@ import { HrComponent } from './ui-components/hr/hr.component';
 import { ErrorsButtonComponent } from './main-header/errors-button/errors-button.component';
 import { ReadingMetadataComponent } from './components/reading-metadata/reading-metadata.component';
 import { LabelComponent } from './components/label/label.component';
+import { LacunaComponent } from './components/lacuna/lacuna.component';
+import { PageLacunaComponent } from './panels/witness-panel/page-lacuna/page-lacuna.component';
 
 const routes: Routes = [
 ];
@@ -226,6 +228,7 @@ const DynamicComponents = [
   VerseComponent,
   VersesGroupComponent,
   WordComponent,
+  LacunaComponent,
 ];
 
 @NgModule({
@@ -310,6 +313,7 @@ const DynamicComponents = [
     ErrorsButtonComponent,
     ReadingMetadataComponent,
     LabelComponent,
+    PageLacunaComponent,
   ],
   imports: [
     AppRoutingModule,

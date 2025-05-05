@@ -28,6 +28,7 @@ export class GenericElement {
     class?: string;
     attributes: Attributes;
     content: Array<ParseResult<GenericElement>>;
+    xPath: string;
 }
 
 export type XMLElement = HTMLElement;
@@ -71,6 +72,7 @@ export interface Page {
     parsedContent: Array<ParseResult<GenericElement>>;
     url: string;
     facsUrl: string;
+    isPartOfLacuna?: boolean;
 }
 
 export interface ChangeLayerData {
@@ -343,7 +345,24 @@ export class Reading extends GenericElement {
     excludedWitIDs: string[];
     significant: boolean;
     varSeq?: number;
-    notes: Note[]
+    notes: Note[];
+    lacunas: Lacunas
+}
+
+export class Lacunas {
+    lacunaStart?: Lacuna;
+    lacunaEnd?: Lacuna;
+}
+
+export interface LacunaPair {
+  start?: HTMLElement;
+  end?: HTMLElement;
+}
+
+export class Lacuna extends GenericElement {
+    id: string;
+    witnessesIds: string[];
+    isLacunaStart: boolean;
 }
 
 export interface GridItem {

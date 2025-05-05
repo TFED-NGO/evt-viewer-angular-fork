@@ -27,6 +27,27 @@ export class ApparatusEntryComponent implements OnInit {
     map(exponent => this.data.exponent && this.data.exponent === exponent)
   );
 
+  get lacunaStart() {
+    const reading = this.getWitnessReadingOrDefault();
+    if (!reading) return null;
+
+    return reading.lacunas.lacunaStart;
+  }
+
+  get lacunaEnd() {
+    const reading = this.getWitnessReadingOrDefault();
+    if (!reading) return null;
+
+    return reading.lacunas.lacunaEnd;
+  }
+
+
+  getWitnessReadingOrDefault() {
+    const readings = this.data.readings;
+    const reading = readings.find(x => x.witIDs.includes(this.witnessPanelService.witnessId))
+    return reading;
+  }
+
   public isInsideAppDetail: boolean;
   public isNestedApp: boolean;
   public nestedApps: ApparatusEntry[] = [];
@@ -63,8 +84,8 @@ export class ApparatusEntryComponent implements OnInit {
     if (this.isInWitnessPanel) {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
       this.selectedReading = isWitnessExcluded ? this.data.lemma : this.data.orderedReadings
-        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId) 
-        || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
+        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId)
+          || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
     }
   }
 
