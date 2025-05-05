@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../../app.config';
-import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
-import { deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
+import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
+import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from 'src/app/extensions/apparatus.extensions';
@@ -30,24 +30,27 @@ export class StructureXmlParserService {
   //private readonly backTagName = 'back';
 
   allApps: XMLElement[] = [];
+  groupedByWitLacunas = new Map<string, LacunaPair[]>();
+  back: Element = null;
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
-  parsePages(el: XMLElement): EditionStructure {
+  parsePages(source: XMLElement): EditionStructure {
     const editionStructure = {
       pages: [] as Page[],
       documentApparatusEntries: new DocumentApparatusEntries()
     };
 
-    if (!el) return editionStructure;
+    if (!source) return editionStructure;
 
-    const front: XMLElement = el.querySelector(this.frontTagName);
-    const body: XMLElement = el.querySelector(this.bodyTagName);
+    const front: XMLElement = source.querySelector(this.frontTagName);
+    const body: XMLElement = source.querySelector(this.bodyTagName);
+    this.back = source.querySelector('back');
 
-    const pbs = Array.from(el.querySelectorAll(this.pageTagName)).filter((p) => !p.getAttribute('ed'));
+    const pbs = Array.from(source.querySelectorAll(this.pageTagName)).filter((p) => !p.getAttribute('ed'));
     const frontPbs = pbs.filter((p) => isNestedInElem(p, this.frontTagName));
     const bodyPbs = pbs.filter((p) => isNestedInElem(p, this.bodyTagName));
-    const doc = el.firstElementChild.ownerDocument;
+    const doc = source.firstElementChild.ownerDocument;
 
     if (frontPbs.length > 0 && bodyPbs.length > 0) {
       const pages = pbs.map((pb: XMLElement, idx, arr: XMLElement[]) => this.parseDocumentPage(doc, pb, arr[idx + 1], 'text'));
@@ -65,15 +68,59 @@ export class StructureXmlParserService {
       editionStructure.pages.push(...frontPages, ...bodyPages);
     }
 
+    const backElements = source.getElementsByTagName('back');
+    const lacunasStart = Array.from(backElements[0].querySelectorAll('lacunaStart')).map(x => x as HTMLElement);
+    const lacunasEnd = Array.from(backElements[0].querySelectorAll('lacunaEnd')).map(x => x as HTMLElement);
+
+    for (const lacuna of lacunasStart.concat(lacunasEnd)) {
+      const wit = Attribute.createOrDefault(lacuna.getAttribute('wit'))
+        || Attribute.createOrDefault(lacuna.parentElement?.getAttribute('wit'));
+      if (!wit) {
+        this.errorService.logError("A Lacuna must either have a wit attribute or its parent should");
+        continue;
+      }
+
+      lacuna.setAttribute('wit', wit.valueWithoutRef);
+
+      const lacunaAnchestorApp = lacuna.closest('app') as HTMLElement;
+      const startFrom = Attribute.createFromOrDefault(lacunaAnchestorApp);
+      lacuna.setAttribute('from', startFrom.valueWithoutRef);
+    }
+
+    for (const lacunaStart of lacunasStart) {
+      if (!lacunasEnd.length) break;
+
+      const startWit = lacunaStart.getAttribute('wit');
+      const lacunaEnd = lacunasEnd.find(lacunaEnd => {
+        const endWit = lacunaEnd.getAttribute('wit');
+        return startWit === endWit;
+      });
+
+      lacunasEnd.splice(0, 1);
+
+      const startFrom = Attribute.createFromOrDefault(lacunaStart);
+      const startAnchor = source.querySelector(`[*|id='${startFrom.valueWithoutRef}']`) as HTMLElement;
+
+
+      const endFrom = Attribute.createFromOrDefault(lacunaEnd);
+      const endAnchor = source.querySelector(`[*|id='${endFrom.valueWithoutRef}']`) as HTMLElement;
+
+
+      const hasKey = this.groupedByWitLacunas.has(startWit);
+      if (!hasKey) {
+        this.groupedByWitLacunas.set(startWit, [])
+      }
+      const pairs = this.groupedByWitLacunas.get(startWit);
+      pairs.push({ start: startAnchor, end: endAnchor });
+    }
     return editionStructure;
   }
-
 
   public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
     if (!this.allApps.length) {
       this.allApps = Array.from(source.querySelectorAll("app"));
       if (!this.allApps.length) {
-        this.errorService.onWarning('There are no apps in the source');
+        this.errorService.logWarning('There are no apps in the source');
         return;
       }
 
@@ -85,7 +132,7 @@ export class StructureXmlParserService {
 
           const from = Attribute.createFromOrDefault(app);
           if (!from) {
-            this.errorService.onError('From attribute is missing:', [app]);
+            this.errorService.logError('From attribute is missing:', [app]);
             continue;
           }
 
@@ -106,7 +153,7 @@ export class StructureXmlParserService {
 
               const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
               if (!otherElement) {
-                this.errorService.onError(
+                this.errorService.logError(
                   `No element found with xml:id ${otherFrom.valueWithoutRef}`,
                   [otherApp]
                 );
@@ -116,14 +163,14 @@ export class StructureXmlParserService {
               if (isIntersecting(fromElement, toElement, otherElement)) {
                 const duplicates = findDuplicateWitnesses(app, otherApp);
                 if (duplicates.length) {
-                  this.errorService.onError(
+                  this.errorService.logError(
                     `Duplicated witness found in intersecting elements: ${duplicates.join(', ')}`,
                     [app, otherApp]
                   );
                 }
               }
             }
-          },  1);
+          }, 1);
         }
 
         this.errorService.loadingEnd();
@@ -172,6 +219,16 @@ export class StructureXmlParserService {
       const enumerateByJson = JSON.stringify(enumeratedByParsed);
       enumeratedByJsonElements.push(enumerateByJson);
     }
+
+    // const app = document.createElement('app')
+    // app.setAttribute('from', '#Luc-001-37');
+    // app.setAttribute('to', '#Luc-001-41');
+
+    // const rdg = document.createElement('rdg');
+    // rdg.setAttribute('wit', '#Mon3')
+    // app.appendChild(rdg);
+
+    // this.allApps.push(app);
 
     for (let i = 0; i < editionStructure.pages.length; i++) {
       const page = editionStructure.pages[i];
@@ -475,12 +532,12 @@ export class StructureXmlParserService {
     return pageContent
       .map((node) => {
 
-        //const origEl = getEditionOrigNode(node, doc);
+        const origEl = getEditionOrigNode(node, doc);
         // issue #228
         // the original line is commented because this function causes the node to be revered at its original state
         // before the pb division, see issue #228 details for further info.
         // for now this quick fix allows a proper text division but we need to investigate exceptions and particular cases
-        const origEl = node;
+        //const origEl = node;
 
         if (origEl.nodeName === this.frontTagName || isNestedInElem(origEl, this.frontTagName)) {
           if (this.hasOriginalContent(origEl)) {
@@ -518,7 +575,7 @@ export class StructureXmlParserService {
 
 
 
-/* this function is only momentarily commented, waiting for issue #228 to be better addressed
+//this function is only momentarily commented, waiting for issue #228 to be better addressed
 function getEditionOrigNode(el: XMLElement, doc: Document) {
   if (el.getAttribute && el.getAttribute('xpath')) {
     const path = doc.documentElement.namespaceURI ? el.getAttribute('xpath').replace(/\//g, '/ns:') : el.getAttribute('xpath');
@@ -529,4 +586,3 @@ function getEditionOrigNode(el: XMLElement, doc: Document) {
 
   return el;
 }
-*/

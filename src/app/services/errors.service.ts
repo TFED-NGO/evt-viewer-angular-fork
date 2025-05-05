@@ -16,7 +16,7 @@ export class ErrorsService {
 
   constructor() { }
 
-  onError(error: string, elements?: HTMLElement[]) {
+  logError(error: string, elements?: HTMLElement[]) {
     const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
     const sourceError: SourceError = { errorMessage: error, type: 'error', outerHTMLs: outherHtmlsOrDefault }
     const errors = this._errors$.getValue();
@@ -28,7 +28,7 @@ export class ErrorsService {
     this._errors$.next([...errors, sourceError]);
   }
 
-  onWarning(error: string, elements?: HTMLElement[]) {
+  logWarning(error: string, elements?: HTMLElement[]) {
     const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
     const sourceError: SourceError = { errorMessage: error, type: 'warning', outerHTMLs: outherHtmlsOrDefault }
     const errors = this._errors$.getValue();

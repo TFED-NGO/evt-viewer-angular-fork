@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { map, Observable, of, shareReplay } from 'rxjs';
 import { HoverService } from 'src/app/services/hover.service';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
+import { isElementBetween } from 'src/app/utils/dom-utils';
 
 @Component({
   selector: 'evt-text',
@@ -41,8 +42,8 @@ export class TextComponent implements OnInit {
             const exponentId = exponent.id().valueWithoutRef;
             if (!this.exponentMemo.has(exponentId)) {
               const { fromEl, toEl } = this.hoverService.getDepaElements(exponent);
-              const isElementBetween = this.hoverService.isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
-              this.exponentMemo.set(exponentId, { enabled: isElementBetween });
+              const result = isElementBetween(fromEl, this.elementRef.nativeElement, toEl);
+              this.exponentMemo.set(exponentId, { enabled: result });
             }
 
             const memo = this.exponentMemo.get(exponentId);

@@ -4,7 +4,7 @@ import {
     GenericElement, NamedEntitiesList, NamedEntity, NamedEntityInfo, NamedEntityLabel,
     NamedEntityRef, NamedEntityType, Relation, XMLElement,
 } from '../../models/evt-models';
-import { xpath } from '../../utils/dom-utils';
+import { getXPath, xpath } from '../../utils/dom-utils';
 import { replaceNewLines } from '../../utils/xml-utils';
 import { AttributeMapParser, AttributeParser, EmptyParser, GenericElemParser, TextParser } from './basic-parsers';
 import { createParser, parseChildren, Parser } from './parser-models';
@@ -45,6 +45,7 @@ export class NamedEntitiesListParser extends EmptyParser implements Parser<XMLEl
             relations: [],
             description: [],
             attributes: this.attributeParser.parse(xml),
+            xPath: getXPath(xml),
         };
 
         const relationParse = createParser(RelationParser, this.genericParse);
@@ -107,7 +108,7 @@ export class NamedEntityRefParser extends EmptyParser implements Parser<XMLEleme
             type: NamedEntityRef,
             entityId: getEntityID(ref),
             entityType: neTypeMap[xml.tagName.toLowerCase()],
-            path: xpath(xml),
+            xPath: getXPath(xml),
             content: parseChildren(xml, this.genericParse),
             attributes: this.attributeParser.parse(xml),
             class: xml.tagName.toLowerCase(),
@@ -132,6 +133,7 @@ export class EntityParser extends EmptyParser implements Parser<XMLElement> {
             namedEntityType: this.getEntityType(xml.tagName),
             content: Array.from(xml.children).map((subchild: XMLElement) => this.parseEntityInfo(subchild)),
             attributes: this.attributeParsers.parse(xml),
+            xPath: getXPath(xml),
         };
 
         return entity;
@@ -143,6 +145,7 @@ export class EntityParser extends EmptyParser implements Parser<XMLElement> {
             label: xml.nodeType === 1 ? xml.tagName.toLowerCase() : 'info',
             content: [this.genericParse(xml)],
             attributes: xml.nodeType === 1 ? this.attributeParsers.parse(xml) : {},
+            xPath: getXPath(xml),
         };
     }
 
@@ -249,6 +252,7 @@ export class EntityInfoParser extends EmptyParser implements Parser<XMLElement> 
             label: xml.nodeType === 1 ? xml.tagName.toLowerCase() : 'info',
             content: [this.genericParse(xml)],
             attributes: xml.nodeType === 1 ? this.attributeParsers.parse(xml) : {},
+            xPath: getXPath(xml),
         };
     }
 }
@@ -276,6 +280,7 @@ export class RelationParser extends EmptyParser implements Parser<XMLElement> {
             attributes,
             content: Array.from(xml.children).map((subchild: XMLElement) => this.entityInfoParser.parse(subchild)),
             description: [],
+            xPath: getXPath(xml),
         };
         if (descriptionEls && descriptionEls.length > 0) {
             descriptionEls.forEach((el) => relation.description.push(this.genericParse(el)));

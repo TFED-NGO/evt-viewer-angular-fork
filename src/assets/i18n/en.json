@@ -207,5 +207,6 @@
     "noErrorFound": "No error found",
     "errors": "Errors",
     "dismissAll": "Dismiss All",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "pageIsPartOfLacuna": "This page is part of a Lacuna"
 }
