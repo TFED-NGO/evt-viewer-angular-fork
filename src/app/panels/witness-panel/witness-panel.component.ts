@@ -48,7 +48,6 @@ export class WitnessPanelComponent implements OnInit {
     const originalPages = this.structureParser.parsePages(source).pages;
     const lacunaPairs = this.structureParser.groupedByWitLacunas.get(this.witnessItem.id);
     const separator = AppConfig.evtSettings.edition.editionStructureSeparator;
-    
     const el = document.createElement('w');
     el.innerText = ' ';
     const emptyElement = this.genericParseService.parse(el);
@@ -79,8 +78,10 @@ export class WitnessPanelComponent implements OnInit {
       }
     }
 
-    for (const page of originalPages) {
-      removeElementsBetweenLacunas(page.parsedContent, () => page.isPartOfLacuna = true);
+    if (lacunaPairs) {
+      for (const page of originalPages) {
+        removeElementsBetweenLacunas(page.parsedContent, () => page.isPartOfLacuna = true);
+      }
     }
 
     const appsData: AppData[] = this.structureParser.allApps
