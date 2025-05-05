@@ -1,11 +1,11 @@
 import { Type } from '@angular/core';
-import { EditionLevelType } from '../app.config';
+import { EditionLevelType, EditorialConventionAttributes } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
 
 export interface EditorialConvention {
     element: string;
-    attributes: Attributes;
+    attributes: EditorialConventionAttributes;
     layouts: EditorialConventionLayouts;
 }
 export type EditorialConventionLayouts = Partial<{ [key in EditionLevelType]: Partial<EditorialConventionLayout> }>;
@@ -226,7 +226,7 @@ export class ApparatusEntry extends GenericElement {
     orderedReadings: Reading[];
 
     /**
-     * The {@link GenericElement.attributes} are used to display data
+     * The {@link GenericElement[attributes]} are used to display data
      * so to avoid messing what already works, this property can be used
      * to store additional attributes. 
      */

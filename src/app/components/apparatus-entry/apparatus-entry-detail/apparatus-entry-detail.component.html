@@ -5,11 +5,11 @@
                 <div class="col">
                     <span class="fw-bold me-1">{{ data.exponent }}</span>
                     <evt-reading class="info-rdg" *ngIf="this.showLemma; else criticalContent" [data]="data.lemma"
-                        [editionLevel]="editionLevel$ | async"></evt-reading>
+                        [editionLevel]="editionLevel"></evt-reading>
                     <ng-template #criticalContent>
                         <span class="me-1" *ngFor="let content of data.criticalContent">
                             <evt-content-viewer [content]="content"
-                                [editionLevel]="editionLevel$ | async"></evt-content-viewer>
+                                [editionLevel]="editionLevel"></evt-content-viewer>
                         </span>
                     </ng-template>
                     <span>]</span>
@@ -23,13 +23,17 @@
                     <div class="d-flex align-items-center" *ngFor="let readingItem of readingItems">
                         <div class="info-rdg pe-2 fw-semibold align-self-start">
                             <evt-reading *ngIf="readingItem.reading.content.length !== 0" [data]="readingItem.reading"
-                                [withDeletions]="true" [editionLevel]="editionLevel$ | async"></evt-reading>
+                                [withDeletions]="true" [editionLevel]="editionLevel"></evt-reading>
                             <span *ngIf="readingItem.reading.content.length === 0" class="font-italic">{{ 'omit' |
                                 translate }}</span>
                         </div>
                         <span *ngIf="readingItem.reading.attributes.wit" class="d-block">
                             <evt-witness-metadata
                                 [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
+                        </span>
+                        <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
+                            <span class="info-label px-2 fw-bold">Resp:</span>
+                            <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                         </span>
                     </div>
                 </div>
@@ -91,7 +95,7 @@
                                 <span class="fw-semibold">{{'LEMMA' | translate}}: </span>
                                 <span class="me-1 info-rdg">
                                     <evt-content-viewer [content]="data.lemma.content"
-                                        [editionLevel]="editionLevel$ | async"></evt-content-viewer>
+                                        [editionLevel]="editionLevel"></evt-content-viewer>
                                 </span>
                             </ng-container>
                             <ng-template #readingLabel>
@@ -102,20 +106,20 @@
                             </ng-template>
                             <ng-container>
                                 <evt-reading *ngIf="data.nestedAppsIDs.length === 0" class="info-rdg"
-                                    [data]="readingItem.reading" [editionLevel]="editionLevel$ | async"></evt-reading>
+                                    [data]="readingItem.reading" [editionLevel]="editionLevel"></evt-reading>
                                 <ng-container *ngIf="data.nestedAppsIDs.length > 0">
                                     <ng-container *ngFor="let c of readingItem.reading.content">
                                         <evt-content-viewer class="info-rdg" *ngIf="!isAppEntry(c)" [content]="c"
-                                            [editionLevel]="editionLevel$ | async"></evt-content-viewer>
+                                            [editionLevel]="editionLevel"></evt-content-viewer>
                                         <evt-reading class="info-rdg" *ngIf="isAppEntry(c)" [data]="c.lemma"
-                                            [editionLevel]="editionLevel$ | async"></evt-reading>
+                                            [editionLevel]="editionLevel"></evt-reading>
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
                             <ng-container *ngFor="let note of readingItem.reading.notes">
                                 <div>{{'notes' | translate | uppercase }}:
                                     <evt-content-viewer *ngFor="let element of note.content" [content]="element"
-                                        [editionLevel]="editionLevel$ | async"></evt-content-viewer>
+                                        [editionLevel]="editionLevel"></evt-content-viewer>
                                 </div>
                             </ng-container>
                             <span *ngIf="readingItem.reading.excludedWitIDs.length">
@@ -131,8 +135,13 @@
                                 <evt-witness-metadata
                                     [witnessMetadata]="readingItem.reading.attributes.wit"></evt-witness-metadata>
                             </span>
+                            <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
+                                <span class="info-label pe-2">Resp:</span>
+                                <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
+                            </span>
+
                             <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
-                                <span class="d-block pe-2" *ngIf="metadata.key !== 'wit'">
+                                <span class="d-block pe-2" *ngIf="metadata.key !== 'wit' && metadata.key !== 'resp'">
                                     <evt-reading-metadata [metadata]="metadata"></evt-reading-metadata>
                                 </span>
                             </ng-container>

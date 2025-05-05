@@ -163,6 +163,7 @@ import { ReadingMetadataComponent } from './components/reading-metadata/reading-
 import { LabelComponent } from './components/label/label.component';
 import { LacunaComponent } from './components/lacuna/lacuna.component';
 import { PageLacunaComponent } from './panels/witness-panel/page-lacuna/page-lacuna.component';
+import { WitnessRespMetadataComponent } from './components/witness-metadata/witness-resp-metadata/witness-resp-metadata.component';
 
 const routes: Routes = [
 ];
@@ -314,6 +315,7 @@ const DynamicComponents = [
     ReadingMetadataComponent,
     LabelComponent,
     PageLacunaComponent,
+    WitnessRespMetadataComponent,
   ],
   imports: [
     AppRoutingModule,

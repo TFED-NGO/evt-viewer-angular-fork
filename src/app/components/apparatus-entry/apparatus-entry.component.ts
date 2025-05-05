@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, HostListener, Input, OnInit, Optional, SkipSelf } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { AppConfig } from 'src/app/app.config';
+import { AppConfig, EditionLevelType } from 'src/app/app.config';
 import { ApparatusEntry, Reading } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { EVTModelService } from '../../services/evt-model.service';
-import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
+import { Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
 import { ApparatusEntryDetailComponent } from './apparatus-entry-detail/apparatus-entry-detail.component';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 
-export interface ApparatusEntryComponent extends EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible { }
+export interface ApparatusEntryComponent extends Highlightable, ShowDeletionsSusceptible { }
 
 @Component({
   selector: 'evt-apparatus-entry',
@@ -54,6 +54,7 @@ export class ApparatusEntryComponent implements OnInit {
 
   isInWitnessPanel: boolean;
   selectedReading?: Reading;
+  editionLevel: EditionLevelType = 'critical'
 
   variance$ = this.evtModelService.appVariance$.pipe(
     map((variances) => variances[this.data.id]),

@@ -1,4 +1,4 @@
-<span class="app-wit link" (click)="onWitnessClicked()">
+<span class="app-wit" [class.clickable]="isClickable" (click)="onWitnessClicked()">
     <ng-container *ngIf="(witnessItem$ | async) as witnessItem;">
         <evt-label *ngIf="witnessItem.label" [data]="witnessItem.label"></evt-label>
         <span *ngIf="witnessItem.id">{{ witnessItem.id }}</span>
