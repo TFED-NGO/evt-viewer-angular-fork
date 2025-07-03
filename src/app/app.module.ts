@@ -114,6 +114,7 @@ import { PublicationStmtComponent } from './components/publication-stmt/publicat
 import { QuoteEntryComponent } from './components/quote-entry/quote-entry.component';
 import { ReadingComponent } from './components/reading/reading.component';
 import { ReadingTextComponent } from './view-modes/reading-text/reading-text.component';
+import { ReadingsSequenceComponent } from './components/apparatus-entry/readings-sequence/readings-sequence.component';
 import { RenditionComponent } from './components/rendition/rendition.component';
 import { RespStmtComponent } from './components/resp-stmt/resp-stmt.component';
 import { SamplingDeclComponent } from './components/sampling-decl/sampling-decl.component';
@@ -270,6 +271,7 @@ const DynamicComponents = [
     PinnerComponent,
     ProjectInfoComponent,
     ReadingTextComponent,
+    ReadingsSequenceComponent,
     ShortcutsComponent,
     SourceDetailComponent,
     SourceNoteComponent,
