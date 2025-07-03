@@ -200,6 +200,7 @@
   "reprintedIn": "Repr. in",
   "editedBy": "Edited by",
   "corrSeq": "Correction sequence",
+  "varSeq": "Correction sequence",
   "criticalNote": "Critical note",
   "showsDeletions": "Show deletions",
   "hidesDeletions": "Hide deletions",
