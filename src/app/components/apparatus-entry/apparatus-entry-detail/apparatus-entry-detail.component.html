@@ -40,6 +40,15 @@
                 </ng-template>
             </li>
 
+            <li ngbNavItem="varSeq" *ngIf="readings.length > 0">
+                <a class="source-detail-btn" ngbNavLink href="#">{{'varSeq' | translate}}</a>
+                <ng-template ngbNavContent>
+                    <evt-readings-sequence 
+                        [data]="readings">
+                    </evt-readings-sequence>
+                </ng-template>
+            </li> 
+
             <li ngbNavItem="info">
                 <a class="app-detail-btn" ngbNavLink href="#">{{'info' | translate}}</a>
                 <ng-template ngbNavContent>

@@ -41,8 +41,9 @@
                 </ng-template>
             </li>
 
-            <li ngbNavItem="corrSeq" *ngIf="mods.length > 0">
-                <a class="source-detail-btn" ngbNavLink href="#">{{'corrSeq' | translate}}</a>
+            <!-- sequence mods -->
+            <li ngbNavItem="varSeq" *ngIf="(mods.length > 0 && orderedLayers && orderedLayers.length > 0); else sequenceReadings">
+                <a class="source-detail-btn" ngbNavLink href="#">{{'varSeq' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-mod-sequence 
                         [data]="mods" 
@@ -51,6 +52,17 @@
                     </evt-mod-sequence>
                 </ng-template>
             </li>
+            <!-- sequence readings -->
+            <ng-template #sequenceReadings>
+                <li ngbNavItem="varSeq" *ngIf="orderedReadings.length > 0">
+                    <a class="source-detail-btn" ngbNavLink href="#">{{'varSeq' | translate}}</a>
+                    <ng-template ngbNavContent>
+                        <evt-readings-sequence 
+                            [data]="orderedReadings">
+                        </evt-readings-sequence>
+                    </ng-template>
+                </li> 
+            </ng-template>
 
             <li ngbNavItem="xml" *ngIf="containerElement.originalEncoding">
                 <a class="source-detail-btn" ngbNavLink href="#">{{'xml' | translate}}</a>
