@@ -24,7 +24,7 @@ export class ModGroupComponent {
 
   public orderedLayers: string[];
 
-  public selLayer: string;
+  public selLayer: string|undefined;
 
   public opened = false;
 
@@ -47,7 +47,7 @@ export class ModGroupComponent {
 
   @Input() orderedReadings: Reading[]
 
-  @Input() set selectedLayer(layer: string) {
+  @Input() set selectedLayer(layer: string|undefined) {
     this.selLayer = layer;
   }
   get selectedLayers() { return this.selLayer; }

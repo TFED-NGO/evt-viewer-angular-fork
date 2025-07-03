@@ -27,8 +27,6 @@ export class TextPanelComponent {
     return this._mc;
   }
 
-  public orderedLayers: string[];
-
   public selLayer: string;
   @Input() set selectedLayer(layer: string) {
     this.selLayer = layer;
