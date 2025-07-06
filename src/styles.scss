@@ -289,6 +289,15 @@ evt-analogue-detail evt-original-encoding-viewer pre {
   font-size: 1.3rem;
 }
 
+.readingSeparator {
+  display: inline-block;
+  font-family: cursive;
+  font-weight: 600;
+  margin: 0 0.2em 0 0.1em;
+  line-height: 1rem;
+  font-size: 1.3rem;
+}
+
 .app-entry-rdg .changeGroupSeparator {
   display: inline-block;
 }
