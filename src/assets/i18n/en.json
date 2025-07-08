@@ -204,6 +204,7 @@
   "criticalNote": "Critical note",
   "showsDeletions": "Show deletions",
   "hidesDeletions": "Hide deletions",
+  "noRelations": "No relations",
   "occurrencesFoundLabel": "{{occurrencesCount}} occurrences found in {{formsCount}} forms",
   "form": "Form",
   "ariaLabels": {

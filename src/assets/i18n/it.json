@@ -203,6 +203,7 @@
   "criticalNote": "Nota critica",
   "showsDeletions": "Mostra cancellazioni",
   "hidesDeletions": "Nascondi cancellazioni",
+  "noRelations": "Nessuna relazione",
   "occurrencesFoundLabel": "{{occurrencesCount}} occorrenze trovate in {{formsCount}} forme",
   "form": "Forma",
   "ariaLabels": {
