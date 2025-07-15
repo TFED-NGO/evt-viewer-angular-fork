@@ -1,4 +1,4 @@
-<evt-panel [showSecondaryContent]="isSecondaryContentOpened()" (scrollContent)="updatePageFromScroll$.next()">
+<evt-panel [showSecondaryContent]="isSecondaryContentOpened()" (scrollContent)="updatePageFromScroll$.next()" [ngClass]="editionLevelID">
     <div header-left>
         <evt-button
             ariaLabel="{{ 'ariaLabels.openInfoTab' | translate }}"
