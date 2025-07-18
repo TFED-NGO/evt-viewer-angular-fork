@@ -121,6 +121,7 @@ export class StructureXmlParserService {
       this.allApps = Array.from(source.querySelectorAll("app"));
       if (!this.allApps.length) {
         this.errorService.logWarning('There are no apps in the source');
+        this.errorService.loadingEnd();
         return;
       }
 
