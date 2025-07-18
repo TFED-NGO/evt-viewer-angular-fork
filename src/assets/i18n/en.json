@@ -218,7 +218,6 @@
   "pageIsPartOfLacuna": "This page is part of a Lacuna",
   "ariaLabels": {
     "goToPrevPage": "Go to previous page",
-    "noWitnessesAvailable": "No witness available",
     "goToNextPage": "Go to next page",
     "submitNamedEntity": "Submit named-entity search",
     "searchNamedEntity": "Search named-entity",
@@ -226,25 +225,16 @@
     "showOptions": "Show options menu",
     "stepBackward": "Step backward",
     "stepForward": "Step forward",
-    "add": "Add",
     "caretLeft": "Caret left",
-    "remove": "Remove",
     "caretRight": "Caret right",
     "openInfoTab": "Open info tab",
     "searchResults": "Search results",
-    "searchWitness": "Search Witnesses",
     "hideDeletionsFromText": "Hide deletions from text flow",
-    "errorsModalSubtitle": "The source document have the following errors",
     "removePinned": "Remove pinned item",
-    "noErrorFound": "No error found",
-    "errors": "Errors",
-    "dismissAll": "Dismiss All",
     "pinItem": "Pin item",
-    "dismiss": "Dismiss",
     "closeModal": "Close modal",
-    "pageIsPartOfLacuna": "This page is part of a Lacuna",
     "hidePanel": "Hide this panel",
     "openApparatusTab": "Open Apparatus Tab",
-    "openPinBoard": "Open Pin Board"a
+    "openPinBoard": "Open Pin Board"
   }
 }
