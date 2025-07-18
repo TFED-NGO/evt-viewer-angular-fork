@@ -114,7 +114,7 @@
   "proseVersesToggler": true,
   "defaultTextFlow": "prose",
   "verseNumberPrinter": 5,
-  "readingColorLight": "rgb(208, 220, 255)",
+  "readingColorLight": "rgb(255 241 208)",
   "readingColorDark": "rgb(101, 138, 255)",
   "externalBibliography": {
     "biblAttributeToMatch": "xml:id",
@@ -139,11 +139,6 @@
     "inline": true,
     "commaSeparated": true,
     "showMainElemTextContent": true,
-    "changeSequenceView": {
-      "showVarSeqAttr": false,
-      "showSeqAttr": false,
-      "layerColors": []
-    },
     "defaultImageZoomLevel": 0.8
   },
   "analogueMarkers": [
@@ -152,7 +147,9 @@
     "Parallel",
     "parallel"
   ],
-  "sourcesExcludedFromListByParent": ["desc"],
+  "sourcesExcludedFromListByParent": [
+    "desc"
+  ],
   "showSubstitutionMarker": true,
   "showSeparatorBetweenChanges": true,
   "startingFromDefinitiveLayer": true,
@@ -161,15 +158,16 @@
     "showVarSeqAttr": false,
     "showSeqAttr": false,
     "layerColors": {
-      "strato-0": "#71e5fa",
-      "strato-1": "#609cf4",
-      "strato-2": "#0d6efd",
-      "strato-3": "#7B66FF",
-      "strato-4": "#3e22f3",
-      "strato-5": "#100077"
+      "strato-0": "#d4a03b",
+      "strato-1": "#d99102",
+      "strato-2": "#ac7301",
+      "strato-3": "#855801",
+      "strato-4": "#5f3f01",
+      "strato-5": "#352400"
     }
   },
   "defaultImageZoomLevel": 0.8,
+  "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
   "editionStructureSeparator": "pb,seg",
   "exponentEnumerateBy": "seg",

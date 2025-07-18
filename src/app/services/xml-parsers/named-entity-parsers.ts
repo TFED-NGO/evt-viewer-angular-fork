@@ -2,32 +2,12 @@ import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
 import {
     GenericElement, NamedEntitiesList, NamedEntity, NamedEntityInfo, NamedEntityLabel,
-    NamedEntityRef, NamedEntityType, Relation, XMLElement,
+    NamedEntityRef, Relation, XMLElement,
 } from '../../models/evt-models';
 import { getXPath, xpath } from '../../utils/dom-utils';
-import { replaceNewLines } from '../../utils/xml-utils';
+import { getXmlIdRequired, replaceNewLines } from '../../utils/xml-utils';
 import { AttributeMapParser, AttributeParser, EmptyParser, GenericElemParser, TextParser } from './basic-parsers';
 import { createParser, parseChildren, Parser } from './parser-models';
-
-export const namedEntitiesListsTagNamesMap: { [key: string]: string } = {
-    persons: 'listPerson',
-    places: 'listPlace',
-    organizations: 'listOrg',
-    events: 'listEvent',
-    occurrences: 'persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref]',
-};
-
-export function getListType(tagName): NamedEntityType {
-    return tagName.replace('list', '').toLowerCase();
-}
-
-export function getListsToParseTagNames() {
-    const neListsConfig = AppConfig.evtSettings.edition.namedEntitiesLists || {};
-
-    return Object.keys(neListsConfig)
-        .map((i) => neListsConfig[i].enable ? namedEntitiesListsTagNamesMap[i] : undefined)
-        .filter((ne) => !!ne);
-}
 
 @xmlParser('evt-named-entities-list-parser', NamedEntitiesListParser)
 export class NamedEntitiesListParser extends EmptyParser implements Parser<XMLElement> {
@@ -38,7 +18,7 @@ export class NamedEntitiesListParser extends EmptyParser implements Parser<XMLEl
             type: NamedEntitiesList,
             id: xml.getAttribute('xml:id') || xpath(xml),
             label: '',
-            namedEntityType: getListType(xml.tagName),
+            namedEntityType: AppConfig.getNamedEntityType(xml.tagName),
             content: [],
             sublists: [],
             originalEncoding: xml,
@@ -70,7 +50,10 @@ export class NamedEntitiesListParser extends EmptyParser implements Parser<XMLEl
                         }
                         break;
                     default:
-                        if (getListsToParseTagNames().indexOf(child.tagName) >= 0) {
+                        // is this the case for parsing named entities sublists, as the 'sublistParser' variable suggest at line 65?
+                        const neLists = AppConfig.getListsToParseTagNames();
+                        const neList = neLists.find(x => x.listSelector === child.tagName);
+                        if (neList) {
                             const subListParser = ParserRegister.get('evt-named-entities-list-parser');
                             const parsedSubList = subListParser.parse(child) as NamedEntitiesList;
                             parsedList.sublists.push(parsedSubList);
@@ -95,24 +78,27 @@ export class NamedEntityRefParser extends EmptyParser implements Parser<XMLEleme
     parse(xml: XMLElement): NamedEntityRef | GenericElement {
         const ref = xml.getAttribute('ref');
         if (!ref) { return this.elementParser.parse(xml); }
-
-        const neTypeMap: { [key: string]: NamedEntityType } = {
+                        
+        const neTypeMap: { [key: string]: string } = {
             placename: 'place',
             geogname: 'place',
             persname: 'person',
             orgname: 'org',
             event: 'event',
+            term: 'term'
         };
-
-        return {
+        
+        const tagName = xml.tagName.toLowerCase();
+        const result = {
             type: NamedEntityRef,
             entityId: getEntityID(ref),
             entityType: neTypeMap[xml.tagName.toLowerCase()],
-            xPath: getXPath(xml),
+            xPath: xpath(xml),
             content: parseChildren(xml, this.genericParse),
             attributes: this.attributeParser.parse(xml),
-            class: xml.tagName.toLowerCase(),
+            class: tagName,
         };
+        return result;
     }
 
 }
@@ -130,7 +116,7 @@ export class EntityParser extends EmptyParser implements Parser<XMLElement> {
             sortKey: xml.getAttribute('sortKey') || (label ? label[0] : '') || xml.getAttribute('xml:id') || xpath(xml),
             originalEncoding: xml,
             label,
-            namedEntityType: this.getEntityType(xml.tagName),
+            namedEntityType: AppConfig.getNamedEntityType(xml.tagName),
             content: Array.from(xml.children).map((subchild: XMLElement) => this.parseEntityInfo(subchild)),
             attributes: this.attributeParsers.parse(xml),
             xPath: getXPath(xml),
@@ -148,8 +134,6 @@ export class EntityParser extends EmptyParser implements Parser<XMLElement> {
             xPath: getXPath(xml),
         };
     }
-
-    private getEntityType(tagName): NamedEntityType { return tagName.toLowerCase(); }
 }
 
 @xmlParser('person', PersonParser)
@@ -241,6 +225,23 @@ export class OrganizationParser extends EntityParser {
             ...super.parse(xml),
             label: textLabel('orgName', xml),
         };
+    }
+}
+
+@xmlParser('entry', EntryParser)
+export class EntryParser extends EntityParser {
+    parse(xml: XMLElement): NamedEntity {
+        return {
+            ...super.parse(xml),
+            label: this.getLabel(xml),
+        };
+    }
+
+    private getLabel(xml: XMLElement): string {
+        const formLemma = xml.querySelector('form[type="lemma"]');
+        const mainOrth = formLemma.querySelector('orth[type="main"') || formLemma.querySelector('orth');
+        const label = mainOrth?.textContent ? mainOrth.textContent : (getXmlIdRequired(xml));
+        return label;
     }
 }
 

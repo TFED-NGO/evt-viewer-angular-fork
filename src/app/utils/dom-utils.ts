@@ -1,4 +1,4 @@
-import { GenericElement, XMLElement } from '../models/evt-models';
+import { XMLElement } from '../models/evt-models';
 
 /**
  * Counter that takes into account the number of parsed elements with [xpath]{@link DOMUtilsService.html#xpath},
@@ -82,7 +82,7 @@ export function isNodeNestedInElem(
  * @returns calculated xpath of the given element
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function xpath(el: any): string {GenericElement
+export function xpath(el: any): string { 
   try {
     if (typeof el === 'string') {
       // document.evaluate(xpathExpression, contextNode, namespaceResolver, resultType, result );
@@ -230,6 +230,23 @@ export function updateCSS(rules: Array<[string, string]>) {
   rules.forEach((rule) => {
     thisCSS.insertRule(`${rule[0]} {${rule[1]}}`, 0);
   });
+}
+
+/**
+ * It applies a multiplier to a given css size
+ * @param value - CSS units such as '1rem', '5em', '5px', '6wh'.
+ * @params multiplier - Multiplier such as 0.8, 2 ...
+ * @returns The resulting units
+ */
+export function reduceCssUnit(value: string, multiplier: number): string {
+  const match = value.match(/^(\d*\.?\d+)([a-zA-Z%]+)$/);
+  if (!match) {
+      throw new Error("Invalid css unit provided");
+  }
+  const [, number, unit] = match;
+  const numberFloat = parseFloat(number);
+  const numberReduced = numberFloat * multiplier;
+  return `${numberReduced.toFixed(2)}${unit}`;
 }
 
 /**

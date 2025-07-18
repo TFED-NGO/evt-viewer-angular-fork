@@ -15,6 +15,7 @@
             </gridster>
             <ng-container *ngIf="witnessBtn$ | async as witnessBtn">
                 <evt-button class="btn" [class.btn-float-right]="witnessBtn.floatRight"
+                    ariaLabel="{{ 'addWitness' | translate }}" aria-role="button"
                     [additionalClasses]="witnessBtn?.additionalClasses" [label]="witnessBtn?.label | translate"
                     [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate" (click)="openModal(content)">
                 </evt-button>

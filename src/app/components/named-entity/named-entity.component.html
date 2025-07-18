@@ -19,7 +19,7 @@
     <div class="card-body ne-content" *ngIf="contentOpened">
         <ul ngbNav #entityDetails="ngbNav" class="entity-details" [activeId]="selectedSection">
             <li [ngbNavItem]="'info_'+data.id" [disabled]="data.content.length === 0">
-                <a ngbNavLink class="ui-font">{{'Info' | translate}}</a>
+                <a ngbNavLink class="ui-font" href="#">{{'Info' | translate}}</a>
                 <ng-template ngbNavContent>
                     <div class="ne-detail-content">
                         <evt-content-viewer *ngFor="let detail of data.content" [content]="detail">
@@ -55,9 +55,8 @@
                                 </ng-container>
                             </ng-container>
                         </div>
-                        <div class="container-fluid">
-                            <div class="row align-items-start"
-                                *ngIf="activeOccurrencesView === 'edition' && (occurrencesForms$ | async) as occurrencesForms">
+                        <div class="container-fluid" *ngIf="activeOccurrencesView === 'edition' && (occurrencesForms$ | async) as occurrencesForms">
+                            <div class="row align-items-start">
                                 <div class="col-auto ne-occurrence text-center"
                                     *ngFor="let occurrenceForm of occurrencesForms">
                                     <div class="fw-bold">{{ occurrenceForm.form }}</div>
@@ -83,7 +82,7 @@
                 </ng-template>
             </li>
             <li [ngbNavItem]="'relations_'+data.id">
-                <a ngbNavLink class="ui-font">{{'Relations' | translate}}</a>
+                <a ngbNavLink class="ui-font" href="#">{{'Relations' | translate}}</a>
                 <ng-template ngbNavContent>
                     <div class="ne-detail-content" *ngIf="relations$ | async as relations">
                         <span *ngIf="relations.length === 0" class="ui-font">{{'noRelations' | translate}}</span>
@@ -93,7 +92,7 @@
                 </ng-template>
             </li>
             <li [ngbNavItem]="'xml_'+data.id">
-                <a ngbNavLink class="ui-font">{{'XMLSource' | translate}}</a>
+                <a ngbNavLink class="ui-font" href="#">{{'XMLSource' | translate}}</a>
                 <ng-template ngbNavContent>
                     <div class="ne-detail-content no-padding">
                         <evt-original-encoding-viewer [originalEncoding]="data.originalEncoding">
