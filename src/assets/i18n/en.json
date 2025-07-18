@@ -169,14 +169,14 @@
   "withId": "with identifier",
   "criticalNotes": "Critical Notes",
   "ortographicVariants": "Orthographic Variants",
-  "info": "More info",
+  "info": "Info",
   "metadataForLemma": "Metadata for lemma",
   "metadataFor": "Metadata for",
   "noDataAvailable": "No data available",
   "moreInfoAboutApp": "More info about the apparatus entry",
   "omit": "omit.",
   "wit": "Wit:",
-  "xml": "XML",
+  "xml": "XML Code",
   "criticalApparatus": "Critical Apparatus",
   "sources": "Sources",
   "analogues": "Analogues",
@@ -245,6 +245,6 @@
     "pageIsPartOfLacuna": "This page is part of a Lacuna",
     "hidePanel": "Hide this panel",
     "openApparatusTab": "Open Apparatus Tab",
-    "openPinBoard": "Open Pin Board"
+    "openPinBoard": "Open Pin Board"a
   }
 }
