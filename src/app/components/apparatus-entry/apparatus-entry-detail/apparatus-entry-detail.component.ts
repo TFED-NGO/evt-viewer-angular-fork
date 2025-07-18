@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
 import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
@@ -6,7 +6,7 @@ import { distinctUntilChanged } from 'rxjs';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 import { ApparatusEntryDetailService } from './apparatus-entry-detail.service';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
-
+import { EditionLevelType } from 'src/app/app.config';
 
 @Component({
   selector: 'evt-apparatus-entry-detail',
@@ -45,11 +45,13 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
 
   showLemma: boolean = false;
 
+  editionLevel: EditionLevelType = 'critical';
+
   constructor(
     public evtModelService: EVTModelService,
     public evtStatusService: EVTStatusService,
     private apparatusEntryDetailService: ApparatusEntryDetailService,
-    private witnessPanelService: WitnessPanelService,
+    @Optional() private witnessPanelService?: WitnessPanelService,
   ) {
   }
 
@@ -65,10 +67,17 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     this.notSignificantReadings = this.data.readings.filter((rdg) => !rdg.significant);
     const readings = [this.data.lemma, ...this.significantReadings, ...this.notSignificantReadings];
     this.readingItems = readings.filter(rdg => !!rdg).map((rdg, i) => {
-      return { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
+      const result = { reading: rdg, isFirst: i === 0, isLemma: rdg.class === 'lem' }
+      return result;
     });
-    const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
-    this.showLemma = !!this.data.lemma && !isWitnessExcluded;
+
+    if (this.witnessPanelService) {
+      const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
+      this.showLemma = !!this.data.lemma && !isWitnessExcluded;
+    }
+    else{
+      this.showLemma = false;
+    }
   }
 
   ngOnDestroy() {
@@ -105,7 +114,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       this.currentTab = tab;
     }
   }
-
 }
 
 export interface ReadingItem {

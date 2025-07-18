@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { parse } from '.';
-import { Description, Witness, XMLElement } from '../../models/evt-models';
+import { Description, GenericElement, Witness, XMLElement } from '../../models/evt-models';
 import { AttributeParser } from './basic-parsers';
 import { GenericParserService } from './generic-parser.service';
-import { createParser, getID } from './parser-models';
+import { createParser, getID, ParseResult } from './parser-models';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +65,7 @@ export class WitnessesParserService {
     const witness: Witness = {
       id,
       name: id,
+      label: this.parseLabelOrDefault(wit),
       attributes: this.attributeParser.parse(wit),
       content: this.parseWitnessContent(wit),
       witnesses: lists.flatMap(list => this.parseList(list as XMLElement)),
@@ -73,8 +74,15 @@ export class WitnessesParserService {
     return witness;
   }
 
+  private parseLabelOrDefault(wit: XMLElement): ParseResult<GenericElement> | null {
+    const label = wit.querySelector(':scope > label'); // we search only in the children, not all the children heriarchy
+    if (!label) return null;
+    const result = this.genericParserService.parse(label as XMLElement);
+    return result;
+  }
+
   private getWitnessAnchestorsIds(wit: HTMLElement, anchestorIds: string[]): void {
-    if(wit.parentElement === null) return;
+    if (wit.parentElement === null) return;
 
     if (wit.parentElement.nodeName !== "witness") {
       this.getWitnessAnchestorsIds(wit.parentElement, anchestorIds);

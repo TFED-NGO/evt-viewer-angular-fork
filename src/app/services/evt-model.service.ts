@@ -75,21 +75,25 @@ export class EVTModelService {
   );
 
   // NAMED ENTITIES
-  public readonly parsedLists$ = this.editionSource$.pipe(
+  public readonly parsedLists$ = this.editionDataService.mainEditionSource$.pipe(
     map((source) => this.namedEntitiesParser.parseLists(source)),
     shareReplay(1),
   );
 
   public readonly persons$ = this.parsedLists$.pipe(
-    map(({ lists, entities }) => (this.namedEntitiesParser.getResultsByType(lists, entities, ['person', 'personGrp']))),
+    map(({ lists, entities }) => (
+      this.namedEntitiesParser.getResultsByType(
+        lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.persons.namedEntityType))),
   );
 
   public readonly places$ = this.parsedLists$.pipe(
-    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(lists, entities, ['place'])),
+    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(
+      lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.places.namedEntityType)),
   );
 
   public readonly organizations$ = this.parsedLists$.pipe(
-    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(lists, entities, ['org'])),
+    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(
+      lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.organizations.namedEntityType)),
   );
 
   public readonly relations$ = this.parsedLists$.pipe(
@@ -97,7 +101,13 @@ export class EVTModelService {
   );
 
   public readonly events$ = this.parsedLists$.pipe(
-    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(lists, entities, ['event'])),
+    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(
+      lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.events.namedEntityType)),
+  );
+
+  public readonly entries$ = this.parsedLists$.pipe(
+    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(
+      lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.entries.namedEntityType)),
   );
 
   public readonly verses$ = this.editionSource$.pipe(
@@ -116,17 +126,19 @@ export class EVTModelService {
     this.organizations$,
     this.relations$,
     this.events$,
+    this.entries$
   ]).pipe(
-    map(([persons, places, organizations, relations, events]) => ({
+    map(([persons, places, organizations, relations, events, entries]) => ({
       all: {
-        lists: [...persons.lists, ...places.lists, ...organizations.lists, ...events.lists],
-        entities: [...persons.entities, ...places.entities, ...organizations.entities, ...events.entities],
+        lists: [...persons.lists, ...places.lists, ...organizations.lists, ...events.lists, ...entries.lists],
+        entities: [...persons.entities, ...places.entities, ...organizations.entities, ...events.entities, ...entries.entities],
       },
       persons,
       places,
       organizations,
       relations,
       events,
+      entries
     })),
     shareReplay(1),
   );
@@ -390,7 +402,7 @@ export class EVTModelService {
     private sourceParser: SourceEntriesParserService,
     private bibliographicEntriesParser: BibliographicEntriesParserService,
     private modParser: ModParserService,
-  ) {
+  ) {    
   }
 
   getPage(pageId: string): Observable<Page> {

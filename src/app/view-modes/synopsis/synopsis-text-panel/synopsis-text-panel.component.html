@@ -1,5 +1,6 @@
 <evt-panel [secondary]="secondary">
-    <div header-left class="d-flex">
+    <div header-left class="d-flex align-items-center">
+        <div class="panel-title text-truncate me-1">{{ edition.editionTitle }}</div> 
         <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
             [selectedPage]="edition.selectedPage.pageSelectionList.selectedPage"
             (onSelectionChanged)="changePage($event)"></evt-synopsis-page-selector>

@@ -15,6 +15,7 @@
             </gridster>
             <ng-container *ngIf="witnessBtn$ | async as witnessBtn">
                 <evt-button class="btn" [class.btn-float-right]="witnessBtn.floatRight"
+                    ariaLabel="{{ 'addWitness' | translate }}" aria-role="button"
                     [additionalClasses]="witnessBtn?.additionalClasses" [label]="witnessBtn?.label | translate"
                     [iconLeft]="witnessBtn?.icon" [title]="witnessBtn?.title | translate" (click)="openModal(content)">
                 </evt-button>
@@ -26,9 +27,11 @@
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">{{ 'addWitness' | translate }}</h4>
-        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+        <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click'); onSearchChanged('')"></button>
     </div>
-    <div class="modal-body">
+    <div class="modal-body overflow-auto" style="max-height: 80vh;">
+        <input id="search-input" type="text" class="form-control mb-2" placeholder="{{'searchWitness' | translate }}" [ngModel]="searchWitness" (ngModelChange)="onSearchChanged($event)"  />
+        
         <ng-container *ngIf="modalWitnesses$ | async as modalWitnesses">
             <div *ngIf="!modalWitnesses.length">{{ 'noWitnessesAvailable' | translate }}</div>
             <evt-modal-witness-item *ngFor="let witness of (modalWitnesses$ | async)" [witness]="witness"

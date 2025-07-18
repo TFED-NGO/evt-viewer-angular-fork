@@ -66,18 +66,6 @@ export class HoverService {
     const toEl = document.getElementById(to.valueWithoutRef);
     return { fromEl, toEl };
   }
-
-  isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
-    try {
-      const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
-      const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
-      const isBetween = isAfterFrom && isBeforeTo;
-      return !!isBetween;
-    }
-    catch (error) {
-      console.warn(error);
-    }
-  }
 }
 
 

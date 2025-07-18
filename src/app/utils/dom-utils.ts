@@ -82,7 +82,7 @@ export function isNodeNestedInElem(
  * @returns calculated xpath of the given element
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function xpath(el: any): string {
+export function xpath(el: any): string { 
   try {
     if (typeof el === 'string') {
       // document.evaluate(xpathExpression, contextNode, namespaceResolver, resultType, result );
@@ -233,6 +233,23 @@ export function updateCSS(rules: Array<[string, string]>) {
 }
 
 /**
+ * It applies a multiplier to a given css size
+ * @param value - CSS units such as '1rem', '5em', '5px', '6wh'.
+ * @params multiplier - Multiplier such as 0.8, 2 ...
+ * @returns The resulting units
+ */
+export function reduceCssUnit(value: string, multiplier: number): string {
+  const match = value.match(/^(\d*\.?\d+)([a-zA-Z%]+)$/);
+  if (!match) {
+      throw new Error("Invalid css unit provided");
+  }
+  const [, number, unit] = match;
+  const numberFloat = parseFloat(number);
+  const numberReduced = numberFloat * multiplier;
+  return `${numberReduced.toFixed(2)}${unit}`;
+}
+
+/**
  * This function searches inside every property of an object for the provided attribute
  * it has one of the provided list of values. It stops after a customizable number of iterations to avoid waste of resources.
  * The limit counter could be inserted in a config, same as the ignoredProperties
@@ -346,4 +363,98 @@ export function getTopMostAncestor(element: HTMLElement): HTMLElement {
     current = current.parentElement;
   }
   return current;
+}
+
+export function isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
+  try {
+    const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
+    const isBetween = isAfterFrom && isBeforeTo;
+    return !!isBetween;
+  }
+  catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+/**
+ * Get absolute xPath position from dom element
+ * xPath position will does not contain any id, class or attribute, etc selector
+ * Because, Some page use random id and class. This function should ignore that kind problem, so we're not using any selector
+ * 
+ * @param {Element} element element to get position
+ * @returns {String} xPath string
+ */
+export function getXPath(el: any): string {
+  try {
+    let sames = [];
+    if (el.parentNode) {
+      sames = [].filter.call(el.parentNode.children, (x) => x.tagName === el.tagName);
+    }
+    let countIndex = sames.length > 1 ? ([].indexOf.call(sames, el) + 1) : 1;
+    countIndex = `[${countIndex}]`;
+    const tagName = el.tagName !== 'tei' ? '-' + el.tagName : '';
+
+    return `${xpath(el.parentNode)}${tagName}${countIndex}`;
+  } catch (e) {
+    totIdsGenerated++; // TODO: remove side effects
+
+    return `-id${totIdsGenerated}`;
+  }
+  // // Selector
+  // let selector = '';
+  // // Loop handler
+  // let foundRoot;
+  // // Element handler
+  // let currentElement = element;
+
+  // // Do action until we reach html element
+  // do {
+  //     // Get element tag name 
+  //     const tagName = currentElement.tagName.toLowerCase();
+  //     // Get parent element
+  //     if(!currentElement.parentElement) {
+  //       console.log('asd')
+  //     }
+  //     const parentElement = currentElement.parentElement;
+
+  //     // Count children
+  //     if (parentElement.childElementCount > 1) {
+  //         // Get children of parent element
+  //         const parentsChildren = [...parentElement.children];
+  //         // Count current tag 
+  //         let tag = [];
+  //         parentsChildren.forEach(child => {
+  //             if (child.tagName.toLowerCase() === tagName) tag.push(child) // Append to tag
+  //         })
+
+  //         // Is only of type
+  //         if (tag.length === 1) {
+  //             // Append tag to selector
+  //             selector = `/${tagName}${selector}`;
+  //         } else {
+  //             // Get position of current element in tag
+  //             const position = tag.indexOf(currentElement) + 1;
+  //             // Append tag to selector
+  //             selector = `/${tagName}[${position}]${selector}`;
+  //         }
+
+  //     } else {
+  //         //* Current element has no siblings
+  //         // Append tag to selector
+  //         selector = `/${tagName}${selector}`;
+  //     }
+
+  //     // Set parent element to current element
+  //     currentElement = parentElement;
+  //     // Is root  
+  //     foundRoot = parentElement.tagName.toLowerCase() === 'html';
+  //     // Finish selector if found root element
+  //     if(foundRoot) selector = `/html${selector}`;
+  // }
+  // while (foundRoot === false);
+
+  // // Return selector
+  // return selector;
 }

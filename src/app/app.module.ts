@@ -141,6 +141,7 @@ import { TitleStmtComponent } from './components/title-stmt/title-stmt.component
 import { VerseComponent } from './components/verse/verse.component';
 import { VersesGroupComponent } from './components/verses-group/verses-group.component';
 import { VersionPanelComponent } from './panels/version-panel/version-panel.component';
+import { VerseProseSelectComponent } from './components/verse-prose-select/verse-prose-select.component';
 import { WordComponent } from './components/word/word.component';
 import { WitnessPanelComponent } from './panels/witness-panel/witness-panel.component';
 import { XmlBeautifyPipe } from './pipes/xml-beautify.pipe';
@@ -158,6 +159,12 @@ import { ModalWitnessItemComponent } from './view-modes/collation/modal-witness-
 import { WitnessIdComponent } from './components/witness-id/witness-id.component';
 import { WitnessMetadataComponent } from './components/witness-metadata/witness-metadata.component';
 import { HrComponent } from './ui-components/hr/hr.component';
+import { ErrorsButtonComponent } from './main-header/errors-button/errors-button.component';
+import { ReadingMetadataComponent } from './components/reading-metadata/reading-metadata.component';
+import { LabelComponent } from './components/label/label.component';
+import { LacunaComponent } from './components/lacuna/lacuna.component';
+import { PageLacunaComponent } from './panels/witness-panel/page-lacuna/page-lacuna.component';
+import { WitnessRespMetadataComponent } from './components/witness-metadata/witness-resp-metadata/witness-resp-metadata.component';
 
 const routes: Routes = [
 ];
@@ -223,6 +230,7 @@ const DynamicComponents = [
   VerseComponent,
   VersesGroupComponent,
   WordComponent,
+  LacunaComponent,
 ];
 
 @NgModule({
@@ -290,6 +298,7 @@ const DynamicComponents = [
     TextTextComponent,
     TextVersionsComponent,
     VersionPanelComponent,
+    VerseProseSelectComponent,
     WitnessPanelComponent,
     XmlBeautifyPipe,
     SynopsisComponent,
@@ -304,6 +313,11 @@ const DynamicComponents = [
     WitnessIdComponent,
     WitnessMetadataComponent,
     HrComponent,
+    ErrorsButtonComponent,
+    ReadingMetadataComponent,
+    LabelComponent,
+    PageLacunaComponent,
+    WitnessRespMetadataComponent,
   ],
   imports: [
     AppRoutingModule,

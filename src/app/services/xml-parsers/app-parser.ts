@@ -1,19 +1,23 @@
 import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
-import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
-import { removeSpaces } from '../../utils/xml-utils';
+import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { createParsedWhiteSpace, removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser, ParseResult } from './parser-models';
 import { XMLID_ATTRIBUTE } from 'src/app/models/constants';
-import { getTopMostAncestor } from 'src/app/utils/dom-utils';
+import { getTopMostAncestor, getXPath } from 'src/app/utils/dom-utils';
+import { v4 as uuidv4 } from 'uuid';
+import { interleave } from 'src/app/utils/js-utils';
 
 @xmlParser('rdg', RdgParser)
 export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     private readingGroupTagName = 'rdgGrp';
     attributeParser = createParser(AttributeParser, this.genericParse);
+    noteParser = createParser(NoteParser, this.genericParse);
+    lacunaParser = createParser(LacunaParser, this.genericParse);
 
     public parse(rdg: XMLElement): Reading {
-        return {
+        const result = {
             type: Reading,
             id: getID(rdg),
             attributes: this.attributeParser.parse(rdg),
@@ -23,7 +27,11 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             significant: this.isReadingSignificant(rdg),
             class: rdg.tagName.toLowerCase(),
             varSeq: parseInt(rdg.getAttribute('varSeq')),
+            notes: this.parseReadingNotes(rdg),
+            lacunas: this.parseLacunas(rdg),
+            xPath: getXPath(rdg),
         };
+        return result;
     }
 
     private parseReadingWitnesses(rdg: XMLElement) {
@@ -61,7 +69,64 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     private isSignificant(notSignificantReading: string[], attributes: NamedNodeMap): boolean {
         return !Array.from(attributes).some(({ name, value }) => notSignificantReading.includes(`${name}=${value}`));
     }
+
+    private parseReadingNotes(rdg: XMLElement): Note[] {
+        const notes = Array.from(rdg.querySelectorAll('note'))
+            .map((note: XMLElement) => this.noteParser.parse(note))
+        return notes;
+    }
+
+    private parseLacunas(rdg: XMLElement): Lacunas {
+        const lacuna = this.lacunaParser.parse(rdg);
+        if (!lacuna) return { lacunaStart: null, lacunaEnd: null };
+
+        const result = lacuna.isLacunaStart ? { lacunaStart: lacuna } : { lacunaEnd: lacuna };
+        return result;
+    }
 }
+
+@xmlParser('evt-lacuna-parser', Lacuna)
+export class LacunaParser extends EmptyParser implements Parser<XMLElement> {
+    private readonly attributeParser = createParser(AttributeParser, this.genericParse);
+
+    parse(reading: HTMLElement): Lacuna | null {
+        let isLacunaStart: boolean = false;
+        let lacunaElement = reading.getElementsByTagName('lacunaStart')[0];
+        if (lacunaElement) {
+            isLacunaStart = true;
+        } else {
+            lacunaElement = reading.getElementsByTagName('lacunaEnd')[0];
+            if (lacunaElement) {
+                isLacunaStart = false;
+            } else {
+                return null;
+            }
+        }
+
+        const id = 'lacuna-' + uuidv4();
+        const attributes = this.attributeParser.parse(lacunaElement as HTMLElement)
+        const lacunaWitnessIds = attributes?.['wit'] ? attributes['wit'].split(' ')
+            : reading.getAttribute('wit')?.split(' ') || [];
+        let witnessesIds: string[];
+        if (lacunaWitnessIds.length) {
+            witnessesIds = lacunaWitnessIds;
+        } else {
+            console.error('No witness has been found for Lacuna', reading);
+            witnessesIds = [];
+        }
+
+        return {
+            id,
+            witnessesIds,
+            isLacunaStart,
+            content: [],
+            attributes,
+            type: Lacuna,
+            xPath: getXPath(lacunaElement),
+        };
+    }
+}
+
 
 @xmlParser('evt-apparatus-entry-parser', AppParser)
 export class AppParser extends EmptyParser implements Parser<XMLElement> {
@@ -78,15 +143,58 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return ParserRegister.get('evt-apparatus-entry-parser');
     }
 
-    public parse(appEntry: XMLElement): ApparatusEntry {
-        const root = getTopMostAncestor(appEntry);
-        const lemma = this.parseLemma(appEntry);
-        const attributes = this.attributeParser.parse(appEntry);
-        let parsedResult: ParseResult<GenericElement>[] = [];
-
+    public parse(appEntryEl: XMLElement): ApparatusEntry {
+        const root = getTopMostAncestor(appEntryEl);
+        const attributes = this.attributeParser.parse(appEntryEl);
         const from = Attribute.createOrDefault(attributes.from);
         const to = Attribute.createOrDefault(attributes.to);
         const fromEl = root.querySelector(`[*|id='${from.valueWithoutRef}']`) as HTMLElement;
+
+        let parseResult = this.createParseResult(to, fromEl, from);
+        const readings = this.parseReadings(appEntryEl);
+
+        const { lemma, changes, orderedReadings } = (() => {
+            const lemma = this.parseLemma(appEntryEl);
+            if (lemma && !lemma.content.length) {
+                lemma.content = [];
+                lemma.content.push(...parseResult);
+            }
+
+            const allReadings = lemma !== undefined ? [lemma].concat(readings) : readings;
+            const changes = lemma !== undefined ? this.orderChanges(allReadings, lemma) : []
+            const orderedReadings = Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq);
+            
+            return {
+                lemma,
+                changes,
+                orderedReadings
+            }
+        })();
+
+        const appEntryObj = {
+            type: ApparatusEntry,
+            id: getID(appEntryEl),
+            attributes: this.attributeParser.parse(appEntryEl),
+            content: [],
+            criticalContent: parseResult,
+            lemma: lemma,
+            readings: readings,
+            notes: this.parseAppNotes(appEntryEl),
+            originalEncoding: appEntryEl,
+            class: appEntryEl.tagName.toLowerCase(),
+            nestedAppsIDs: this.getNestedAppsIDs(appEntryEl),
+            changes: changes,
+            orderedReadings: orderedReadings,
+            additionalAttributes: new AdditionalAttributes(),
+            exponent: '',
+            xPath: getXPath(appEntryEl),
+        };
+        const appEntry = Object.assign(new ApparatusEntry(), appEntryObj);
+        return appEntry;
+    }
+
+    private createParseResult(to: Attribute, fromEl: HTMLElement, from: Attribute) {
+        let parsedResult: ParseResult<GenericElement>[] = [];
         if (!to) {
             parsedResult.push(this.genericParse(fromEl));
         }
@@ -94,39 +202,15 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
             const fromParent = fromEl.parentElement;
             if (!fromParent) throw new Error("From parent is required");
 
-            parsedResult = Array
+            const whiteSpace = createParsedWhiteSpace();
+            const elements = Array
                 .from(fromParent.children)
                 .skipWhile(element => !this.isElementByXmlId(element, from))
                 .takeWhile(element => !this.isElementByXmlId(element, to), { includeLastItem: true })
                 .map(this.genericParse);
+            parsedResult = interleave(elements, whiteSpace);
         }
-
-        if (lemma && !lemma.content.length) {
-            lemma.content.push(...parsedResult);
-        }
-
-        const criticalContent = parsedResult;
-
-        const readings = this.parseReadings(appEntry);
-        const allReadings = (lemma !== undefined) ? readings.concat(lemma) : readings;
-        return {
-            type: ApparatusEntry,
-            id: getID(appEntry),
-            attributes: this.attributeParser.parse(appEntry),
-            content: [],
-            criticalContent: criticalContent,
-            lemma: lemma,
-            readings: readings,
-            notes: this.parseAppNotes(appEntry),
-            originalEncoding: appEntry,
-            class: appEntry.tagName.toLowerCase(),
-            nestedAppsIDs: this.getNestedAppsIDs(appEntry),
-            changes: (lemma !== undefined) ? this.orderChanges(allReadings, lemma) : [],
-            orderedReadings: Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq),
-            additionalAttributes: new AdditionalAttributes(),
-            exponent: '',
-            isWitnessExcluded: ApparatusEntry.prototype.isWitnessExcluded
-        };
+        return parsedResult;
     }
 
     private isElementByXmlId(element: Element, attribute: Attribute) {
@@ -147,10 +231,8 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     }
 
     private parseAppNotes(appEntry: XMLElement): Note[] {
-        const notes = Array.from(appEntry.children)
-            .filter(({ tagName }) => tagName === this.noteTagName)
+        const notes = Array.from(appEntry.querySelectorAll(this.noteTagName))
             .map((note: XMLElement) => this.noteParser.parse(note));
-
         return notes;
     }
 
@@ -193,3 +275,4 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return changes;
     }
 }
+

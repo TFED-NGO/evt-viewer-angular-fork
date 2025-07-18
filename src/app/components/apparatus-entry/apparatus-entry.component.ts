@@ -1,16 +1,16 @@
 import { ChangeDetectionStrategy, Component, HostListener, Input, OnInit, Optional, SkipSelf } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
-import { AppConfig } from 'src/app/app.config';
+import { AppConfig, EditionLevelType } from 'src/app/app.config';
 import { ApparatusEntry, Reading } from '../../models/evt-models';
 import { register } from '../../services/component-register.service';
 import { EVTModelService } from '../../services/evt-model.service';
-import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
+import { Highlightable, ShowDeletionsSusceptible } from '../components-mixins';
 import { ApparatusEntryDetailComponent } from './apparatus-entry-detail/apparatus-entry-detail.component';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
 
-export interface ApparatusEntryComponent extends EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible { }
+export interface ApparatusEntryComponent extends Highlightable, ShowDeletionsSusceptible { }
 
 @Component({
   selector: 'evt-apparatus-entry',
@@ -24,8 +24,29 @@ export class ApparatusEntryComponent implements OnInit {
   @Input() selectedLayer: string;
 
   public isOpened$ = this.statusService.currentApparatusExponent$.pipe(
-    map(exponent => this.data.exponent === exponent)
+    map(exponent => this.data.exponent && this.data.exponent === exponent)
   );
+
+  get lacunaStart() {
+    const reading = this.getWitnessReadingOrDefault();
+    if (!reading) return null;
+
+    return reading.lacunas.lacunaStart;
+  }
+
+  get lacunaEnd() {
+    const reading = this.getWitnessReadingOrDefault();
+    if (!reading) return null;
+
+    return reading.lacunas.lacunaEnd;
+  }
+
+
+  getWitnessReadingOrDefault() {
+    const readings = this.data.readings;
+    const reading = readings.find(x => x.witIDs.includes(this.witnessPanelService.witnessId))
+    return reading;
+  }
 
   public isInsideAppDetail: boolean;
   public isNestedApp: boolean;
@@ -33,6 +54,7 @@ export class ApparatusEntryComponent implements OnInit {
 
   isInWitnessPanel: boolean;
   selectedReading?: Reading;
+  editionLevel: EditionLevelType = 'critical'
 
   variance$ = this.evtModelService.appVariance$.pipe(
     map((variances) => variances[this.data.id]),
@@ -63,8 +85,8 @@ export class ApparatusEntryComponent implements OnInit {
     if (this.isInWitnessPanel) {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
       this.selectedReading = isWitnessExcluded ? this.data.lemma : this.data.orderedReadings
-        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId) 
-        || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
+        .find(r => r.witIDs.includes(this.witnessPanelService.witnessId)
+          || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
     }
   }
 

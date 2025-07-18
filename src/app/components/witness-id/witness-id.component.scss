@@ -1,9 +1,5 @@
 .app-wit {
-    font-size: 90%;
-    font-family: serif;
-
-    &.link {
-
+    &.clickable {
         &:hover {
             text-decoration: underline;
             cursor: pointer;

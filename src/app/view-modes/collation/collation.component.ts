@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, TemplateRef, ViewChild } from '@angul
 import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
 import { BehaviorSubject, combineLatest, Observable, Subject, Subscription } from 'rxjs';
-import { debounceTime, map, tap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, tap } from 'rxjs/operators';
 import { Witness } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
@@ -20,7 +20,8 @@ export class CollationComponent implements OnDestroy {
   @ViewChild('collationPanel', { static: false }) collationPanel: ElementRef;
   @ViewChild('witnessesModal', { static: false }) witnessesModal: ModalComponent;
   private witnessModalRef: NgbModalRef = null;
-
+  searchWitness = '';
+  updateSearchTerm$ = new BehaviorSubject<string>('');
   private latestWitnesses$ = new BehaviorSubject<WitnessItem[]>([]);
   private itemsChanged$ = new Subject<void>();
   private itemsChangedSubs: Subscription;
@@ -39,7 +40,7 @@ export class CollationComponent implements OnDestroy {
         .map((w, i) => {
           if (typeof w.name !== 'string') {
             throw new Error("Witness name must be a string but was: " + w.name);
-          } 
+          }
 
           return {
             id: w.id,
@@ -56,22 +57,59 @@ export class CollationComponent implements OnDestroy {
       this.updateGridsterOptions(witnesses);
     })
   );
-  
+
   public modalWitnesses$: Observable<ModalWitnessItem[]> = combineLatest([
     this.evtModelService.witnesses$,
-    this.evtStatusService.currentStatus$
+    this.evtStatusService.currentStatus$,
+    this.updateSearchTerm$.pipe(debounceTime(300), distinctUntilChanged())
   ]).pipe(
-    map(([witnesses, status]) => {
-      const result = witnesses
-        .map(w => {
-          if (typeof w.name !== 'string') {
-            throw new Error("Witness name must be a string but was: " + w.name);
-          }
-          return this.createPopoverWitnessItem(w, status.witnesses);
-        });
-      return result;
-    }),
+    map(([witnesses, status, searchTerm]) => {
+      if (!searchTerm) {
+        // No search → Return the hierarchical structure
+        return witnesses.map(w => this.createPopoverWitnessItem(w, status.witnesses));
+      }
+
+      // Search term exists → Return only matching witnesses and their children (flattened)
+      const flatResult: Map<string, ModalWitnessItem> = new Map();
+      witnesses.forEach(w => this.collectMatchingWitnesses(w, status.witnesses, searchTerm, flatResult));
+      return Array.from(flatResult.values());
+    })
   );
+
+  /**
+   * Recursively finds matching witnesses and their children,
+   * adding ONLY them to the result (excluding parents unless they match search term).
+   */
+  private collectMatchingWitnesses(witness: Witness, currentWitnessesIds: string[], searchTerm: string, result: Map<string, ModalWitnessItem>): void {
+    let matches = witness.name.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Recursively check all children
+    for (let child of witness.witnesses) {
+      this.collectMatchingWitnesses(child, currentWitnessesIds, searchTerm, result);
+
+      if (child.name.toLowerCase().includes(searchTerm.toLowerCase())) {
+        matches = true;
+        if (!result.has(child.id)) {
+          result.set(child.id, {
+            id: child.id,
+            label: child.name,
+            witnesses: [],
+            canSelect: !currentWitnessesIds.includes(child.id)
+          });
+        }
+      }
+    }
+
+    // If the witness itself matches, add it
+    if (matches && !result.has(witness.id)) {
+      result.set(witness.id, {
+        id: witness.id,
+        label: witness.name,
+        witnesses: [],
+        canSelect: !currentWitnessesIds.includes(witness.id)
+      });
+    }
+  }
 
   private createPopoverWitnessItem(witness: Witness, currentWitnessesIds: string[]): ModalWitnessItem {
     return {
@@ -79,8 +117,13 @@ export class CollationComponent implements OnDestroy {
       label: witness.name,
       witnesses: witness.witnesses.map(w => this.createPopoverWitnessItem(w, currentWitnessesIds)),
       canSelect: !currentWitnessesIds.includes(witness.id)
-    }
+    };
   }
+
+  onSearchChanged(searchTerm: string) {
+    this.updateSearchTerm$.next(searchTerm);
+  }
+
 
   public options: GridsterConfig = {
     gridType: GridType.Fit,
@@ -162,7 +205,11 @@ export class CollationComponent implements OnDestroy {
   }
 
   openModal(content: TemplateRef<any>) {
-    this.witnessModalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' })
+    this.witnessModalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+    setTimeout(() => {
+      const input = document.getElementById('search-input');
+      input?.focus();
+    }, 500);
   }
   closeModal() {
     this.modalService.close(this.witnessModalRef);

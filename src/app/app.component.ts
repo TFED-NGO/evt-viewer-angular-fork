@@ -36,9 +36,8 @@ export class AppComponent implements OnDestroy {
 
   ) {
 
-    this.evtStatusService.currentViewMode$.pipe().subscribe((_) => {
-      //if (view !== undefined && (view.id === 'imageImage' || view.id === 'imageOnly' || view.id === 'synopticEdition')) {
-      if (true) { // temporary, navbar is hidden everywhere
+    this.evtStatusService.currentViewMode$.pipe().subscribe((view) => {
+      if (view !== undefined && view.id === 'synopticEdition') {
         this.navbarOpened$.next(false);
         this.hasNavBar = false;
       } else {
