@@ -31,25 +31,41 @@
   "downloadableXMLSource": true,
   "namedEntitiesLists": {
     "persons": {
-      "defaultLabel": "Persons",
-      "enable": true
-    },
-    "places": {
-      "defaultLabel": "Places",
-      "enable": true
-    },
-    "organizations": {
-      "defaultLabel": "Organizations",
-      "enable": true
-    },
-    "relations": {
-      "defaultLabel": "Relations",
-      "enable": true
-    },
-    "events": {
-      "defaultLabel": "Events",
-      "enable": true
-    }
+			"defaultLabel": "Persons",
+			"enable": true,
+			"listSelector": "listPerson",
+			"namedEntityType": "person"
+		},
+		"places": {
+			"enable": true,
+			"defaultLabel": "Places",
+			"listSelector": "listPlace",
+			"namedEntityType": "place"
+		},
+		"organizations": {
+			"enable": true,
+			"defaultLabel": "Organizations",
+			"listSelector": "listOrg",
+			"namedEntityType": "org"
+		},
+		"relations": {
+			"enable": true,
+			"defaultLabel": "Relations",
+			"listSelector": "listRelation",
+			"namedEntityType": "relation"
+		},
+		"events": {
+			"enable": true,
+			"defaultLabel": "Events",
+			"listSelector": "listEvent",
+			"namedEntityType": "event"
+		},
+		"entries": {
+			"enable": true,
+			"defaultLabel": "Entries",
+			"listSelector": "div[type='glossary']",
+			"namedEntityType": "entry"
+		}
   },
   "showLists": true,
   "entitiesSelectItems": [
