@@ -69,6 +69,14 @@ export class StructureXmlParserService {
     }
 
     const backElements = source.getElementsByTagName('back');
+    if (backElements.length === 0) return editionStructure;
+
+    this.loadLacunas(backElements, source);
+
+    return editionStructure;
+  }
+
+  private loadLacunas(backElements: HTMLCollectionOf<Element>, source: HTMLElement) {
     const lacunasStart = Array.from(backElements[0].querySelectorAll('lacunaStart')).map(x => x as HTMLElement);
     const lacunasEnd = Array.from(backElements[0].querySelectorAll('lacunaEnd')).map(x => x as HTMLElement);
 
@@ -101,19 +109,16 @@ export class StructureXmlParserService {
       const startFrom = Attribute.createFromOrDefault(lacunaStart);
       const startAnchor = source.querySelector(`[*|id='${startFrom.valueWithoutRef}']`) as HTMLElement;
 
-
       const endFrom = Attribute.createFromOrDefault(lacunaEnd);
       const endAnchor = source.querySelector(`[*|id='${endFrom.valueWithoutRef}']`) as HTMLElement;
 
-
       const hasKey = this.groupedByWitLacunas.has(startWit);
       if (!hasKey) {
-        this.groupedByWitLacunas.set(startWit, [])
+        this.groupedByWitLacunas.set(startWit, []);
       }
       const pairs = this.groupedByWitLacunas.get(startWit);
       pairs.push({ start: startAnchor, end: endAnchor });
     }
-    return editionStructure;
   }
 
   public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
@@ -125,87 +130,29 @@ export class StructureXmlParserService {
         return;
       }
 
+      for (const app of this.allApps) {
+        addIsDepaAttribute(app);
+      }
+
       // this can load after some times as errors can be available later
-      setTimeout(() => {
-        this.errorService.loadingStart();
-
-        for (const app of this.allApps) {
-
-          const from = Attribute.createFromOrDefault(app);
-          if (!from) {
-            this.errorService.logError('From attribute is missing:', [app]);
-            continue;
-          }
-
-          const to = Attribute.createToOrDefault(app);
-          if (!to) continue;
-
-          const fromElement = source.querySelector(`[*|id='${from.valueWithoutRef}']`);
-          const toElement = source.querySelector(`[*|id='${to.valueWithoutRef}']`);
-
-          if (!fromElement || !toElement) continue;
-
-          // instead of loading all errors right away, this avoid blocking the ui
-          setTimeout(() => {
-            const otherApps = this.allApps.filter(x => !x.isEqualNode(app));
-            for (const otherApp of otherApps) {
-              const otherFrom = Attribute.createFromOrDefault(otherApp);
-              if (!otherFrom) continue;
-
-              const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
-              if (!otherElement) {
-                this.errorService.logError(
-                  `No element found with xml:id ${otherFrom.valueWithoutRef}`,
-                  [otherApp]
-                );
-                continue;
-              }
-
-              if (isIntersecting(fromElement, toElement, otherElement)) {
-                const duplicates = findDuplicateWitnesses(app, otherApp);
-                if (duplicates.length) {
-                  this.errorService.logError(
-                    `Duplicated witness found in intersecting elements: ${duplicates.join(', ')}`,
-                    [app, otherApp]
-                  );
-                }
-              }
-            }
-          }, 1);
-        }
-
-        this.errorService.loadingEnd();
-      }, 1_000);
-
-      function isIntersecting(fromElement: Element, toElement: Element, otherElement: Element) {
-        const isAfterFromInclusive =
-          (fromElement.compareDocumentPosition(otherElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
-          otherElement.isEqualNode(fromElement);
-
-        const isBeforeToInclusive =
-          (otherElement.compareDocumentPosition(toElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
-          otherElement.isEqualNode(toElement);
-
-        return isAfterFromInclusive && isBeforeToInclusive;
-      }
-
-      function findDuplicateWitnesses(app: HTMLElement, otherApp: HTMLElement): string[] {
-        const wit = 'wit';
-        const withSelector = `[${wit}]`;
-        const exceptParent = 'lem';
-
-        const extractWits = (element: HTMLElement) =>
-          Array.from(element.querySelectorAll(withSelector))
-            .filter(x => !x.closest(exceptParent))
-            .flatMap(x => x.getAttribute(wit)?.split(' ') || []);
-
-        const appWits = extractWits(app);
-        const otherAppWits = extractWits(otherApp);
-
-        return findDuplicates([...appWits, ...otherAppWits]);
-      }
+      setTimeout(() => this.checkDepaErrors(source), 1_000);
     }
 
+    const result = this.getDocumentApparatusEntries(editionStructure.pages);
+    result.apps.forEach((value, key) => {
+      editionStructure.documentApparatusEntries.apps.set(key, value);
+    });
+
+    this.processApparatusExponents(source, editionStructure);
+
+    function addIsDepaAttribute(app: HTMLElement) {
+      const isDepa = !app.closest("body");
+      app.setAttribute("isDepa", isDepa.toString());
+    }
+  }
+
+  private processApparatusExponents(source: HTMLElement, editionStructure: EditionStructure) {
+    let counter = 0;
     const result = this.getDocumentApparatusEntries(editionStructure.pages);
     result.apps.forEach((value, key) => {
       editionStructure.documentApparatusEntries.apps.set(key, value);
@@ -215,30 +162,27 @@ export class StructureXmlParserService {
     const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
     const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
     const enumeratedByJsonElements: string[] = [];
-    for (let enumeratedByElement of enumeratedByElements) {
-      const enumeratedByParsed = this.genericParserService.parse(enumeratedByElement as XMLElement);
-      const enumerateByJson = JSON.stringify(enumeratedByParsed);
-      enumeratedByJsonElements.push(enumerateByJson);
+    const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
+    if (enumerateBy) {
+      const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
+      for (let enumeratedByElement of enumeratedByElements) {
+        const enumeratedByParsed = this.genericParserService.parse(enumeratedByElement as XMLElement);
+        const enumerateByJson = JSON.stringify(enumeratedByParsed);
+        enumeratedByJsonElements.push(enumerateByJson);
+      }
     }
 
-    // const app = document.createElement('app')
-    // app.setAttribute('from', '#Luc-001-37');
-    // app.setAttribute('to', '#Luc-001-41');
-
-    // const rdg = document.createElement('rdg');
-    // rdg.setAttribute('wit', '#Mon3')
-    // app.appendChild(rdg);
-
-    // this.allApps.push(app);
-
+    const resetCounterCallback: (item: GenericElement, enumerateBy: string[]) => void
+      = enumerateBy ? (item) => resetCounter(item, enumeratedByJsonElements)
+        : (_) => { };
     for (let i = 0; i < editionStructure.pages.length; i++) {
       const page = editionStructure.pages[i];
       this.addApparatusExponents(
         page.parsedContent,
         (app, exponent) => onApparatusEntryReplaced(page, app, exponent),
         () => exponentLabelFactory(this.alphabet),
-        onShouldResetCounter,
-      )
+        (item) => resetCounterCallback(item, enumeratedByJsonElements)
+      );
     }
 
     function onApparatusEntryReplaced(page: Page, app: ApparatusEntry, exponent: ApparatusEntryExponent): void {
@@ -263,13 +207,104 @@ export class StructureXmlParserService {
       return label;
     }
 
-    function onShouldResetCounter(item: GenericElement): void {
+    function resetCounter(item: GenericElement, enumeratedBy: string[]): void {
       const currentItemJson = JSON.stringify(item);
-      const matchesSelector = enumeratedByJsonElements.some(x => x === currentItemJson);
+      const matchesSelector = enumeratedBy.some(x => x === currentItemJson);
       if (enumerateBy !== 'global' && matchesSelector) {
         counter = 0;
       }
     }
+
+    function findDuplicates(array: string[]): string[] {
+      const uniqueElements = new Set();
+      const duplicates = [];
+
+      array.forEach(item => {
+        if (uniqueElements.has(item)) {
+          duplicates.push(item);
+        } else {
+          uniqueElements.add(item);
+        }
+      });
+
+      return duplicates;
+    }
+  }
+
+  private checkDepaErrors(source: HTMLElement) {
+    this.errorService.loadingStart();
+
+    for (const app of this.allApps.filter(x => AppParser.isDepa(x))) {
+      const from = Attribute.createFromOrDefault(app);
+      if (!from) {
+        this.errorService.logError('From attribute is missing:', [app]);
+        continue;
+      }
+
+      const to = Attribute.createToOrDefault(app);
+      if (!to) continue;
+
+      const fromElement = source.querySelector(`[*|id='${from.valueWithoutRef}']`);
+      const toElement = source.querySelector(`[*|id='${to.valueWithoutRef}']`);
+
+      if (!fromElement || !toElement) continue;
+
+      // instead of loading all errors right away, this avoid blocking the ui
+      setTimeout(() => {
+        const otherApps = this.allApps.filter(x => !x.isEqualNode(app));
+        for (const otherApp of otherApps) {
+          const otherFrom = Attribute.createFromOrDefault(otherApp);
+          if (!otherFrom) continue;
+
+          const otherElement = source.querySelector(`[*|id='${otherFrom.valueWithoutRef}']`);
+          if (!otherElement) {
+            this.errorService.logError(
+              `No element found with xml:id ${otherFrom.valueWithoutRef}`,
+              [otherApp]
+            );
+            continue;
+          }
+
+          if (isIntersecting(fromElement, toElement, otherElement)) {
+            const duplicates = findDuplicateWitnesses(app, otherApp);
+            if (duplicates.length) {
+              this.errorService.logError(
+                `Duplicated witness found in intersecting elements: ${duplicates.join(', ')}`,
+                [app, otherApp]
+              );
+            }
+          }
+        }
+      }, 1);
+    }
+
+    this.errorService.loadingEnd();
+
+    function isIntersecting(fromElement: Element, toElement: Element, otherElement: Element) {
+      const isAfterFromInclusive = (fromElement.compareDocumentPosition(otherElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+        otherElement.isEqualNode(fromElement);
+
+      const isBeforeToInclusive = (otherElement.compareDocumentPosition(toElement) & Node.DOCUMENT_POSITION_FOLLOWING) ||
+        otherElement.isEqualNode(toElement);
+
+      return isAfterFromInclusive && isBeforeToInclusive;
+    }
+
+    function findDuplicateWitnesses(app: HTMLElement, otherApp: HTMLElement): string[] {
+      const wit = 'wit';
+      const withSelector = `[${wit}]`;
+      const exceptParent = 'lem';
+
+      const extractWits = (element: HTMLElement) => Array.from(element.querySelectorAll(withSelector))
+        .filter(x => !x.closest(exceptParent))
+        .flatMap(x => x.getAttribute(wit)?.split(' ') || []);
+
+      const appWits = extractWits(app);
+      const otherAppWits = extractWits(otherApp);
+
+      return findDuplicates([...appWits, ...otherAppWits]);
+    }
+
 
     function findDuplicates(array: string[]): string[] {
       const uniqueElements = new Set();
@@ -396,7 +431,7 @@ export class StructureXmlParserService {
             const exponent = ApparatusEntryExponent.create(id, from, to, getExponentLabel(), app);
             item.content.push(exponent);
             this.appExponents.set(exponent.id().valueWithoutRef, exponent);
-            app.exponent = exponent.label; 
+            app.exponent = exponent.label;
           }
         }
       }

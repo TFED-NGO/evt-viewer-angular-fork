@@ -58,7 +58,6 @@
             <li ngbNavItem="criticalNotes" *ngIf="data.notes.length > 0">
                 <a class="app-detail-btn" [class.active]="this.currentTab === 'criticalNotes'" ngbNavLink
                     (click)="onTabClicked('criticalNotes')">{{'criticalNotes' | translate}}</a>
-
                 <ng-template ngbNavContent>
                     <div *ngFor="let note of data.notes">
                         <evt-note [data]="note"></evt-note>
@@ -81,7 +80,6 @@
             <li ngbNavItem="corrSeq" *ngIf="data.changes.length > 0">
                 <a class="source-detail-btn" [class.active]="this.currentTab === 'corrSeq'" ngbNavLink
                     (click)="onTabClicked('corrSeq')">{{'corrSeq' | translate}}</a>
-
                 <ng-template ngbNavContent>
                     <evt-mod-sequence [data]="data.changes" [orderedLayers]="orderedLayers"
                         [selectedLayer]="selectedLayer">
@@ -92,7 +90,6 @@
             <li ngbNavItem="info">
                 <a class="app-detail-btn" [class.active]="this.currentTab === 'info'" ngbNavLink
                     (click)="onTabClicked('info')">{{'info' | translate}}</a>
-
                 <ng-template ngbNavContent>
                     <ng-container *ngFor="let readingItem of readingItems">
                         <div class="mb-2">
@@ -158,7 +155,6 @@
             <li ngbNavItem="xml">
                 <a class="app-detail-btn" [class.active]="this.currentTab === 'xml'" ngbNavLink
                     (click)="onTabClicked('xml')">{{'xml' | translate}}</a>
-
                 <ng-template ngbNavContent>
                     <evt-original-encoding-viewer
                         [originalEncoding]="data.originalEncoding"></evt-original-encoding-viewer>

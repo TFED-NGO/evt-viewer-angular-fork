@@ -2,7 +2,7 @@
 	"editionUrls": [
 		{
 			"type": "main",
-			"value":"assets/data/VB-DOTR.xml",
+			"value":"assets/data/custom/DOTR/VB-complete-xinclude.xml",
 			"enable": true
 		}
 	],
