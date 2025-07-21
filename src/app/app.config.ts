@@ -103,6 +103,7 @@ export class AppConfig {
         rules['.' + SourceClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
         rules['.' + AnalogueClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
         rules['.' + SourceClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
+
         Object.entries(rules).forEach(([selector, style]) => { updateCSS([[selector, style]]) });
         console.log('Style applied from config', rules);
     }

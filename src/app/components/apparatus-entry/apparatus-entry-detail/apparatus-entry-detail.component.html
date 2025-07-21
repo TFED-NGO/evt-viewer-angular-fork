@@ -64,9 +64,11 @@
                     </div>
                 </ng-template>
             </li>
+          
             <li ngbNavItem="notSignificantRdg" *ngIf="this.notSignificantReadings.length > 0">
                 <a class="app-detail-btn" ngbNavLink [class.active]="this.currentTab === 'ortographicVariants'"
                     (click)="onTabClicked('ortographicVariants')">{{'ortographicVariants' | translate}}</a>
+
                 <ng-template ngbNavContent>
                     <span class="d-block" *ngFor="let el of this.notSignificantReadings">
                         <evt-reading [data]="el"></evt-reading>

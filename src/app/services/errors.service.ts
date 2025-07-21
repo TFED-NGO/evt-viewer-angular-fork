@@ -20,10 +20,6 @@ export class ErrorsService {
     const outherHtmlsOrDefault = elements?.map(x => x.outerHTML) ?? [];
     const sourceError: SourceError = { errorMessage: error, type: 'error', outerHTMLs: outherHtmlsOrDefault }
     const errors = this._errors$.getValue();
-    if (errors.some(e => e.errorMessage === sourceError.errorMessage)) {
-      return;
-    }
-
     console.error(error, elements);
     this._errors$.next([...errors, sourceError]);
   }
