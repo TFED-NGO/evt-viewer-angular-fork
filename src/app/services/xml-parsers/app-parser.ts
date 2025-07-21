@@ -83,7 +83,8 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
         const result = lacuna.isLacunaStart ? { lacunaStart: lacuna } : { lacunaEnd: lacuna };
         return result;
     }
-  
+}
+
 @xmlParser('evt-lacuna-parser', Lacuna)
 export class LacunaParser extends EmptyParser implements Parser<XMLElement> {
     private readonly attributeParser = createParser(AttributeParser, this.genericParse);
@@ -144,7 +145,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     public static isDepa(app: HTMLElement): boolean {
         return JSON.parse(app.getAttribute("isDepa")) ?? false;
     }
-  
+
     public parse(appEntryEl: XMLElement): ApparatusEntry {
         const root = getTopMostAncestor(appEntryEl);
         const attributes = this.attributeParser.parse(appEntryEl);
@@ -205,7 +206,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         else {
             const fromParent = fromEl.parentElement;
             if (!fromParent) throw new Error("From parent is required");
-          
+
             const whiteSpace = createParsedWhiteSpace();
             const elements = Array
                 .from(fromParent.children)
