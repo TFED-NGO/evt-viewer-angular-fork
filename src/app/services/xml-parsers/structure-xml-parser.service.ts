@@ -153,6 +153,14 @@ export class StructureXmlParserService {
 
   private processApparatusExponents(source: HTMLElement, editionStructure: EditionStructure) {
     let counter = 0;
+    const result = this.getDocumentApparatusEntries(editionStructure.pages);
+    result.apps.forEach((value, key) => {
+      editionStructure.documentApparatusEntries.apps.set(key, value);
+    });
+
+    let counter = 0;
+    const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
+    const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
     const enumeratedByJsonElements: string[] = [];
     const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
     if (enumerateBy) {
@@ -205,6 +213,21 @@ export class StructureXmlParserService {
       if (enumerateBy !== 'global' && matchesSelector) {
         counter = 0;
       }
+    }
+
+    function findDuplicates(array: string[]): string[] {
+      const uniqueElements = new Set();
+      const duplicates = [];
+
+      array.forEach(item => {
+        if (uniqueElements.has(item)) {
+          duplicates.push(item);
+        } else {
+          uniqueElements.add(item);
+        }
+      });
+
+      return duplicates;
     }
   }
 
