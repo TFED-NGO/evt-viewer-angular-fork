@@ -143,33 +143,39 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return ParserRegister.get('evt-apparatus-entry-parser');
     }
 
+    public static isDepa(app: HTMLElement): boolean {
+        return JSON.parse(app.getAttribute("isDepa")) ?? false;
+    }
+
     public parse(appEntryEl: XMLElement): ApparatusEntry {
         const root = getTopMostAncestor(appEntryEl);
         const attributes = this.attributeParser.parse(appEntryEl);
         const from = Attribute.createOrDefault(attributes.from);
         const to = Attribute.createOrDefault(attributes.to);
-        const fromEl = root.querySelector(`[*|id='${from.valueWithoutRef}']`) as HTMLElement;
 
-        let parseResult = this.createParseResult(to, fromEl, from);
+        let parseResult: ParseResult<GenericElement>[];
+        const lemma = this.parseLemma(appEntryEl);
+        const isDepa = AppParser.isDepa(appEntryEl);
+        if (isDepa) {
+            if (!from) {
+                console.error("From attribute is required since isDepa is true", appEntryEl);
+                throw new Error();
+            }
+
+            const fromEl = root.querySelector(`[*|id='${from.valueWithoutRef}']`) as HTMLElement;
+            parseResult = this.createParseResult(from, fromEl, to);
+            if (lemma && lemma.content.length === 0) {
+                lemma.content = [...parseResult];
+            }
+        }
+        else {
+            parseResult = [];
+        }
+
         const readings = this.parseReadings(appEntryEl);
-
-        const { lemma, changes, orderedReadings } = (() => {
-            const lemma = this.parseLemma(appEntryEl);
-            if (lemma && !lemma.content.length) {
-                lemma.content = [];
-                lemma.content.push(...parseResult);
-            }
-
-            const allReadings = lemma !== undefined ? [lemma].concat(readings) : readings;
-            const changes = lemma !== undefined ? this.orderChanges(allReadings, lemma) : []
-            const orderedReadings = Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq);
-            
-            return {
-                lemma,
-                changes,
-                orderedReadings
-            }
-        })();
+        const allReadings = lemma !== undefined ? [lemma].concat(readings) : readings;
+        const changes = lemma !== undefined ? this.orderChanges(allReadings, lemma) : []
+        const orderedReadings = Array.from(allReadings).sort((r1, r2) => r1.varSeq - r2.varSeq);
 
         const appEntryObj = {
             type: ApparatusEntry,
@@ -193,7 +199,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
         return appEntry;
     }
 
-    private createParseResult(to: Attribute, fromEl: HTMLElement, from: Attribute) {
+    private createParseResult(from: Attribute, fromEl: HTMLElement, to: Attribute) {
         let parsedResult: ParseResult<GenericElement>[] = [];
         if (!to) {
             parsedResult.push(this.genericParse(fromEl));
