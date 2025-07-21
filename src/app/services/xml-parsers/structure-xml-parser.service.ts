@@ -146,7 +146,7 @@ export class StructureXmlParserService {
     this.processApparatusExponents(source, editionStructure);
 
     function addIsDepaAttribute(app: HTMLElement) {
-      const isDepa = !!app.closest("back");
+      const isDepa = !app.closest("body");
       app.setAttribute("isDepa", isDepa.toString());
     }
   }
