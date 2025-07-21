@@ -158,11 +158,8 @@ export class StructureXmlParserService {
       editionStructure.documentApparatusEntries.apps.set(key, value);
     });
 
-    let counter = 0;
     const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
-    const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
     const enumeratedByJsonElements: string[] = [];
-    const enumerateBy = AppConfig.evtSettings.edition.exponentEnumerateBy;
     if (enumerateBy) {
       const enumeratedByElements = Array.from(source.querySelectorAll(enumerateBy));
       for (let enumeratedByElement of enumeratedByElements) {
@@ -213,21 +210,6 @@ export class StructureXmlParserService {
       if (enumerateBy !== 'global' && matchesSelector) {
         counter = 0;
       }
-    }
-
-    function findDuplicates(array: string[]): string[] {
-      const uniqueElements = new Set();
-      const duplicates = [];
-
-      array.forEach(item => {
-        if (uniqueElements.has(item)) {
-          duplicates.push(item);
-        } else {
-          uniqueElements.add(item);
-        }
-      });
-
-      return duplicates;
     }
   }
 
