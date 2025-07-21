@@ -1,5 +1,5 @@
 <ng-container *ngIf="(entries$ | async) as entries">
-        <ng-container *ngIf="entries.length; else noElement">
+        <ng-container *ngIf="entries.length">
                 <ng-container *ngFor="let entry of entries">
                         <div #appDetails style="scroll-margin-top: 100px;" (click)="selectApparatusEntry(entry.entry)">
                                 <evt-apparatus-entry-detail [data]="entry.entry" class="app-list"
@@ -7,7 +7,4 @@
                         </div>
                 </ng-container>
         </ng-container>
-        <ng-template #noElement>
-                <h3>There is no element to show</h3>
-        </ng-template>
 </ng-container>
