@@ -71,12 +71,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       return result;
     });
 
+    this.showLemma = !!this.data.lemma;
     if (this.witnessPanelService) {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
-      this.showLemma = !!this.data.lemma && !isWitnessExcluded;
-    }
-    else{
-      this.showLemma = false;
+      this.showLemma = !isWitnessExcluded;
     }
   }
 

@@ -327,6 +327,13 @@ export class StructureXmlParserService {
         const app = item as ApparatusEntry;
         if (!app) throw new Error("Invalid type " + app);
 
+        const callback = (content: any[]) => this.addApparatusExponents(
+          content, 
+          onApparatusEntryReplaced, 
+          getExponentLabel, 
+          onShouldResetCounter);
+        this.addNestedApparatusExponents(app, callback);
+
         const id = this.getExponentId();
         const to = id; // the exponent itself as the To element
         let exponent: ApparatusEntryExponent = null;
@@ -419,6 +426,27 @@ export class StructureXmlParserService {
       }
       else {
         //console.log('Node is not of interest for apparatus processing', item);
+      }
+    }
+  }
+
+  private addNestedApparatusExponents(app: ApparatusEntry, callback: (content: any[]) => void) {
+    const contentValues: ContentValue[] = [];
+    this.populateValuesWithContent(app, contentValues);
+    for (const value of contentValues) {
+      callback(value.content);
+    }
+  }
+
+  private populateValuesWithContent(obj: any, accumulator: ContentValue[]) {
+    const values = Object.values(obj)
+      .flatMap(x => x as any)
+      .filter(x => typeof (x) === 'object');
+    for (let index = 0; index < values.length; index++) {
+      const value = values[index];
+      if (value.content) {
+        accumulator.push(value);
+        this.populateValuesWithContent({ content: value.content }, accumulator);
       }
     }
   }
@@ -603,4 +631,8 @@ function getEditionOrigNode(el: XMLElement, doc: Document) {
   }
 
   return el;
+}
+
+interface ContentValue {
+  content: any[]
 }
