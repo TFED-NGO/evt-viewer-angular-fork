@@ -10,6 +10,7 @@
     <!-- default -->
     <ng-container *ngIf="!orderedLayers || (orderedLayers && orderedLayers.length == 0)">
         <ng-container *ngFor="let mod of sequence">
+            
             <ng-container *ngIf="((showVarSeqAttr) && (mod?.varSeq))">
                 <span class="mod-varSeq">{{mod.varSeq}} </span>
             </ng-container>

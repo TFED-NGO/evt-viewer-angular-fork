@@ -5,7 +5,7 @@
     3. add/del/subst ordered by @seq
 -->
     <ng-container *ngFor="let rdg of sequence">
-        <ng-container *ngIf="((showVarSeqAttr) && (rdg?.varSeq))">
+        <ng-container *ngIf="showVarSeqAttr && rdg?.varSeq">
             <span class="mod-varSeq">{{rdg.varSeq}} </span>
         </ng-container>
 

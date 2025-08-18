@@ -36,12 +36,12 @@
     </div>
 
     <!-- header for readings -->
-    <div class="card-body ne-header app-detail-content source-detail-content" *ngIf="orderedReadings.length > 0">
-        <span class="mod-symbol" (click)="toggleModGroupEntryBox()">🕐</span>
+    <div class="card-body ne-header app-detail-content source-detail-content" *ngIf="!(mods.length > 0) && orderedReadings.length > 0">
+        <span class="mod-symbol" (click)="toggleModGroupEntryBox()"></span>
         <span class="mod-text">
             <ng-container *ngFor="let reading of orderedReadings; index as i">
                 <span class="changeSeparator" *ngIf="changeSeparatorVisible"> > </span>
-                {{ reading.varSeq || ''}}
+                <ng-container *ngIf="showVarSeqAttr">{{ reading.varSeq || ''}}</ng-container>
                 <evt-content-viewer 
                     [content]="reading" 
                     [editionLevel]="editionLevelChange.asObservable() | async"

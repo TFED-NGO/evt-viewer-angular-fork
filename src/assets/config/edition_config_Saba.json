@@ -154,7 +154,7 @@
   "startingFromDefinitiveLayer": false,
   "showChangeLayerMarkerInText": true,
   "changeSequenceView": {
-    "showVarSeqAttr": false,
+    "showVarSeqAttr": true,
     "showSeqAttr": false,
     "layerColors": {
       "strato-0": "#d4a03b",

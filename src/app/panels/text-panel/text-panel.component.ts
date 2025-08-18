@@ -95,7 +95,7 @@ export class TextPanelComponent {
       this.textFlow = this.defaultTextFlow;
     }
     if (e && this.showDeletions === undefined) {
-      this.showDeletions = true;
+      this.showDeletions = false;
     }
   }
   public get editionLevelID() {

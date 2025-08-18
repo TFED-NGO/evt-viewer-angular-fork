@@ -19,6 +19,7 @@ export interface ModGroupComponent extends EditionlevelSusceptible, Highlightabl
 export class ModGroupComponent {
 
   public changeSeparatorVisible = AppConfig.evtSettings.edition.showSeparatorBetweenChanges;
+  public showVarSeqAttr = AppConfig.evtSettings.edition.changeSequenceView.showVarSeqAttr;
 
   public mods: Mod[];
 
