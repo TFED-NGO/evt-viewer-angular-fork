@@ -1,7 +1,3 @@
-.w .lb {
-    display: none;
-}
-
 .ab[rend="align-center"] {
     display: block;
     text-align: center;
@@ -35,6 +31,10 @@
     margin-bottom: 0.1rem;
     border-bottom: 1px solid black;
     display: block;
+}
+
+*[rend="sup"] {
+    vertical-align: text-bottom;
 }
 
 *[place="superscript"] {

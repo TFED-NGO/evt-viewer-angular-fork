@@ -1,5 +1,5 @@
-<evt-panel [showSecondaryContent]="isSecondaryContentOpened()" (scrollContent)="updatePageFromScroll$.next()" [ngClass]="editionLevelID">
-    <div header-left>
+<evt-panel [showSecondaryContent]="isSecondaryContentOpened()" (scrollContent)="updatePageFromScroll$.next()">
+    <div header-left class="no-drag d-flex align-items-center">
         <evt-button
             ariaLabel="{{ 'ariaLabels.openInfoTab' | translate }}"
             aria-role="button"
@@ -37,7 +37,7 @@
         {{ getSecondaryContent() }}
     </div>
 
-    <div footer>
+    <div footer class="d-flex align-items-center" >
         <evt-button
             ariaLabel="{{ 'ariaLabels.searchResult' | translate }}"
             aria-role="button"
