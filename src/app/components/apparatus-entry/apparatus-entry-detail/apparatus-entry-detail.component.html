@@ -88,7 +88,8 @@
             </li>
 
             <li ngbNavItem="varSeq" *ngIf="readings.length > 0">
-                <a class="source-detail-btn" ngbNavLink href="#">{{'varSeq' | translate}}</a>
+                <a class="source-detail-btn" [class.active]="this.currentTab === 'varSeq'" ngbNavLink 
+                    (click)="onTabClicked('varSeq')">{{'varSeq' | translate}}</a>
                 <ng-template ngbNavContent>
                     <evt-readings-sequence 
                         [data]="readings">

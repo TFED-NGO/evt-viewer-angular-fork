@@ -34,6 +34,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   public notSignificantReadings: Reading[] = [];
   public readingItems: ReadingItem[] = [];
 
+  public get readings() {
+    return this.readingItems.map(item => item.reading);
+  }
+
   public get isTabContentExpanded(): boolean {
     return this.currentTab !== undefined;
   }
@@ -120,4 +124,4 @@ export interface ReadingItem {
   isFirst: boolean;
 }
 
-export type AppTabType = 'xml' | 'info' | 'criticalNotes' | 'ortographicVariants' | 'corrSeq' | undefined;
+export type AppTabType = 'xml' | 'info' | 'criticalNotes' | 'ortographicVariants' | 'corrSeq' | 'varSeq' | undefined;
