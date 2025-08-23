@@ -97,7 +97,9 @@ import { NamedEntityRelationComponent } from './components/named-entity-relation
 import { NamespaceComponent } from './components/namespace/namespace.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { NavBarImageComponent } from './nav-bar-image/nav-bar-image.component';
-import { NoteComponent } from './components/note/note.component';
+import { NotesComponent } from './components/notes/notes.component';
+import { NoteComponent } from './components/notes/note/note.component';
+import { NoteDetailComponent } from './components/notes/note-detail/note-detail.component';
 import { NotesStmtComponent } from './components/notes-stmt/notes-stmt.component';
 import { OriginalEncodingViewerComponent } from './components/original-encoding-viewer/original-encoding-viewer.component';
 import { OsdComponent } from './components/osd/osd.component';
@@ -277,6 +279,8 @@ const DynamicComponents = [
     NamedEntityOccurrenceComponent,
     NavBarComponent,
     NavBarImageComponent,
+    NotesComponent,
+    NoteDetailComponent,
     OriginalEncodingViewerComponent,
     OsdComponent,
     PageComponent,

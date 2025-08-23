@@ -263,6 +263,7 @@ export class AdditionalAttributes {
 export const SourceClass = 'sourceEntry';
 export const AnalogueClass = 'analogueEntry';
 export const BibliographyClass = 'biblioEntry';
+export const NoteClass = 'noteEntry'
 
 export class QuoteEntry extends GenericElement {
     id: string;

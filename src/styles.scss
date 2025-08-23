@@ -372,3 +372,9 @@ evt-page :not(evt-apparatus-entry-detail) .verse-num:before {
 [ng-reflect-text-flow="verses"] evt-verse {
   display: block;
 }
+
+.note-tab-pinner {
+  margin-right: 0.65rem;
+  margin-top: 0.35rem;
+  float: right;
+}
