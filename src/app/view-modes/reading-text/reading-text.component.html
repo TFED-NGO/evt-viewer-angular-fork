@@ -19,7 +19,9 @@
                         <ng-template ngbNavContent>
                             <evt-critical-apparatus
                                 [pageID]="currentPageID$ | async"
-                                (pageChange)="changePage($event)">
+                                (pageChange)="changePage($event)"
+                                [editionLevel]="currentEditionLevel$ | async"
+                                (editionLevelChange)="changeEditionLevel($event)">
                             </evt-critical-apparatus>
                         </ng-template>
                     </li>

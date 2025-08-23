@@ -26,7 +26,7 @@
             [selectedLayer]="selectedLayer" (click)="toggleAppEntryBox($event);"></evt-reading>
       </ng-container>
 
-      <evt-apparatus-entry-detail *ngIf="isOpened$ | async" [data]="data" [selectedLayer]="selectedLayer"
+      <evt-apparatus-entry-detail *ngIf="isOpened$ | async" [data]="data" [selectedLayer]="selectedLayer" [editionLevel]='editionLevel'
          (click)="stopPropagation($event)"></evt-apparatus-entry-detail>
    </ng-container>
 </span>

@@ -23,6 +23,8 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   @Input() data: ApparatusEntry;
   @Input() isSelected: boolean = false;
 
+  @Input() editionLevel: EditionLevelType;
+
   nestedApps: ApparatusEntry[] = [];
   rdgHasCounter = false;
 
@@ -48,8 +50,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   }
 
   showLemma: boolean = false;
-
-  editionLevel: EditionLevelType = 'critical';
 
   constructor(
     public evtModelService: EVTModelService,
@@ -80,6 +80,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
       this.showLemma = !isWitnessExcluded;
     }
+    console.log(this.editionLevel)
   }
 
   ngOnDestroy() {
