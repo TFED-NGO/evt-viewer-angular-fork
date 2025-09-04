@@ -87,6 +87,16 @@
                 </ng-template>
             </li>
 
+            <li ngbNavItem="varSeq" *ngIf="editionLevel == 'changesView' && readings.length > 0">
+                <a class="source-detail-btn" [class.active]="this.currentTab === 'varSeq'" ngbNavLink 
+                    (click)="onTabClicked('varSeq')">{{'varSeq' | translate}}</a>
+                <ng-template ngbNavContent>
+                    <evt-readings-sequence 
+                        [data]="readings">
+                    </evt-readings-sequence>
+                </ng-template>
+            </li> 
+
             <li ngbNavItem="info">
                 <a class="app-detail-btn" [class.active]="this.currentTab === 'info'" ngbNavLink
                     (click)="onTabClicked('info')">{{'info' | translate}}</a>
