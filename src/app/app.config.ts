@@ -11,9 +11,7 @@ import { reduceCssUnit, updateCSS } from './utils/dom-utils';
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
-    private readonly uiConfigUrl = 'assets/config/ui_config.json';
-    private readonly defaultFileConfigUrl = 'assets/config/file_config.json';
-    private readonly editionConfigUrl = 'assets/config/edition_config.json';
+    private readonly defaultFileConfigUrl = 'assets/config/config.json';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
     private readonly hostConfig$: Observable<HostConfig> = this.http.get<HostConfig>("assets/config/host_config.json");
     public readonly fileConfigUrl$: Observable<string> = this.hostConfig$.pipe(
@@ -40,33 +38,32 @@ export class AppConfig {
     load() {
         return new Promise<void>((resolve) => {
             this.fileConfigUrl$.pipe(
-                switchMap(fileConfigUrl => this.http.get<FileConfig>(fileConfigUrl).pipe(
+                switchMap(mainConfigUrl => this.http.get<MainConfig>(mainConfigUrl).pipe(
                     catchError((err) => {
                         alert("Config file not found \n" + err.message);
                         return throwError(() => err);
                     }),
-                    switchMap((files: FileConfig) => forkJoin([
-                        this.http.get<UiConfig>(files.configurationUrls?.ui ?? this.uiConfigUrl),
-                        this.http.get<EditionConfig>(files.configurationUrls?.edition ?? this.editionConfigUrl),
+                    switchMap((configFile: MainConfig) => forkJoin([
                         this.http.get<EditorialConventionsConfig>(
-                            files.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl),
+                            configFile.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl
+                        ),
                     ]).pipe(
-                        map(([ui, edition, editorialConventions]) => {
-                            console.log(ui, edition, files);
-                            this.updateStyleFromConfig(edition, ui);
+                        map(([editorialConventions]) => {
+                            console.log(configFile);
+                            this.updateStyleFromConfig(configFile.edition, configFile.ui);
                             // Handle default values => TODO: Decide how to handle defaults!!
-                            if (ui.defaultLocalization) {
-                                if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
-                                    this.translate.use(ui.defaultLocalization);
+                            if (configFile.ui.defaultLocalization) {
+                                if (configFile.ui.availableLanguages.find((l) => l.code === configFile.ui.defaultLocalization && l.enable)) {
+                                    this.translate.use(configFile.ui.defaultLocalization);
                                 } else {
-                                    const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
+                                    const firstAvailableLang = configFile.ui.availableLanguages.find((l) => l.enable);
                                     if (firstAvailableLang) {
                                         this.translate.use(firstAvailableLang.code);
                                     }
                                 }
                             }
 
-                            return { ui, edition, files, editorialConventions };
+                            return { ui: configFile.ui, edition: configFile.edition, files: configFile, editorialConventions } as EVTConfig;
                         }),
                     )))
                 ),
@@ -128,7 +125,7 @@ export class AppConfig {
 export interface EVTConfig {
     ui: UiConfig;
     edition: EditionConfig;
-    files: FileConfig;
+    files: MainConfig;
     editorialConventions: EditorialConventionsConfig;
 }
 
@@ -245,7 +242,7 @@ export interface HostConfig {
     allowedEVTAASConfigBaseUrls: string[];
 }
 
-export interface FileConfig {
+export interface MainConfig {
     editionUrls: EditionUrl[];
     editionImagesSource: {
         [T in EditionImagesSources]: EditionImagesConfig;
@@ -260,6 +257,8 @@ export interface FileConfig {
         ui: string;
         editorialConventions: string;
     };
+    edition: EditionConfig;
+    ui: UiConfig;
 }
 
 export type EditionUrlType = 'main' | undefined;
