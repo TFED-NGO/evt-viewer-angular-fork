@@ -7,11 +7,12 @@ import { EntitiesSelectItemGroup } from './components/entities-select/entities-s
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { EditorialConventionLayout } from './models/evt-models';
 import { reduceCssUnit, updateCSS } from './utils/dom-utils';
+import * as yaml from 'js-yaml';
 
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
-    private readonly defaultFileConfigUrl = 'assets/config/config.json';
+    private readonly defaultFileConfigUrl = 'assets/config/config.yml';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
     private readonly hostConfig$: Observable<HostConfig> = this.http.get<HostConfig>("assets/config/host_config.json");
     public readonly fileConfigUrl$: Observable<string> = this.hostConfig$.pipe(
@@ -38,7 +39,16 @@ export class AppConfig {
     load() {
         return new Promise<void>((resolve) => {
             this.fileConfigUrl$.pipe(
-                switchMap(mainConfigUrl => this.http.get<MainConfig>(mainConfigUrl).pipe(
+                switchMap(mainConfigUrl => this.http.get(mainConfigUrl, { responseType: 'text' }).pipe(
+                    map((yamlText: string) => {
+                        try {
+                            const parsed = yaml.load(yamlText) as MainConfig;
+                            return parsed;
+                        } catch (e) {
+                            console.error('Error parsing YAML config file:', e);
+                            throw e;
+                        }
+                    }),
                     catchError((err) => {
                         alert("Config file not found \n" + err.message);
                         return throwError(() => err);
