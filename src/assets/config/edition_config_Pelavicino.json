@@ -60,6 +60,12 @@
 			"listSelector": "listEvent",
 			"namedEntityType": "event"
 		},
+		"objects": {
+			"enable": true,
+			"defaultLabel": "Objects",
+			"listSelector": "listObject",
+			"namedEntityType": "object"
+		},
 		"entries": {
 			"enable": true,
 			"defaultLabel": "Entries",
