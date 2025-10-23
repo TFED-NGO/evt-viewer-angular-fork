@@ -199,7 +199,9 @@
   "reprintedIn": "Réimprimé dans",
   "editedBy": "Édité par",
   "corrSeq": "Séquence de corrections",
+  "varSeq": "Séquence de variantes",
   "criticalNote": "Note critique",
   "showsDeletions": "Afficher les suppressions",
-  "hidesDeletions": "Cacher les suppressions"
+  "hidesDeletions": "Cacher les suppressions",
+  "noRelations": "Aucune relation"
 }

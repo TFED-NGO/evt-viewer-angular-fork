@@ -19,7 +19,9 @@
                         <ng-template ngbNavContent>
                             <evt-critical-apparatus
                                 [pageID]="currentPageID$ | async"
-                                (pageChange)="changePage($event)">
+                                (pageChange)="changePage($event)"
+                                [editionLevel]="currentEditionLevel$ | async"
+                                (editionLevelChange)="changeEditionLevel($event)">
                             </evt-critical-apparatus>
                         </ng-template>
                     </li>
@@ -48,7 +50,12 @@
                     <li [ngbNavItem]="'notes'">
                         <a ngbNavLink href="#">{{ 'notes' | translate }}</a>
                         <ng-template ngbNavContent>
-
+                            <evt-notes
+                                [pageID]="currentPageID$ | async"
+                                (pageChange)="changePage($event)"
+                                [editionLevel]="currentEditionLevel$ | async"
+                                (editionLevelChange)="changeEditionLevel($event)">
+                            </evt-notes>
                         </ng-template>
                     </li>
                 </ul>  

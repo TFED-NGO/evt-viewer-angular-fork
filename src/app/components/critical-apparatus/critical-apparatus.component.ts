@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Component, ElementRef, Input, QueryList, ViewChildren } from '@angular/core';
 import { EVTStatusService } from '../../services/evt-status.service';
-import { combineLatest, map, Observable, tap } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, tap } from 'rxjs';
 import { ApparatusEntry } from 'src/app/models/evt-models';
 import { HoverService } from 'src/app/services/hover.service';
+import { EditionLevelType } from 'src/app/app.config';
 
 @Component({
   selector: 'evt-critical-apparatus',
@@ -12,6 +13,15 @@ import { HoverService } from 'src/app/services/hover.service';
 })
 export class CriticalApparatusComponent {
   @Input() pageID: string;
+
+  @Input() set editionLevel(el: EditionLevelType) {
+    this.edLevel = el;
+    this.editionLevelChange.next(el);
+  }
+  get editionLevel() { return this.edLevel; }
+  editionLevelChange = new BehaviorSubject<EditionLevelType | ''>('');
+  private edLevel: EditionLevelType;
+    
   @ViewChildren('appDetails', { read: ElementRef}) appDetails!: QueryList<ElementRef>;
 
   private appClasses = ['app'];
