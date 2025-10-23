@@ -95,18 +95,21 @@ export class EditionDataService {
           tap((fileData) => {
             const includedDoc = parseXml(fileData);
             const fileXpointer = element.getAttribute('xpointer');
-            let includedTextElem: Node;
+            let includedElement: Node;
             if (fileXpointer) {
-              includedTextElem = doc.querySelector(`[*|id="${fileXpointer}"]`)
+              includedElement = doc.querySelector(`[*|id="${fileXpointer}"]`)
                 || includedDoc.querySelector(`[*|id="${fileXpointer}"]`)
                 || includedDoc.querySelector('text');
             } else {
-              includedTextElem = includedDoc.querySelector('text');
+              includedElement = includedDoc.querySelector('text');
             }
+
+            if(!includedElement) throw new Error("No element to include found");
             // element.parentNode.replaceChild(includedTextElem, element);
-            element.parentNode.appendChild(includedTextElem);
+            element.parentNode.appendChild(includedElement);
           }),
-          catchError((_) => {
+          catchError((e) => {
+            console.error(`Loading XInclude failed for element`, element, e);
             Array.from(element.getElementsByTagName('xi:fallback')).map((el) => {
               const divEl = document.createElement('div');
               divEl.classList.add('xiinclude-fallback');
