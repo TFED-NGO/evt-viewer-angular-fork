@@ -2,16 +2,16 @@ import { isNestedInElem } from 'src/app/utils/dom-utils';
 import { isBoolString } from 'src/app/utils/js-utils';
 import { xmlParser } from '.';
 import {
-    Abstract, Calendar, CalendarDesc, CatRef, Change, Channel, ChannelMode, ClassCode, Constitution,
-    Correction, CorrectionMethod, CorrectionStatus, CorrespAction, CorrespActionType, CorrespContext, CorrespDesc, Creation, CRefPattern,
-    Degree, Derivation, Description, Domain, EditionStmt, EditorialDecl, EncodingDesc, Extent, Factuality, FileDesc, GenericElement,
-    HandNote, HandNotes, HandNoteScope, Hyphenation, HyphenationEol, Interaction, Interpretation,
-    Keywords, Language, LangUsage, ListChange, ListTranspose, MsDesc, NamedEntitiesList, NamedEntityRef, Namespace, Normalization,
-    NormalizationMethod, Note, NotesStmt, Paragraph, ParticDesc, Preparedness, ProfileDesc, ProjectDesc, Ptr, PublicationStmt,
-    Punctuation, PunctuationMarks, PunctuationPlacement,
-    Purpose, Quotation, QuotationMarks, RefsDecl, RefState, Rendition, RenditionScope, Resp, RespStmt, RevisionDesc,
-    SamplingDecl, Scheme, Segmentation, SeriesStmt, Setting, SettingDesc, SourceDesc, Status, StdVals,
-    StyleDefDecl, TagsDecl, TagUsage, Term, TextClass, TextDesc, TitleStmt, Transpose, XMLElement,
+  Abstract, Calendar, CalendarDesc, CatRef, Change, Channel, ChannelMode, ClassCode, Constitution,
+  Correction, CorrectionMethod, CorrectionStatus, CorrespAction, CorrespActionType, CorrespContext, CorrespDesc, Creation, CRefPattern,
+  Degree, Derivation, Description, Domain, EditionStmt, EditorialDecl, EncodingDesc, Extent, Factuality, FileDesc, GenericElement,
+  HandNote, HandNotes, HandNoteScope, Hyphenation, HyphenationEol, Interaction, Interpretation,
+  Keywords, Language, LangUsage, ListChange, ListTranspose, MsDesc, NamedEntitiesList, NamedEntityRef, Namespace, Normalization,
+  NormalizationMethod, Note, NotesStmt, Paragraph, ParticDesc, Preparedness, ProfileDesc, ProjectDesc, Ptr, PublicationStmt,
+  Punctuation, PunctuationMarks, PunctuationPlacement,
+  Purpose, Quotation, QuotationMarks, RefsDecl, RefState, Rendition, RenditionScope, Resp, RespStmt, RevisionDesc,
+  SamplingDecl, Scheme, Segmentation, SeriesStmt, Setting, SettingDesc, SourceDesc, Status, StdVals,
+  StyleDefDecl, TagsDecl, TagUsage, Term, TextClass, TextDesc, TitleStmt, Transpose, VariantEncoding, XMLElement,
 } from '../../models/evt-models';
 import { GenericElemParser, GenericParser, parseElement, queryAndParseElement, queryAndParseElements } from './basic-parsers';
 import { NamedEntityRefParser } from './named-entity-parsers';
@@ -445,24 +445,25 @@ export class RefsDeclParser extends GenericElemParser implements Parser<XMLEleme
 
 @xmlParser('encodingDesc', EncodingDescParser)
 export class EncodingDescParser extends GenericParser implements Parser<XMLElement> {
-    parse(xml: XMLElement): EncodingDesc {
-        return {
-            ...super.parse(xml),
-            type: EncodingDesc,
-            structuredData: Array.from(xml.children).filter((el) => el.tagName === 'p').length !== xml.children.length,
-            projectDesc: queryAndParseElements<ProjectDesc>(xml, 'projectDesc'),
-            samplingDecl: queryAndParseElements<SamplingDecl>(xml, 'samplingDecl'),
-            editorialDecl: queryAndParseElements<EditorialDecl>(xml, 'editorialDecl'),
-            tagsDecl: queryAndParseElements<TagsDecl>(xml, 'tagsDecl'),
-            styleDefDecl: queryAndParseElement<StyleDefDecl>(xml, 'styleDefDecl'),
-            refsDecl: queryAndParseElements<RefsDecl>(xml, 'refsDecl'),
-            classDecl: queryAndParseElements<GenericElement>(xml, 'classDecl'),
-            geoDecl: queryAndParseElements<GenericElement>(xml, 'geoDecl'),
-            unitDecl: queryAndParseElements<GenericElement>(xml, 'unitDecl'),
-            schemaSpec: queryAndParseElements<GenericElement>(xml, 'schemaSpec'),
-            schemaRef: queryAndParseElements<GenericElement>(xml, 'schemaRef'),
-        };
-    }
+  parse(xml: XMLElement): EncodingDesc {
+    return {
+      ...super.parse(xml),
+      type: EncodingDesc,
+      structuredData: Array.from(xml.children).filter((el) => el.tagName === 'p').length !== xml.children.length,
+      projectDesc: queryAndParseElements<ProjectDesc>(xml, 'projectDesc'),
+      samplingDecl: queryAndParseElements<SamplingDecl>(xml, 'samplingDecl'),
+      editorialDecl: queryAndParseElements<EditorialDecl>(xml, 'editorialDecl'),
+      tagsDecl: queryAndParseElements<TagsDecl>(xml, 'tagsDecl'),
+      styleDefDecl: queryAndParseElement<StyleDefDecl>(xml, 'styleDefDecl'),
+      refsDecl: queryAndParseElements<RefsDecl>(xml, 'refsDecl'),
+      classDecl: queryAndParseElements<GenericElement>(xml, 'classDecl'),
+      geoDecl: queryAndParseElements<GenericElement>(xml, 'geoDecl'),
+      unitDecl: queryAndParseElements<GenericElement>(xml, 'unitDecl'),
+      schemaSpec: queryAndParseElements<GenericElement>(xml, 'schemaSpec'),
+      schemaRef: queryAndParseElements<GenericElement>(xml, 'schemaRef'),
+      variantEncoding: queryAndParseElement<VariantEncoding>(xml, 'variantEncoding')
+    };
+  }
 }
 
 @xmlParser('abstract', AbstractParser)

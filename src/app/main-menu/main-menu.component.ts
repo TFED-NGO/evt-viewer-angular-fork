@@ -6,7 +6,6 @@ import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { AppConfig } from '../app.config';
-import { GlobalListsComponent } from '../components/global-lists/global-lists.component';
 import { ProjectInfoComponent } from '../components/project-info/project-info.component';
 import { EvtInfoComponent } from '../evt-info/evt-info.component';
 import { EVTModelService } from '../services/evt-model.service';
@@ -109,15 +108,7 @@ export class MainMenuComponent {
 
   private openGlobalDialogLists() {
     this.itemClicked.emit('lists');
-    const modalRef = this.modalService.open(ModalComponent, { id: 'global-lists' });
-    const modalComp = modalRef.componentInstance as ModalComponent;
-    modalComp.fixedHeight = true;
-    modalComp.wider = true;
-    modalComp.modalId = 'global-lists';
-    modalComp.title = 'lists';
-    modalComp.bodyContentClass = 'p-0 h-100';
-    modalComp.headerIcon = { icon: 'clipboard-list', iconSet: 'fas', additionalClasses: 'me-3' };
-    modalComp.bodyComponent = GlobalListsComponent;
+    this.modalService.openGlobalLists();
   }
 
   private generateBookmark() {
@@ -129,7 +120,7 @@ export class MainMenuComponent {
     // TODO downloadXML
     this.itemClicked.emit('downloadXML');
     if (this.fileConfig && this.fileConfig.editionUrls) {
-      this.fileConfig.editionUrls.forEach((url) => window.open(url, '_blank'));
+      this.fileConfig.editionUrls.forEach((url) => window.open(url.value, '_blank'));
     } else {
       alert('Loading data... \nPlease try again later.');
     }

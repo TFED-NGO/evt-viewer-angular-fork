@@ -36,7 +36,7 @@ import {
 } from './msdesc-parser';
 import {
     NamedEntitiesListParser, NamedEntityRefParser, OrganizationParser,
-    PersonGroupParser, PersonParser, PlaceParser, RelationParser, ObjectParser,
+    PersonGroupParser, PersonParser, PlaceParser, RelationParser, EntryParser, ObjectParser
 } from './named-entity-parsers';
 import { QuoteParser } from './quotes-parser';
 import { AnalogueParser } from './analogue-parser';
@@ -224,6 +224,7 @@ export function ParsersDecl(declarations: Array<Type<any>>) {
     WidthParser,
     WordParser,
     ZoneParser,
+    EntryParser
 ])
 export class XMLParsers {
 }

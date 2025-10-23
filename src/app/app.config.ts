@@ -1,53 +1,75 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, throwError } from 'rxjs';
+import { catchError, map, shareReplay, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
-import { Attributes, EditorialConventionLayout } from './models/evt-models';
-import { updateCSS } from './utils/dom-utils';
+import { EditorialConventionLayout } from './models/evt-models';
+import { reduceCssUnit, updateCSS } from './utils/dom-utils';
 
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
     private readonly uiConfigUrl = 'assets/config/ui_config.json';
-    private readonly fileConfigUrl = 'assets/config/file_config.json';
+    private readonly defaultFileConfigUrl = 'assets/config/file_config.json';
     private readonly editionConfigUrl = 'assets/config/edition_config.json';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
+    private readonly hostConfig$: Observable<HostConfig> = this.http.get<HostConfig>("assets/config/host_config.json");
+    public readonly fileConfigUrl$: Observable<string> = this.hostConfig$.pipe(
+        map(config => config.allowedEVTAASConfigBaseUrls),
+        map(allowedUrls => {
+            const params = new URLSearchParams(window.location.hash)
+            const paramsUrl = params.get("fileConfigUrl");
+            if (!paramsUrl || paramsUrl === this.defaultFileConfigUrl) return this.defaultFileConfigUrl;
+
+            const prefixesMatched = allowedUrls.filter(x => paramsUrl.includes(x))
+            console.log("matched prefix: " + prefixesMatched)
+            if (!prefixesMatched.length) throw new Error(paramsUrl + " not allowed");
+            return paramsUrl;
+        }),
+        shareReplay(1)
+    );
 
     constructor(
         public translate: TranslateService,
         private http: HttpClient,
-    ) { }
+    ) {
+    }
 
     load() {
         return new Promise<void>((resolve) => {
-            this.http.get<FileConfig>(this.fileConfigUrl).pipe(
-                switchMap((files: FileConfig) => forkJoin([
-                    this.http.get<UiConfig>(files.configurationUrls?.ui ?? this.uiConfigUrl),
-                    this.http.get<EditionConfig>(files.configurationUrls?.edition ?? this.editionConfigUrl),
-                    this.http.get<EditorialConventionsConfig>(
-                        files.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl),
-                ]).pipe(
-                    map(([ui, edition, editorialConventions]) => {
-                        console.log(ui, edition, files);
-                        this.updateStyleFromConfig(edition, ui);
-                        // Handle default values => TODO: Decide how to handle defaults!!
-                        if (ui.defaultLocalization) {
-                            if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
-                                this.translate.use(ui.defaultLocalization);
-                            } else {
-                                const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
-                                if (firstAvailableLang) {
-                                    this.translate.use(firstAvailableLang.code);
+            this.fileConfigUrl$.pipe(
+                switchMap(fileConfigUrl => this.http.get<FileConfig>(fileConfigUrl).pipe(
+                    catchError((err) => {
+                        alert("Config file not found \n" + err.message);
+                        return throwError(() => err);
+                    }),
+                    switchMap((files: FileConfig) => forkJoin([
+                        this.http.get<UiConfig>(files.configurationUrls?.ui ?? this.uiConfigUrl),
+                        this.http.get<EditionConfig>(files.configurationUrls?.edition ?? this.editionConfigUrl),
+                        this.http.get<EditorialConventionsConfig>(
+                            files.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl),
+                    ]).pipe(
+                        map(([ui, edition, editorialConventions]) => {
+                            console.log(ui, edition, files);
+                            this.updateStyleFromConfig(edition, ui);
+                            // Handle default values => TODO: Decide how to handle defaults!!
+                            if (ui.defaultLocalization) {
+                                if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
+                                    this.translate.use(ui.defaultLocalization);
+                                } else {
+                                    const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
+                                    if (firstAvailableLang) {
+                                        this.translate.use(firstAvailableLang.code);
+                                    }
                                 }
                             }
-                        }
 
-                        return { ui, edition, files, editorialConventions };
-                    }),
-                )),
+                            return { ui, edition, files, editorialConventions };
+                        }),
+                    )))
+                ),
             ).subscribe((evtConfig) => {
                 AppConfig.evtSettings = evtConfig;
                 console.log('evtConfig', evtConfig);
@@ -63,17 +85,44 @@ export class AppConfig {
      */
     updateStyleFromConfig(edition: EditionConfig, ui: UiConfig) {
         const rules = [];
-        rules['.edition-font'] = `font-family: ${ui.mainFontFamily}; font-size: ${ui.mainFontSize};`;
+        rules['html'] = `font-size: ${ui.mainFontSize};`;
+        rules['.edition-font'] = `font-family: ${ui.mainFontFamily};`;
+        rules['.ng-select'] = `font-size: ${ui.secondaryFontSize};`;
+        rules['.nav-link'] = `font-size: ${ui.secondaryFontSize} !important;`;
+        rules['.tab-content'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.75)}`;
+        rules['.apparatus-nav .nav-link'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)} !important;`;
+        rules['evt-biblio-list .msIdentifier, .btn-close, .layerMarker, .app-wit'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['.code, .label, .relation-description, .source-detail-btn'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.9)};`;
+        rules['.mod-layer'] = `font-size: ${reduceCssUnit(ui.mainFontSize, 0.8)};`;
+        rules['evt-original-encoding-viewer code'] = `font-size: ${ui.secondaryFontSize};`;
         rules['.app-detail-tabs .nav-link'] = `font-family: ${ui.secondaryFontFamily};`;
         rules['.ui-font'] = `font-family: ${ui.secondaryFontFamily}; font-size: ${ui.secondaryFontSize};`;
         rules['.app-detail-tabs'] = `font-family: ${ui.secondaryFontFamily};`;
+        //rules['.app-detail-content'] = `font-family: ${ui.mainFontFamily}; font-size: ${ui.secondaryFontSize};`;
         rules['.' + AnalogueClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
         rules['.' + SourceClass + ' .opened'] = `background-color: ${edition.readingColorDark};`;
         rules['.' + AnalogueClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
         rules['.' + SourceClass + ':hover'] = `background-color: ${edition.readingColorLight}; cursor:pointer;`;
-        Object.entries(rules).forEach(([selector,style]) => { updateCSS([[selector,style]]) });
+
+        Object.entries(rules).forEach(([selector, style]) => { updateCSS([[selector, style]]) });
+        console.log('Style applied from config', rules);
     }
 
+    static getListsToParseTagNames(): NamedEntitiesListConfig[] {
+        const neLists = AppConfig.evtSettings.edition.namedEntitiesLists || {};
+        const enabledLists: NamedEntitiesListConfig[] = Object.keys(neLists)
+            .map((i) => neLists[i].enable ? neLists[i] : undefined)
+            .filter((ne) => !!ne);
+        return enabledLists;
+    }
+
+    static getNamedEntityType(tagName: string): string {
+        const lists = AppConfig.getListsToParseTagNames();
+        const list = lists.find(list => 
+            list.listSelector.toLowerCase().includes(tagName.toLowerCase()) 
+            || list.namedEntityType.toLowerCase() === tagName.toLowerCase());
+        return list.namedEntityType;
+    }
 }
 
 export interface EVTConfig {
@@ -97,24 +146,24 @@ export interface UiConfig {
     thumbnailsButton: boolean;
     viscollButton: boolean;
     defaultBibliographicStyle: string;
-	  allowedBibliographicStyles: {
-      [key: string]: {
-              id: string;
-        label: string;
-        enabled: boolean;
-              propsOrder: BibliographicProperties[];
-              properties: BibliographicStyle;
+    allowedBibliographicStyles: {
+        [key: string]: {
+            id: string;
+            label: string;
+            enabled: boolean;
+            propsOrder: BibliographicProperties[];
+            properties: BibliographicStyle;
         }
     };
     mainFontFamily: string;
     mainFontSize: string;
     secondaryFontFamily: string;
     secondaryFontSize: string;
-    theme: 'neutral' | 'modern' | 'classic';
+    theme: string;
     syncZonesHighlightButton: boolean;
 }
 export type CitingRanges = 'issue' | 'volume' | 'page';
-export type BibliographicProperties = 'author'| 'date'| 'title'| 'editor' | 'publication' | 'pubPlace' | 'publisher' | 'doi';
+export type BibliographicProperties = 'author' | 'date' | 'title' | 'editor' | 'publication' | 'pubPlace' | 'publisher' | 'doi';
 export type BibliographicStyle = Partial<{
     propsDelimiter: string;
     authorStyle: Partial<{
@@ -143,13 +192,15 @@ export interface EditionConfig {
     downloadableXMLSource: boolean;
     availableEditionLevels: EditionLevel[];
     namedEntitiesLists: Partial<{
-        persons: NamedEntitiesListsConfig;
-        places: NamedEntitiesListsConfig;
-        organizations: NamedEntitiesListsConfig;
-        relations: NamedEntitiesListsConfig;
-        events: NamedEntitiesListsConfig;
+        persons: NamedEntitiesListConfig;
+        places: NamedEntitiesListConfig;
+        organizations: NamedEntitiesListConfig;
+        relations: NamedEntitiesListConfig;
+        events: NamedEntitiesListConfig;
+        entries: NamedEntitiesListConfig;
         objects: NamedEntitiesListsConfig;
     }>;
+    namedEntitiesOccurrenceSelector: string;
     entitiesSelectItems: EntitiesSelectItemGroup[];
     notSignificantVariants: string[];
     defaultEdition: EditionLevelType;
@@ -164,13 +215,13 @@ export interface EditionConfig {
         elementAttributesToMatch: string[];
     }>;
     biblView: Partial<{
-		propsToShow: string[];
-		showAttrNames: boolean;
-		showEmptyValues: boolean;
-		inline: boolean;
+        propsToShow: string[];
+        showAttrNames: boolean;
+        showEmptyValues: boolean;
+        inline: boolean;
         commaSeparated: boolean;
         showMainElemTextContent: boolean;
-	}>;
+    }>;
     analogueMarkers: string[];
     sourcesExcludedFromListByParent: string[];
     showChangeLayerMarkerInText: boolean;
@@ -182,14 +233,21 @@ export interface EditionConfig {
     }>;
     startingFromDefinitiveLayer: boolean;
     defaultImageZoomLevel: number;
+    maxImageZoomLevel: number;
     showSubstitutionMarker: boolean;
     multiPageEngineForCriticalEdition: boolean;
+    editionStructureSeparator: string;
+    exponentEnumerateBy: string | 'global';
 }
 
 export type EditionImagesSources = 'manifest' | 'graphics';
 
+export interface HostConfig {
+    allowedEVTAASConfigBaseUrls: string[];
+}
+
 export interface FileConfig {
-    editionUrls: string[];
+    editionUrls: EditionUrl[];
     editionImagesSource: {
         [T in EditionImagesSources]: EditionImagesConfig;
     };
@@ -205,14 +263,26 @@ export interface FileConfig {
     };
 }
 
+export type EditionUrlType = 'main' | undefined;
+
+export interface EditionUrl {
+    type: EditionUrlType;
+    value: string;
+    enable: boolean;
+    friendlyName: string;
+    glossaryUrl: string;
+}
+
 export interface EditionImagesConfig {
     value: string;
     enable: boolean;
 }
 
-export interface NamedEntitiesListsConfig {
+export interface NamedEntitiesListConfig {
     defaultLabel: string;
     enable: boolean;
+    listSelector: string;
+    namedEntityType: string;
 }
 export type EditionLevelType = 'diplomatic' | 'interpretative' | 'critical' | 'changesView';
 export interface EditionLevel {
@@ -227,14 +297,16 @@ export interface EditorialConventionsConfig {
     [key: string]: CustomEditorialConvention;
 }
 
+export interface EditorialConventionAttributes { [key: string]: string[]; }
+
 export interface CustomEditorialConvention {
     layouts: { // indicate the output style to be assigned for the indicated encoding for each edition level
         [key in EditionLevelType]: EditorialConventionLayout;
     };
     markup: { // Identifies the element depending on its encoding
         element: string;
-        attributes: Attributes;
+        attributes: EditorialConventionAttributes;
     };
 }
 
-export type TextFlow = 'prose' | 'verses';
+export type TextFlow = 'prose' | 'prose_mixed' | 'verses';
