@@ -103,6 +103,10 @@ export interface NamedEntities {
         lists: NamedEntitiesList[];
         entities: NamedEntity[];
     };
+    objects: {
+       lists: NamedEntitiesList[];
+       entities: NamedEntity[];
+    };
     entries: {
         lists: NamedEntitiesList[];
         entities: NamedEntity[];

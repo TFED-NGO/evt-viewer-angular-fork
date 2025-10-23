@@ -32,7 +32,7 @@ import { BibliographicEntriesParserService } from './xml-parsers/bibliographic-e
 import { ModParserService } from './xml-parsers/mod-parser.service';
 
 @Injectable({
-  providedIn: 'root',
+    providedIn: 'root',
 })
 export class EVTModelService {
   public readonly editionSource$: Observable<OriginalEncodingNodeType> = this.editionDataService.mainEditionSource$.pipe(
@@ -110,6 +110,11 @@ export class EVTModelService {
       lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.entries.namedEntityType)),
   );
 
+  public readonly objects$ = this.parsedLists$.pipe(
+    map(({ lists, entities }) => this.namedEntitiesParser.getResultsByType(
+      lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.objects.namedEntityType)),
+  );
+
   public readonly verses$ = this.editionSource$.pipe(
     map((source) => this.linesVersesParser.parseVerses(source)),
     shareReplay(1),
@@ -126,19 +131,21 @@ export class EVTModelService {
     this.organizations$,
     this.relations$,
     this.events$,
-    this.entries$
+    this.entries$,
+    this.objects$
   ]).pipe(
-    map(([persons, places, organizations, relations, events, entries]) => ({
+    map(([persons, places, organizations, relations, events, entries, objects]) => ({
       all: {
-        lists: [...persons.lists, ...places.lists, ...organizations.lists, ...events.lists, ...entries.lists],
-        entities: [...persons.entities, ...places.entities, ...organizations.entities, ...events.entities, ...entries.entities],
+        lists: [...persons.lists, ...places.lists, ...organizations.lists, ...events.lists, ...entries.lists, ...objects.lists],
+        entities: [...persons.entities, ...places.entities, ...organizations.entities, ...events.entities, ...entries.entities, ...objects.entities],
       },
       persons,
       places,
       organizations,
       relations,
       events,
-      entries
+      entries,
+      objects
     })),
     shareReplay(1),
   );
