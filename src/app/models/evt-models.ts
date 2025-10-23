@@ -103,6 +103,10 @@ export interface NamedEntities {
         lists: NamedEntitiesList[];
         entities: NamedEntity[];
     };
+    objects: {
+       lists: NamedEntitiesList[];
+       entities: NamedEntity[];
+    };
     entries: {
         lists: NamedEntitiesList[];
         entities: NamedEntity[];
@@ -263,6 +267,7 @@ export class AdditionalAttributes {
 export const SourceClass = 'sourceEntry';
 export const AnalogueClass = 'analogueEntry';
 export const BibliographyClass = 'biblioEntry';
+export const NoteClass = 'noteEntry'
 
 export class QuoteEntry extends GenericElement {
     id: string;

@@ -23,6 +23,8 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   @Input() data: ApparatusEntry;
   @Input() isSelected: boolean = false;
 
+  @Input() editionLevel: EditionLevelType;
+
   nestedApps: ApparatusEntry[] = [];
   rdgHasCounter = false;
 
@@ -34,6 +36,10 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   public notSignificantReadings: Reading[] = [];
   public readingItems: ReadingItem[] = [];
 
+  public get readings() {
+    return this.readingItems.map(item => item.reading);
+  }
+
   public get isTabContentExpanded(): boolean {
     return this.currentTab !== undefined;
   }
@@ -44,8 +50,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
   }
 
   showLemma: boolean = false;
-
-  editionLevel: EditionLevelType = 'critical';
 
   constructor(
     public evtModelService: EVTModelService,
@@ -71,13 +75,12 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       return result;
     });
 
+    this.showLemma = !!this.data.lemma;
     if (this.witnessPanelService) {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
-      this.showLemma = !!this.data.lemma && !isWitnessExcluded;
+      this.showLemma = !isWitnessExcluded;
     }
-    else{
-      this.showLemma = false;
-    }
+    console.log(this.editionLevel)
   }
 
   ngOnDestroy() {
@@ -122,4 +125,4 @@ export interface ReadingItem {
   isFirst: boolean;
 }
 
-export type AppTabType = 'xml' | 'info' | 'criticalNotes' | 'ortographicVariants' | 'corrSeq' | undefined;
+export type AppTabType = 'xml' | 'info' | 'criticalNotes' | 'ortographicVariants' | 'corrSeq' | 'varSeq' | undefined;
