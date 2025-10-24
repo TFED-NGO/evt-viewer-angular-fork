@@ -87,7 +87,7 @@ export class ModComponent {
     const layerColors = AppConfig.evtSettings.edition.changeSequenceView.layerColors;
     if ((this.data?.changeLayer) && (layerColors[this.data.changeLayer.replace('#','')])) {
       return layerColors[this.data.changeLayer.replace('#','')];
-    } else {
+    } else if (this.data.changeLayer !== null) {
       this.errorService.logWarning(`Change layer ${this.data.changeLayer} color not defined in config file. Black is used.`);
     }
 
