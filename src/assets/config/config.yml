@@ -243,7 +243,7 @@ ui:
       - target
       - source
 
-  biblView:
+  biblTab:
     propsToShow:
       - author
       - title
@@ -278,7 +278,6 @@ ui:
         titleQuotes: true
         emphasized:
           - publisher
-
     apa:
       id: apa
       label: APA
@@ -305,7 +304,6 @@ ui:
           - publication
         inBrackets:
           - date
-
     mla:
       id: mla
       label: MLA

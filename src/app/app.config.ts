@@ -220,7 +220,7 @@ export interface EditionConfig {
         biblAttributeToMatch: string;
         elementAttributesToMatch: string[];
     }>;
-    biblView: Partial<{
+    biblTab: Partial<{
         propsToShow: string[];
         showAttrNames: boolean;
         showEmptyValues: boolean;
