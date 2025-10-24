@@ -1,6 +1,6 @@
 editionUrls:
   - type: main
-    value: assets/data/text/igitur.xml
+    value: assets/data/text/saba.xml
     enable: true
 
 editionImagesSource:
@@ -174,7 +174,9 @@ edition:
   defaultImageZoomLevel: 0.8
   maxImageZoomLevel: 2
   multiPageEngineForCriticalEdition: false
-  editionStructureSeparator: pb,seg
+  editionStructureSeparator: 
+    - pb
+    - seg
   exponentEnumerateBy: seg
   transformWitnessId: true
 
