@@ -123,29 +123,6 @@ edition:
   readingColorLight: "rgb(255 241 208)"
   readingColorDark: "rgb(101, 138, 255)"
 
-  externalBibliography:
-    biblAttributeToMatch: xml:id
-    elementAttributesToMatch:
-      - target
-      - source
-
-  biblView:
-    propsToShow:
-      - author
-      - title
-      - date
-      - editor
-      - publisher
-      - pubPlace
-      - citedRange
-      - biblScope
-    showAttrNames: false
-    showEmptyValues: false
-    inline: true
-    commaSeparated: true
-    showMainElemTextContent: true
-    defaultImageZoomLevel: 0.8
-
   analogueMarkers:
     - ParallelPassage
     - parallelPassage
@@ -235,6 +212,7 @@ ui:
       label: Synoptic edition
       enable: true
 
+  # Accessibility and Interface
   localization: true
   defaultLocalization: en
   availableLanguages:
@@ -258,8 +236,32 @@ ui:
   secondaryFontSize: "1.1em"
   theme: modern
   syncZonesHighlightButton: true
-  defaultBibliographicStyle: chicago
 
+# Bibliography
+  externalBibliography:
+    biblAttributeToMatch: xml:id
+    elementAttributesToMatch:
+      - target
+      - source
+
+  biblView:
+    propsToShow:
+      - author
+      - title
+      - date
+      - editor
+      - publisher
+      - pubPlace
+      - citedRange
+      - biblScope
+    showAttrNames: false
+    showEmptyValues: false
+    inline: true
+    commaSeparated: true
+    showMainElemTextContent: true
+    defaultImageZoomLevel: 0.8
+
+  defaultBibliographicStyle: chicago
   allowedBibliographicStyles:
     chicago:
       id: chicago
