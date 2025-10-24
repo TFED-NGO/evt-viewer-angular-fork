@@ -139,7 +139,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
