@@ -73,7 +73,7 @@
       "namedEntityType": "object"
     }
   },
-  "showLists": true,
+  "showEntitiesLists": true,
   "entitiesSelectItems": [
     {
       "label": "Named Entities",

@@ -2,7 +2,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 
 import { AppConfig } from '../app.config';
 import { ProjectInfoComponent } from '../components/project-info/project-info.component';
@@ -12,6 +12,7 @@ import { ShortcutsComponent } from '../shortcuts/shortcuts.component';
 import { EvtIconInfo } from '../ui-components/icon/icon.component';
 import { ModalComponent } from '../ui-components/modal/modal.component';
 import { ModalService } from '../ui-components/modal/modal.service';
+import { EVTModelService } from '../services/evt-model.service';
 
 @Component({
   selector: 'evt-main-menu',
@@ -32,6 +33,7 @@ export class MainMenuComponent {
     public themes: ThemesService,
     public translate: TranslateService,
     private modalService: ModalService,
+    private evtModelService: EVTModelService,
   ) {
     this.dynamicItems = this.getDynamicItems();
   }
@@ -63,7 +65,9 @@ export class MainMenuComponent {
           additionalClasses: 'icon',
         },
         label: 'openLists',
-        enabled$: of(this.editionConfig.showLists),
+        enabled$: this.evtModelService.namedEntities$.pipe(
+          map((ne) => this.editionConfig.showEntitiesLists && ne.all.entities.length > 0),
+        ),
         callback: () => this.openGlobalDialogLists(),
       },
       {
