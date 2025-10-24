@@ -195,7 +195,7 @@ export interface EditionConfig {
     editionTitle: string;
     badge: string;
     editionHome: string;
-    showLists: boolean;
+    showEntitiesLists: boolean;
     downloadableXMLSource: boolean;
     availableEditionLevels: EditionLevel[];
     namedEntitiesLists: Partial<{

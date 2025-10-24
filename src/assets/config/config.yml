@@ -75,8 +75,7 @@ edition:
       listSelector: "div[type='glossary']"
       namedEntityType: entry
 
-  showLists: true
-
+  showEntitiesLists: true
   entitiesSelectItems:
     - label: Named Entities
       enable: true
@@ -148,8 +147,6 @@ edition:
       strato-4: "#5f3f01"
       strato-5: "#352400"
 
-  defaultImageZoomLevel: 0.8
-  maxImageZoomLevel: 2
   multiPageEngineForCriticalEdition: false
   editionStructureSeparator: 
     - pb
@@ -236,6 +233,8 @@ ui:
   secondaryFontSize: "1.1em"
   theme: modern
   syncZonesHighlightButton: true
+  defaultImageZoomLevel: 0.8
+  maxImageZoomLevel: 2
 
 # Bibliography
   externalBibliography:
@@ -259,7 +258,6 @@ ui:
     inline: true
     commaSeparated: true
     showMainElemTextContent: true
-    defaultImageZoomLevel: 0.8
 
   defaultBibliographicStyle: chicago
   allowedBibliographicStyles:
