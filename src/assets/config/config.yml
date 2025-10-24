@@ -154,6 +154,12 @@ edition:
   exponentEnumerateBy: seg
   transformWitnessId: true
 
+  externalBibliography:
+    biblAttributeToMatch: xml:id
+    elementAttributesToMatch:
+      - target
+      - source
+
 
 # User interface customization
 ui:
@@ -202,7 +208,7 @@ ui:
       iconSet: evt
       id: documentalMixed
       label: Documental
-      enable: false
+      enable: true
     - icon: versions
       iconSet: evt
       id: synopticEdition
@@ -237,12 +243,6 @@ ui:
   maxImageZoomLevel: 2
 
 # Bibliography
-  externalBibliography:
-    biblAttributeToMatch: xml:id
-    elementAttributesToMatch:
-      - target
-      - source
-
   biblTab:
     propsToShow:
       - author
