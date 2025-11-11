@@ -9,7 +9,7 @@ import { EditorialConventionLayout } from './models/evt-models';
 import { reduceCssUnit, updateCSS } from './utils/dom-utils';
 
 @Injectable()
-export class AppConfig {
+export class AppConfig { 
     static evtSettings: EVTConfig;
     private readonly uiConfigUrl = 'assets/config/ui_config.json';
     private readonly defaultFileConfigUrl = 'assets/config/file_config.json';
