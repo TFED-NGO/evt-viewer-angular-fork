@@ -47,7 +47,7 @@ export class StructureXmlParserService {
     const body: XMLElement = source.querySelector(this.bodyTagName);
     this.back = source.querySelector('back');
 
-    const pbs = Array.from(source.querySelectorAll(this.pageTagName)).filter((p) => !p.getAttribute('ed'));
+    const pbs = Array.from(source.querySelectorAll(this.pageTagName));//.filter((p) => !p.getAttribute('ed'));
     const frontPbs = pbs.filter((p) => isNestedInElem(p, this.frontTagName));
     const bodyPbs = pbs.filter((p) => isNestedInElem(p, this.bodyTagName));
     const doc = source.firstElementChild.ownerDocument;

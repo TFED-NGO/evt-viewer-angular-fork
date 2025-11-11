@@ -60,6 +60,12 @@
 			"listSelector": "listEvent",
 			"namedEntityType": "event"
 		},
+		"objects": {
+			"enable": true,
+			"defaultLabel": "Objects",
+			"listSelector": "listObject",
+			"namedEntityType": "object"
+		},
 		"entries": {
 			"enable": true,
 			"defaultLabel": "Entries",
@@ -67,6 +73,7 @@
 			"namedEntityType": "entry"
 		}
 	},
+	"namedEntitiesOccurrenceSelector": "persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref], term[ref]",
 	"showLists": true,
 	"entitiesSelectItems": [
 		{

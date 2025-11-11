@@ -198,7 +198,7 @@ export interface EditionConfig {
         relations: NamedEntitiesListConfig;
         events: NamedEntitiesListConfig;
         entries: NamedEntitiesListConfig;
-        objects: NamedEntitiesListsConfig;
+        objects: NamedEntitiesListConfig;
     }>;
     namedEntitiesOccurrenceSelector: string;
     entitiesSelectItems: EntitiesSelectItemGroup[];
