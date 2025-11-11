@@ -1,6 +1,6 @@
 {
   "editionTitle": "My Digital Edition",
-  "badge": "alpha",
+  "badge": "beta",
   "editionHome": "evt.labcd.unipi.it/",
   "availableEditionLevels": [
     {
@@ -65,7 +65,13 @@
 			"defaultLabel": "Entries",
 			"listSelector": "div[type='glossary']",
 			"namedEntityType": "entry"
-		}
+		},
+    "objects": {
+      "enable": true,
+      "defaultLabel": "Objects",
+      "listSelector": "listObject",
+      "namedEntityType": "object"
+    }
   },
   "showLists": true,
   "entitiesSelectItems": [
