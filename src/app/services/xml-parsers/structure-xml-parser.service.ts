@@ -58,11 +58,11 @@ export class StructureXmlParserService {
     }
     else {
       const frontPages = frontPbs.length === 0 && front && this.isMarkedAsOrigContent(front)
-        ? [this.parseSinglePage(doc, front, 'page_front', this.frontTagName, 'facs_front')]
+        ? [this.parseSinglePage(doc, front, `page_front_${uuidv4()}`, this.frontTagName, 'facs_front')]
         : frontPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.frontTagName));
 
       const bodyPages = bodyPbs.length === 0
-        ? [this.parseSinglePage(doc, body, 'page1', 'mainText', 'facs1')] // TODO: tranlsate mainText
+        ? [this.parseSinglePage(doc, body, `page1_${uuidv4()}`, 'mainText', 'facs1')] // TODO: translate mainText
         : bodyPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.bodyTagName));
 
       editionStructure.pages.push(...frontPages, ...bodyPages);
