@@ -238,5 +238,6 @@
     "hidePanel": "Hide this panel",
     "openApparatusTab": "Open Apparatus Tab",
     "openPinBoard": "Open Pin Board"
-  }
+  },
+  "noNamedEntities": "There are no named entities to show"
 }

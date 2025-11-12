@@ -32,13 +32,18 @@ import { BibliographicEntriesParserService } from './xml-parsers/bibliographic-e
 import { ModParserService } from './xml-parsers/mod-parser.service';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class EVTModelService {
   public readonly editionSource$: Observable<OriginalEncodingNodeType> = this.editionDataService.mainEditionSource$.pipe(
     map(x => x.editionData),
     shareReplay(1),
   );
+
+  // public readonly editionSource$: Observable<OriginalEncodingNodeType> = this.editionDataService.allEditionSources$.pipe(
+  //   map(editionSources => editionSources[0].editionData),
+  //   shareReplay(1),
+  // );
 
   public readonly title$ = this.editionSource$.pipe(
     map((source) => this.prefatoryMatterParser.parseEditionTitle(source)),
@@ -79,6 +84,11 @@ export class EVTModelService {
     map((source) => this.namedEntitiesParser.parseLists(source)),
     shareReplay(1),
   );
+
+  // public readonly parsedLists$ = this.editionDataService.allEditionSources$.pipe(
+  //   map((editionSources) => this.namedEntitiesParser.parseLists(editionSources[0])),
+  //   shareReplay(1),
+  // );
 
   public readonly persons$ = this.parsedLists$.pipe(
     map(({ lists, entities }) => (
@@ -147,6 +157,11 @@ export class EVTModelService {
       entries,
       objects
     })),
+    shareReplay(1),
+  );
+
+  public readonly noNamedEntities$: Observable<boolean> = this.namedEntities$.pipe(
+    map(ne => !ne.all.entities.length),
     shareReplay(1),
   );
 
@@ -409,7 +424,7 @@ export class EVTModelService {
     private sourceParser: SourceEntriesParserService,
     private bibliographicEntriesParser: BibliographicEntriesParserService,
     private modParser: ModParserService,
-  ) {    
+  ) {
   }
 
   getPage(pageId: string): Observable<Page> {
