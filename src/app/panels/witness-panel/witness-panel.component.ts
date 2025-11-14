@@ -29,11 +29,6 @@ export class WitnessPanelComponent implements OnInit {
   );
 
   currentPage$: Observable<Page> = this.pages$.pipe(
-    // TODO: check currentPageId when adding witness from the modal
-    // tap(pages => {
-    //   console.log("pages", pages);
-    //   console.log("pageId", this.witnessItem.currentPageId);
-    // }),
     map(pages => pages.find(p => p.id === this.witnessItem.currentPageId)),
   );
 
