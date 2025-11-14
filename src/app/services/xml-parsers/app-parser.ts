@@ -4,7 +4,7 @@ import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Lacuna
 import { createParsedWhiteSpace, removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser, ParseResult } from './parser-models';
-import { XMLID_ATTRIBUTE } from 'src/app/models/constants';
+import { ISDEPA_ATTRIBUTE, XMLID_ATTRIBUTE } from 'src/app/models/constants';
 import { getTopMostAncestor, getXPath } from 'src/app/utils/dom-utils';
 import { v4 as uuidv4 } from 'uuid';
 import { interleave } from 'src/app/utils/js-utils';
@@ -143,7 +143,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     }
 
     public static isDepa(app: HTMLElement): boolean {
-        return JSON.parse(app.getAttribute("isDepa")) ?? false;
+        return JSON.parse(app.getAttribute(ISDEPA_ATTRIBUTE)) ?? false;
     }
 
     public parse(appEntryEl: XMLElement): ApparatusEntry {

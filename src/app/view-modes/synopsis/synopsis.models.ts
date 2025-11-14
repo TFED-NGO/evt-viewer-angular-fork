@@ -7,16 +7,17 @@ export interface Attribute {
 }
 
 export interface SynopsisEdition {
-    editionData: HTMLElement,
-    selectedPage: SynopsisSelectedPage,
-    pages: Page[],
-    editionLevel: EditionLevel,
-    editionTitle: string,
+    editionId: string;
+    editionData: HTMLElement;
+    selectedPage: SynopsisSelectedPage;
+    pages: Page[];
+    editionLevel: EditionLevel;
+    editionTitle: string;
 }
 
 export interface SynopsisPageSelection {
-    pageId: string,
-    pageLabel: string,
+    pageId: string;
+    pageLabel: string;
 }
 
 export interface SynopsisPageSelectionList {
@@ -32,16 +33,16 @@ export interface SynopsisSelectedPage {
 }
 
 export interface PageChangedArgs {
-    editionTitle: string,
-    pageId: string,
+    editionId: string;
+    pageId: string;
 }
 
 export interface XmlIdChangedArgs {
-    editionTitle: string,
-    xmlId: string,
+    editionId: string;
+    xmlId: string;
 }
 
 export interface EditionLevelChangedArgs{
-    editionLevel: EditionLevel,
-    editionTitle: string,
+    editionId: string;
+    editionLevel: EditionLevel;
 }

@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../../app.config';
-import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
+import { Anchor, ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
 import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from 'src/app/extensions/apparatus.extensions';
-import { FROM_ATTRIBUTE, TO_ATTRIBUTE } from 'src/app/models/constants';
+import { FROM_ATTRIBUTE, TO_ATTRIBUTE, ISDEPA_ATTRIBUTE } from 'src/app/models/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { AlphabetService } from '../alphabet.service';
 import { AppParser } from './app-parser';
@@ -17,7 +17,7 @@ import { ErrorsService } from '../errors.service';
 export class StructureXmlParserService {
   constructor(
     private genericParserService: GenericParserService,
-    private alphabet: AlphabetService,
+    private alphabetService: AlphabetService,
     private errorService: ErrorsService,
   ) {
   }
@@ -147,7 +147,7 @@ export class StructureXmlParserService {
 
     function addIsDepaAttribute(app: HTMLElement) {
       const isDepa = !app.closest("body");
-      app.setAttribute("isDepa", isDepa.toString());
+      app.setAttribute(ISDEPA_ATTRIBUTE, isDepa.toString());
     }
   }
 
@@ -177,7 +177,7 @@ export class StructureXmlParserService {
       this.addApparatusExponents(
         page.parsedContent,
         (app, exponent) => onApparatusEntryReplaced(page, app, exponent),
-        () => exponentLabelFactory(this.alphabet),
+        () => exponentLabelFactory(this.alphabetService),
         (item) => resetCounterCallback(item, enumeratedByJsonElements)
       );
     }
@@ -323,8 +323,8 @@ export class StructureXmlParserService {
       const item = items[i];
       onShouldResetCounter(item);
 
-      if (item.type?.name === 'ApparatusEntry') {
-        const app = item as ApparatusEntry;
+      if (item instanceof ApparatusEntry) {
+        const app = item;
         if (!app) throw new Error("Invalid type " + app);
 
         const id = this.getExponentId();
@@ -348,11 +348,11 @@ export class StructureXmlParserService {
         onApparatusEntryReplaced(item, exponent);
         app.exponent = exponent.label;
       }
-      else if (item.type?.name === 'Anchor') {
+      else if (item instanceof Anchor) {
         const anchorId = item.attributes['id'];
         const apps = this.getApparatusEntriesOrDefault(anchorId);
         if (!apps.length) {
-          console.warn("This anchor has not apparatus entry associated with its id and will be skipped", item);
+          //console.warn("This anchor has not apparatus entry associated with its id and will be skipped", item);
           continue;
         }
 
@@ -378,7 +378,7 @@ export class StructureXmlParserService {
         }
       }
       // in other cases exponents are added to the items array, so we skip them
-      else if (item.type?.name === 'ApparatusEntryExponent') {
+      else if (item instanceof ApparatusEntryExponent) {
         //console.log("The element is an exponent, skipping", item);
         continue;
       }

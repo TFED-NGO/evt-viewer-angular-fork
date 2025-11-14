@@ -7,8 +7,9 @@ import { AppConfig, EditionLevel, EditionLevelType } from '../app.config';
 import { ChangeLayerData, Page, ViewMode } from '../models/evt-models';
 import { EVTModelService } from './evt-model.service';
 import { deepSearch } from '../utils/dom-utils';
+import { EditionSource } from './named-entities.service';
 
-export type URLParamsKeys = 'd' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app';
+export type URLParamsKeys = 'd' | 'ed' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app';
 export type URLParams = { [T in URLParamsKeys]: string };
 
 @Injectable({
@@ -58,14 +59,23 @@ export class EVTStatusService {
         this.route.queryParams.pipe(map((params: URLParams) => params.d)),
         this.updateDocument$,
     );
+    public currentEdition$ = merge(
+        this.route.queryParams.pipe(map((params: URLParams) => params.ed)),
+        this.evtModelService.updateEditionId$,
+    ).pipe(
+        mergeMap((editionId) => this.evtModelService.editionSources$.pipe(
+            map((editionSources) => !editionId ? editionSources[0]
+                : editionSources.find((ed) => ed.id === editionId))
+        ))
+    );
     public currentPage$ = merge(
         merge(
             this.route.queryParams.pipe(map((params: URLParams) => params.p)),
             this.updatePageId$,
         ).pipe(
             mergeMap((id) => this.evtModelService.pages$.pipe(
-                map((pages) => !id ? pages[0] : pages.find((p) => p.id === id) || pages[0])),
-            ),
+                map((pages) => !id ? pages[0] : pages.find((p) => p.id === id) || pages[0]),
+            )),
         ),
         this.updatePage$.pipe(
             filter((p) => !!p),
@@ -75,6 +85,7 @@ export class EVTStatusService {
             map(([n, pages]) => n < 0 ? pages[pages.length - 1] : pages[n]),
         ),
     );
+    
     public currentEditionLevels$ = merge(
         this.route.queryParams.pipe(
             map((params: URLParams) => (params.el?.split(',') ?? [])),
@@ -104,7 +115,7 @@ export class EVTStatusService {
         ).pipe(
             filter((n) => n !== undefined),
             withLatestFrom(this.updateLayer$),
-            map(([data,selectedLayer]) => {
+            map(([data, selectedLayer]) => {
                 data.selectedLayer = selectedLayer;
 
                 return data;
@@ -115,6 +126,7 @@ export class EVTStatusService {
     public currentStatus$: Observable<AppStatus> = combineLatest([
         this.updateViewMode$,
         this.currentDocument$,
+        this.currentEdition$,
         this.currentPage$,
         this.currentEditionLevels$,
         this.currentWitnesses$,
@@ -127,6 +139,7 @@ export class EVTStatusService {
         map(([
             viewMode,
             document,
+            edition,
             page,
             editionLevels,
             witnesses,
@@ -147,6 +160,7 @@ export class EVTStatusService {
             return {
                 viewMode,
                 document,
+                edition,
                 page,
                 editionLevels,
                 witnesses,
@@ -203,6 +217,7 @@ export class EVTStatusService {
     getUrlFromStatus(fileConfigUrl: string, status: AppStatus) {
         const params = {
             d: status.document || '',
+            ed: status.edition?.id || '',
             p: status.page?.id ?? '',
             el: status.editionLevels.join(','),
             ws: status.witnesses.join(','),
@@ -221,7 +236,7 @@ export class EVTStatusService {
 
     /** to avoid loops this function must not be fed with nodes */
     getPageElementsByClassList(classList: string[]) {
-        const attributesNotIncludedInSearch = ['originalEncoding','type','spanElements','includedElements'];
+        const attributesNotIncludedInSearch = ['originalEncoding', 'type', 'spanElements', 'includedElements'];
         const maxEffort = 4000;
 
         return this.currentStatus$.pipe(
@@ -235,6 +250,7 @@ export class EVTStatusService {
 export interface AppStatus {
     viewMode: ViewMode;
     document: string;
+    edition: EditionSource;
     page: Page;
     editionLevels: EditionLevelType[];
     witnesses: string[];

@@ -80,7 +80,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
       this.showLemma = !isWitnessExcluded;
     }
-    console.log(this.editionLevel)
   }
 
   ngOnDestroy() {

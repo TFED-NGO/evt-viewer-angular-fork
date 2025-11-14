@@ -1,15 +1,17 @@
 <evt-panel [secondary]="secondary">
     <div header-left class="d-flex align-items-center">
         <div class="panel-title text-truncate me-1">{{ edition.editionTitle }}</div> 
-        <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
+        <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()"> <!-- To avoid gridster drag -->
+            <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
             [selectedPage]="edition.selectedPage.pageSelectionList.selectedPage"
             (onSelectionChanged)="changePage($event)"></evt-synopsis-page-selector>
-        <div class="mx-1">
+        </div>
+        <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()"> <!-- To avoid gridster drag -->
             <evt-synopsis-xml-id-selector [xmlIds]="edition.selectedPage.xmlIds"
                 [selectedXmlId]="edition.selectedPage.selectedXmlId"
-                (onXmlIdChanged)="changeXmlId($event)"></evt-synopsis-xml-id-selector>
+                (onXmlIdChanged)="changeXmlId($event)" ></evt-synopsis-xml-id-selector>
         </div>
-        <div class="mx-1">
+        <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()"> <!-- To avoid gridster drag -->
             <evt-synopsis-edition-level-selector [editionLevel]="edition.editionLevel"
                 (onEditionLevelChanged)="changeEditionLevel($event)"></evt-synopsis-edition-level-selector>
         </div>

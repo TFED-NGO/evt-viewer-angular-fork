@@ -12,45 +12,23 @@ import { v4 as uuidv4 } from 'uuid';
   providedIn: 'root',
 })
 export class EditionDataService {
-  private readonly editionUrls = AppConfig.evtSettings.files.editionUrls || [];
-  private readonly mainUrl = this.editionUrls.find(x => this.isMainUrl(x)) ?? this.editionUrls[0];
-  private readonly otherUrls = this.editionUrls.filter(x => !this.isMainUrl(x)) ?? this.editionUrls.slice(1);
+  private readonly editionUrls: EditionUrl[];
 
-  readonly mainEditionSource$: Observable<EditionSource> = this.loadAndParseMainEditionData().pipe(
-    shareReplay(1));
-  readonly otherEditionSources$: Observable<EditionSource[]> = this.loadOtherEditionsData().pipe(
-    shareReplay(1));
-  readonly allEditionSources$: Observable<EditionSource[]> = forkJoin({
-    main: this.mainEditionSource$,
-    others: this.otherEditionSources$,
-  }).pipe(
-    map(({ main, others }) => [main, ...others]),
-    shareReplay(1));
+  readonly allEditionSources$: Observable<EditionSource[]>;
 
   constructor(
     private http: HttpClient,
     private prefatoryMatterParser: PrefatoryMatterParserService
   ) {
+    this.editionUrls = AppConfig.evtSettings.files.editionUrls;
+    if (!this.editionUrls) throw new Error("EditionUrls is required");
+    if (!this.editionUrls.length) throw new Error("At least an EditionUrl is required");
 
+    this.allEditionSources$ = this.loadAndParseEditionData(this.editionUrls).pipe(shareReplay(1));
   }
 
-  private loadAndParseMainEditionData(): Observable<EditionSource> {
-    return this.loadAndParseEditionData(this.mainUrl);
-  }
-
-  private loadOtherEditionsData(): Observable<EditionSource[]> {
-    if (!this.otherUrls.length) return of([]);
-
-    const requests = this.otherUrls.map(editionUrl => this.loadAndParseEditionData(editionUrl));
-    return forkJoin(requests);
-  }
-
-  private isMainUrl(url: EditionUrl): boolean {
-    return url.type === 'main';
-  }
-
-  private loadAndParseEditionData(editionUrl: EditionUrl): Observable<EditionSource> {
-    return this.http.get(editionUrl.value, { responseType: 'text' }).pipe(
+  private loadAndParseEditionData(editionUrls: EditionUrl[]): Observable<EditionSource[]> {
+    const editionData$ = editionUrls.map(editionUrl => this.http.get(editionUrl.value, { responseType: 'text' }).pipe(
       map((source) => parseXml(source)),
       tap(source => {
         setId(source.lastElementChild as HTMLElement);
@@ -76,15 +54,22 @@ export class EditionDataService {
         })
       ),
       map(({ editionData, glossary }) => {
+        const id = editionUrl.value.split('/').pop().split('.')[0]; // assets/data/myFile.xml => myFile
         const editionInfo: EditionInfo = {
           editionTitle: this.prefatoryMatterParser.parseEditionTitle(editionData),
           editionFriendlyName: editionUrl.friendlyName
         };
         const parsedGlossary = glossary ? parseXml(glossary) : null;
-        return { editionData, editionInfo, glossary: parsedGlossary };
+        const editionSource: EditionSource = { id, editionData, editionInfo, glossary: parsedGlossary };
+        return editionSource;
       }),
-      catchError(() => throwError(() => this.createError()))
-    );
+      catchError((e) => throwError(() => {
+        console.error(e.message);
+        return this.createError()
+      }
+      ))
+    ));
+    return forkJoin(editionData$); // waits for all observables to complete and emit once an array of results
   }
 
   loadXIinclude(doc: HTMLElement, baseUrlPath: string) {
@@ -104,7 +89,7 @@ export class EditionDataService {
               includedElement = includedDoc.querySelector('text');
             }
 
-            if(!includedElement) throw new Error("No element to include found");
+            if (!includedElement) throw new Error("No element to include found");
             // element.parentNode.replaceChild(includedTextElem, element);
             element.parentNode.appendChild(includedElement);
           }),

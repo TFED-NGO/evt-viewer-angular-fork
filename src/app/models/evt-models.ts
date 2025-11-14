@@ -2,6 +2,7 @@ import { Type } from '@angular/core';
 import { EditionLevelType, EditorialConventionAttributes } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
+import { ISDEPA_ATTRIBUTE } from './constants';
 
 export interface EditorialConvention {
     element: string;
@@ -104,8 +105,8 @@ export interface NamedEntities {
         entities: NamedEntity[];
     };
     objects: {
-       lists: NamedEntitiesList[];
-       entities: NamedEntity[];
+        lists: NamedEntitiesList[];
+        entities: NamedEntity[];
     };
     entries: {
         lists: NamedEntitiesList[];
@@ -245,6 +246,11 @@ export class ApparatusEntry extends GenericElement {
         const isWitnessExcluded = this.readings.some(x => x.excludedWitIDs.includes(witnessId));
         return isWitnessExcluded;
     }
+
+    isDepa() {
+        const isDepaValue = this.attributes[ISDEPA_ATTRIBUTE];
+        return isDepaValue === 'true';
+    }
 }
 
 export class AdditionalAttributes {
@@ -363,8 +369,8 @@ export class Lacunas {
 }
 
 export interface LacunaPair {
-  start?: HTMLElement;
-  end?: HTMLElement;
+    start?: HTMLElement;
+    end?: HTMLElement;
 }
 
 export class Lacuna extends GenericElement {

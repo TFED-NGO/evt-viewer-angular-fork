@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { EditionDataService } from "./edition-data.service";
 import { NamedEntitiesParserService } from "./xml-parsers/named-entities-parser.service";
-import { map, shareReplay, Observable, forkJoin } from "rxjs";
+import { map, shareReplay, Observable } from "rxjs";
 import { NamedEntities, NamedEntityOccurrence } from "../models/evt-models";
 import { StructureXmlParserService } from "./xml-parsers/structure-xml-parser.service";
 import { Map } from '../utils/js-utils';
@@ -10,11 +10,8 @@ import { Map } from '../utils/js-utils';
     providedIn: 'root',
 })
 export class NamedEntitiesService {
-    private readonly allEditionSources$: Observable<AllEditionSources> = forkJoin({
-        main: this.editionDataService.mainEditionSource$,
-        others: this.editionDataService.otherEditionSources$,
-    }).pipe(
-        map(({ main, others }) => new AllEditionSources(main, others)),
+    private readonly allEditionSources$: Observable<AllEditionSources> = this.editionDataService.allEditionSources$.pipe(
+        map((editionSources) => new AllEditionSources(editionSources)),
         shareReplay(1)
     );
 
@@ -44,15 +41,14 @@ export class NamedEntitiesService {
 }
 
 export class AllEditionSources {
-    constructor(private main: EditionSource, private others: EditionSource[]) { }
+    constructor(private editionSources: EditionSource[]) { }
 
     getAllEditionSources(): EditionSource[] {
-        return [this.main, ...this.others];
+        return [...this.editionSources];
     }
-    getEditionSource(editionTitle: string): EditionSource {
-        if (editionTitle === this.main.editionInfo.editionTitle) return this.main;
 
-        const edition = this.others.find(x => x.editionInfo.editionTitle === editionTitle);
+    getEditionSource(editionTitle: string): EditionSource {
+        const edition = this.editionSources.find(x => x.editionInfo.editionTitle === editionTitle);
         if (!edition) throw new Error('No edition found with title' + editionTitle);
 
         return edition;
@@ -60,6 +56,7 @@ export class AllEditionSources {
 }
 
 export interface EditionSource {
+    id: string;
     editionInfo: EditionInfo;
     editionData: HTMLElement;
     glossary: HTMLElement;

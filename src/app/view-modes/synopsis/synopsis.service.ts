@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { combineLatest, map, Observable, shareReplay } from "rxjs";
+import { map, Observable, shareReplay } from "rxjs";
 import { StructureXmlParserService } from "../../services/xml-parsers/structure-xml-parser.service";
 import { EVTStatusService } from "../../services/evt-status.service";
-import { Page } from "../../models/evt-models";
+import { Attribute as AttributeModel, Page } from "../../models/evt-models";
 import { PrefatoryMatterParserService } from "../../services/xml-parsers/prefatory-matter-parser.service";
 import { EditionDataService } from "src/app/services/edition-data.service";
 import { Attribute, SynopsisEdition } from "./synopsis.models";
@@ -12,19 +12,8 @@ import { EditionSource } from "src/app/services/named-entities.service";
     providedIn: 'root',
 })
 export class SynopsisService {
-    readonly mainEdition$: Observable<SynopsisEdition> = this.editionDataService.mainEditionSource$.pipe(
-        map(editionSources => this.mapToSynopsisEdition([editionSources])[0]),
-        shareReplay(1));
-
-    readonly otherEditions$: Observable<SynopsisEdition[]> = this.editionDataService.otherEditionSources$.pipe(
+    readonly allEditions$: Observable<SynopsisEdition[]> = this.editionDataService.allEditionSources$.pipe(
         map(editionSources => this.mapToSynopsisEdition(editionSources)),
-        shareReplay(1));
-
-    readonly allEditions$: Observable<SynopsisEdition[]> = combineLatest([
-        this.mainEdition$,
-        this.otherEditions$,
-    ]).pipe(
-        map(([main, others]) => [main, ...others]),
         shareReplay(1));
 
     constructor(
@@ -36,12 +25,16 @@ export class SynopsisService {
     }
 
     getXmlIdsWithCorrespInOtherEditions(editions: HTMLElement[], editionToSkip: HTMLElement, page: Page): string[] {
-        const xmlIds = page.originalContent.flatMap(x => this.recursiveParseAttribute(x, "xml:id"));
+        const pageId = AttributeModel.create(page.id);
+        const xmlIds = page.originalContent
+            .flatMap(x => this.recursiveParseAttribute(x, "xml:id"))
+            .filter(x => x.value !== pageId.valueWithoutRef); // to skip the page element itself
         const corresps = editions
             .filter(x => x !== editionToSkip)
             .flatMap(x => {
                 return this.recursiveParseAttribute(x, "corresp");
-            });
+            })
+            .filter(x => x.value !== pageId.valueRef); // to skip the page element itself
         const result = xmlIds.filter(xmlId =>
             corresps.some(corresp =>  this.matchCorresp(corresp, xmlId.value)));
         return result.map(x => x.value);
@@ -92,6 +85,8 @@ export class SynopsisService {
                 }))
             };
             const editionSource: SynopsisEdition = {
+                editionId: source.id,
+                editionTitle: editionTitle,
                 editionData: source.editionData,
                 pages: pages,
                 selectedPage: {
@@ -100,7 +95,6 @@ export class SynopsisService {
                     selectedXmlId: xmlIds[0],
                     pageSelectionList: pageSelectionList
                 },
-                editionTitle: editionTitle,
                 editionLevel: this.evtStatusService.defaultEditionLevel,
             };
             return editionSource;
