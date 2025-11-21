@@ -27,11 +27,11 @@ export class SynopsisTextPanelComponent implements OnInit {
   }
 
   changePage(pageId: string): void {
-    this.onPageChanged.emit({ editionId: this.edition.editionId, pageId: pageId });
+    this.onPageChanged.emit({ editionId: this.edition.editionInfo.editionId, pageId: pageId });
   }
 
   changeXmlId(xmlId: string): void {
-    this.onXmlIdChanged.emit({ editionId: this.edition.editionId, xmlId: xmlId })
+    this.onXmlIdChanged.emit({ editionId: this.edition.editionInfo.editionId, xmlId: xmlId })
   }
 
   changeSelection(items: EntitiesSelectItem[]) {
@@ -39,6 +39,6 @@ export class SynopsisTextPanelComponent implements OnInit {
   }
 
   changeEditionLevel(level: EditionLevel) {
-    this.onEditionLevelChanged.emit({ editionId: this.edition.editionId, editionLevel: level });
+    this.onEditionLevelChanged.emit({ editionId: this.edition.editionInfo.editionId, editionLevel: level });
   }
 }

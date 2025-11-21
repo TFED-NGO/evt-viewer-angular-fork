@@ -1,6 +1,6 @@
 <evt-panel [secondary]="secondary">
     <div header-left class="d-flex align-items-center">
-        <div class="panel-title text-truncate me-1">{{ edition.editionTitle }}</div> 
+        <div class="panel-title text-truncate me-1">{{ edition.editionInfo.editionFriendlyName ?? edition.editionInfo.editionTitle }}</div> 
         <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()"> <!-- To avoid gridster drag -->
             <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
             [selectedPage]="edition.selectedPage.pageSelectionList.selectedPage"

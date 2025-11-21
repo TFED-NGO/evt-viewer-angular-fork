@@ -46,23 +46,16 @@ export class AllEditionSources {
     getAllEditionSources(): EditionSource[] {
         return [...this.editionSources];
     }
-
-    getEditionSource(editionTitle: string): EditionSource {
-        const edition = this.editionSources.find(x => x.editionInfo.editionTitle === editionTitle);
-        if (!edition) throw new Error('No edition found with title' + editionTitle);
-
-        return edition;
-    }
 }
 
 export interface EditionSource {
-    id: string;
     editionInfo: EditionInfo;
     editionData: HTMLElement;
     glossary: HTMLElement;
 }
 
 export interface EditionInfo {
+    editionId: string;
     editionTitle: string;
     editionFriendlyName: string;
 }

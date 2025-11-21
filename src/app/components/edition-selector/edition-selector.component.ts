@@ -1,5 +1,5 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { BehaviorSubject, map, Observable, Subscription } from 'rxjs';
+import { Component} from '@angular/core';
+import { map, Observable } from 'rxjs';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 
 @Component({
@@ -7,36 +7,28 @@ import { EVTModelService } from 'src/app/services/evt-model.service';
   templateUrl: './edition-selector.component.html',
   styleUrls: ['./edition-selector.component.scss']
 })
-export class EditionSelectorComponent implements OnInit, OnDestroy {
-  public editions$: Observable<Edition[]> = this.evtModelService.editionSources$.pipe(
+export class EditionSelectorComponent {
+  public readonly editions$: Observable<Edition[]> = this.evtModelService.editionSources$.pipe(
     map(editions => editions.map(ed => {
       return {
-        id: ed.id,
+        id: ed.editionInfo.editionId,
         title: ed.editionInfo.editionFriendlyName ?? ed.editionInfo.editionTitle
       };
     }))
   );
-  private editionsSubs: Subscription;
-  public selectedEdition$ = new BehaviorSubject<string>(undefined);
+
+  public readonly selectedEditionId$ = this.evtModelService.currentEdition$.pipe(
+    map(edition => edition.editionInfo.editionId)
+  );
 
   constructor(
     private evtModelService: EVTModelService,
   ) {
   }
 
-  ngOnInit(): void {
-    this.editionsSubs = this.editions$.subscribe(editions => {
-      const firstEdition = editions[0];
-      this.selectedEdition$.next(firstEdition.id);
-    });
-  }
 
   public onEditionChanged(id: string) {
     this.evtModelService.updateEditionId$.next(id);
-  }
-
-  ngOnDestroy(): void {
-    this.editionsSubs?.unsubscribe();
   }
 }
 

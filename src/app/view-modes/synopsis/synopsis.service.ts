@@ -3,7 +3,6 @@ import { map, Observable, shareReplay } from "rxjs";
 import { StructureXmlParserService } from "../../services/xml-parsers/structure-xml-parser.service";
 import { EVTStatusService } from "../../services/evt-status.service";
 import { Attribute as AttributeModel, Page } from "../../models/evt-models";
-import { PrefatoryMatterParserService } from "../../services/xml-parsers/prefatory-matter-parser.service";
 import { EditionDataService } from "src/app/services/edition-data.service";
 import { Attribute, SynopsisEdition } from "./synopsis.models";
 import { EditionSource } from "src/app/services/named-entities.service";
@@ -20,7 +19,6 @@ export class SynopsisService {
         private editionDataService: EditionDataService,
         private evtStatusService: EVTStatusService,
         private editionStructureParser: StructureXmlParserService,
-        private prefatoryMatterParser: PrefatoryMatterParserService,
     ) {
     }
 
@@ -70,7 +68,6 @@ export class SynopsisService {
     private mapToSynopsisEdition(editionSources: EditionSource[]) {
         const result = editionSources.map(source => {
             const pages = this.editionStructureParser.parsePages(source.editionData).pages;
-            const editionTitle = this.prefatoryMatterParser.parseEditionTitle(source.editionData);
             const defaultPage = pages[0];
             const xmlIds = this.getXmlIdsWithCorrespInOtherEditions(
                 editionSources.map(x => x.editionData), source.editionData, defaultPage);
@@ -85,8 +82,7 @@ export class SynopsisService {
                 }))
             };
             const editionSource: SynopsisEdition = {
-                editionId: source.id,
-                editionTitle: editionTitle,
+                editionInfo: source.editionInfo,
                 editionData: source.editionData,
                 pages: pages,
                 selectedPage: {

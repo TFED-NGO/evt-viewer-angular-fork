@@ -65,7 +65,7 @@ export class EVTStatusService {
     ).pipe(
         mergeMap((editionId) => this.evtModelService.editionSources$.pipe(
             map((editionSources) => !editionId ? editionSources[0]
-                : editionSources.find((ed) => ed.id === editionId))
+                : editionSources.find((ed) => ed.editionInfo.editionId === editionId))
         ))
     );
     public currentPage$ = merge(
@@ -217,7 +217,7 @@ export class EVTStatusService {
     getUrlFromStatus(fileConfigUrl: string, status: AppStatus) {
         const params = {
             d: status.document || '',
-            ed: status.edition?.id || '',
+            ed: status.edition?.editionInfo?.editionId || '',
             p: status.page?.id ?? '',
             el: status.editionLevels.join(','),
             ws: status.witnesses.join(','),

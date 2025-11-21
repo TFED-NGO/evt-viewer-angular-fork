@@ -47,31 +47,31 @@ export class SynopsisComponent implements OnInit, OnDestroy {
           mobileBreakpoint: 0
         };
       })).subscribe(() => this.changePage({
-        editionId: this.editions[0].editionId,
+        editionId: this.editions[0].editionInfo.editionId,
         pageId: this.editions[0].selectedPage.page.id
       }));
   }
 
   changePage(args: PageChangedArgs): void {
-    const edition = this.editions.find(x => x.editionId === args.editionId);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     const newPage = edition.pages.find(x => x.id == args.pageId);
     const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.editions.map(x => x.editionData), edition.editionData, newPage);
     edition.selectedPage.page = newPage;
     edition.selectedPage.xmlIds = newPageXmlIds;
 
-    this.changeXmlId({ editionId: edition.editionId, xmlId: newPageXmlIds[0] })
+    this.changeXmlId({ editionId: edition.editionInfo.editionId, xmlId: newPageXmlIds[0] })
   }
 
   changeXmlId(args: XmlIdChangedArgs): void {
-    const edition = this.editions.find(x => x.editionId === args.editionId);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlId);
     edition.selectedPage.selectedXmlId = newXmlId;
 
     this.scrollIntoViewAndUnderline(newXmlId);
 
-    const otherEditions = this.editions.filter(x => x.editionId !== args.editionId);
+    const otherEditions = this.editions.filter(x => x.editionInfo.editionId !== args.editionId);
     for (const otherEdition of otherEditions) {
-      console.group(otherEdition.editionTitle)
+      console.group(otherEdition.editionInfo.editionTitle)
 
       const newPage = this.synopsisService.getCorrespPageOrDefault(otherEdition.pages, newXmlId);
       if (!newPage) {
@@ -128,7 +128,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
   }
 
   changeEditionLevel(args: EditionLevelChangedArgs) {
-    const edition = this.editions.find(x => x.editionId === args.editionId);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     edition.editionLevel = args.editionLevel;
   }
 

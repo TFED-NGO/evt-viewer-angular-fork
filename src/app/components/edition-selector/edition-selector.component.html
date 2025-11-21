@@ -6,7 +6,7 @@
     bindValue="id"
     [clearable]="false"
     [searchable]="true"
-    [ngModel]="selectedEdition$ | async"
+    [ngModel]="selectedEditionId$ | async"
     (change)="onEditionChanged($event.id)">
     <ng-template ng-label-tmp let-item="item">
         <evt-icon [iconInfo]="{icon: 'file-alt', additionalClasses: 'me-2'}" label-left></evt-icon>

@@ -54,13 +54,13 @@ export class EditionDataService {
         })
       ),
       map(({ editionData, glossary }) => {
-        const id = editionUrl.value.split('/').pop().split('.')[0]; // assets/data/myFile.xml => myFile
         const editionInfo: EditionInfo = {
+          editionId: editionUrl.value.split('/').pop().split('.')[0], // assets/data/myFile.xml => myFile --- TODO: improve with proper id in xml 
           editionTitle: this.prefatoryMatterParser.parseEditionTitle(editionData),
           editionFriendlyName: editionUrl.friendlyName
         };
         const parsedGlossary = glossary ? parseXml(glossary) : null;
-        const editionSource: EditionSource = { id, editionData, editionInfo, glossary: parsedGlossary };
+        const editionSource: EditionSource = { editionData, editionInfo, glossary: parsedGlossary };
         return editionSource;
       }),
       catchError((e) => throwError(() => {

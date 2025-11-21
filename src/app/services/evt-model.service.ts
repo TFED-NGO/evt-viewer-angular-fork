@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, map, shareReplay, switchMap } from 'rxjs/operators';
+import { combineLatestWith, distinctUntilChanged, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
   ChangeLayerData,
   EditionStructure,
@@ -45,8 +45,9 @@ export class EVTModelService {
     this.editionSources$
   ]).pipe(
     map(([id, sources]) => {
-      return id ? sources.find(s => s.id == id) : sources[0];
+      return id ? sources.find(s => s.editionInfo.editionId == id) : sources[0];
     }),
+    distinctUntilChanged(),
     shareReplay(1),
   );
 

@@ -1,5 +1,6 @@
 import { EditionLevel } from "src/app/app.config";
 import { Page } from "src/app/models/evt-models";
+import { EditionInfo } from "src/app/services/named-entities.service";
 
 export interface Attribute {
     key: string;
@@ -7,12 +8,11 @@ export interface Attribute {
 }
 
 export interface SynopsisEdition {
-    editionId: string;
+    editionInfo: EditionInfo;
     editionData: HTMLElement;
     selectedPage: SynopsisSelectedPage;
     pages: Page[];
     editionLevel: EditionLevel;
-    editionTitle: string;
 }
 
 export interface SynopsisPageSelection {
