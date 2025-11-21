@@ -21,6 +21,10 @@ export class EditionSelectorComponent {
     map(edition => edition.editionInfo.editionId)
   );
 
+  public readonly selectedEditionTitle$ = this.evtModelService.currentEdition$.pipe(
+    map(edition => edition.editionInfo.editionTitle)
+  );
+
   constructor(
     private evtModelService: EVTModelService,
   ) {
