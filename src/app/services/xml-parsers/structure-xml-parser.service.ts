@@ -325,8 +325,6 @@ export class StructureXmlParserService {
 
       if (item instanceof ApparatusEntry) {
         const app = item;
-        if (!app) throw new Error("Invalid type " + app);
-
         const id = this.getExponentId();
         const to = id; // the exponent itself as the To element
         let exponent: ApparatusEntryExponent = null;

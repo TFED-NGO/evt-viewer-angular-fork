@@ -90,8 +90,8 @@ export class EVTModelService {
   );
 
   // NAMED ENTITIES
-  public readonly parsedLists$ = this.editionDataService.allEditionSources$.pipe(
-    map((editionSources) => this.namedEntitiesParser.parseLists(editionSources[0])),
+  public readonly parsedLists$ = this.editionSources$.pipe(
+    map((editionSources) => this.namedEntitiesParser.parseLists(editionSources)),
     shareReplay(1),
   );
 
