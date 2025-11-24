@@ -109,29 +109,17 @@ export class SynopsisComponent implements OnInit, OnDestroy {
     }
   }
 
-  private readonly intersectionObservers = new Map<string, IntersectionObserver>();
-
   private scrollIntoView(xmlId: string) {
     const tryFind = () => {
       const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
       if (!el) {
         requestAnimationFrame(tryFind); // try again next frame
       } else {
-        if (!this.intersectionObservers.has(xmlId)) {
-          const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-              if (entry.isIntersecting && entry.intersectionRatio === 1) {
-                const highlightClass = "flash-highlight";
-                el.classList.toggle(highlightClass);
-                observer.disconnect();
-                this.intersectionObservers.delete(xmlId);
-              }
-            });
-          }, { threshold: 1.0 });
-          observer.observe(el);
-        }
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          el.classList.toggle("flash-highlight");
+        }, 500);
       }
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     requestAnimationFrame(tryFind);
   }
@@ -147,7 +135,6 @@ export class SynopsisComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.editionsSubscription.unsubscribe();
-    this.intersectionObservers.forEach(x => x.disconnect());
   }
 }
 
