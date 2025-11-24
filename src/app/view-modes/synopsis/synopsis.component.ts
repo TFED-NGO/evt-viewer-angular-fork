@@ -67,7 +67,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
     const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlId);
     edition.selectedPage.selectedXmlId = newXmlId;
 
-    this.scrollIntoViewAndUnderline(newXmlId);
+    this.scrollIntoView(newXmlId);
 
     const otherEditions = this.editions.filter(x => x.editionInfo.editionId !== args.editionId);
     for (const otherEdition of otherEditions) {
@@ -91,7 +91,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
       const elementXmlId = element?.getAttribute("xml:id");
       console.log("Element found is", element, newXmlId, elementXmlId);
 
-      this.scrollIntoViewAndUnderline(elementXmlId);
+      this.scrollIntoView(elementXmlId);
 
       if (!newPageXmlIds.length && elementXmlId) {
         newPageXmlIds.push(elementXmlId)
@@ -109,20 +109,29 @@ export class SynopsisComponent implements OnInit, OnDestroy {
     }
   }
 
-  private scrollIntoViewAndUnderline(xmlId: string) {
+  private readonly intersectionObservers = new Map<string, IntersectionObserver>();
+
+  private scrollIntoView(xmlId: string) {
     const tryFind = () => {
       const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-        const panel = el.closest('.panel-content.content.card-content.edition-font.p-4') as HTMLElement;
-        panel
-          .querySelectorAll(`${el.tagName.toLowerCase()}.text-decoration-underline`)
-          .forEach(x => (x as HTMLElement).classList.remove('text-decoration-underline'));
-        el.classList.add("text-decoration-underline");
-      } else {
+      if (!el) {
         requestAnimationFrame(tryFind); // try again next frame
+      } else {
+        if (!this.intersectionObservers.has(xmlId)) {
+          const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting && entry.intersectionRatio === 1) {
+                const highlightClass = "flash-highlight";
+                el.classList.toggle(highlightClass);
+                observer.disconnect();
+                this.intersectionObservers.delete(xmlId);
+              }
+            });
+          }, { threshold: 1.0 });
+          observer.observe(el);
+        }
       }
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };
     requestAnimationFrame(tryFind);
   }
@@ -138,6 +147,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.editionsSubscription.unsubscribe();
+    this.intersectionObservers.forEach(x => x.disconnect());
   }
 }
 

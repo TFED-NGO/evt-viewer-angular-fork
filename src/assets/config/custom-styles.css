@@ -61,3 +61,13 @@ evt-reading evt-note,
 evt-addition evt-note {
   display: none;
 }
+
+.flash-highlight {
+  animation: flash-bg 1s ease-in-out 3; 
+}
+
+@keyframes flash-bg {
+  0%   { background-color: transparent; }
+  50%  { background-color: #ffeb3b80; }
+  100% { background-color: transparent; }
+}
