@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, HostListener, Input, OnInit, Optional, SkipSelf } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { AppConfig } from 'src/app/app.config';
 import { ApparatusEntry, Reading } from '../../models/evt-models';
@@ -23,9 +23,17 @@ export class ApparatusEntryComponent implements OnInit {
   @Input() data: ApparatusEntry;
   @Input() selectedLayer: string;
 
-  public isOpened$ = this.statusService.currentApparatusExponent$.pipe(
-    map(exponent => this.data.exponent && this.data.exponent === exponent)
+  public updateIsOpened$ = new BehaviorSubject<boolean>(false);
+  public isOpened$ = combineLatest([
+    this.statusService.currentApparatusExponent$.pipe(
+      map(exponent => this.data.exponent != null && this.data.exponent === exponent)
+    ),
+    this.updateIsOpened$
+  ]).pipe(
+    map(([matchesExponent, localUpdate]) => matchesExponent || localUpdate)
   );
+
+
 
   get lacunaStart() {
     const reading = this.getWitnessReadingOrDefault();
@@ -54,6 +62,9 @@ export class ApparatusEntryComponent implements OnInit {
 
   isInWitnessPanel: boolean;
   selectedReading?: Reading;
+
+  private toggleAppBoxStrategy: Function;
+  private closeAppBoxStrategy: Function;
 
   variance$ = this.evtModelService.appVariance$.pipe(
     map((variances) => variances[this.data.id]),
@@ -87,6 +98,21 @@ export class ApparatusEntryComponent implements OnInit {
         .find(r => r.witIDs.includes(this.witnessPanelService.witnessId)
           || r.witIDs.some(x => this.witnessPanelService.anchestorsIds.includes(x)));
     }
+
+    if (this.data.exponent) { // depa
+      this.toggleAppBoxStrategy = () => {
+        const value = this.statusService.updateApparatusExponent$.value === this.data.exponent ? null : this.data.exponent;
+        this.statusService.updateApparatusExponent$.next(value)
+      }
+      this.closeAppBoxStrategy = () => this.statusService.updateApparatusExponent$.next(null);
+    }
+    else { // inline
+      this.toggleAppBoxStrategy = () => {
+        const value = this.updateIsOpened$.value;
+        this.updateIsOpened$.next(!value);
+      }
+      this.closeAppBoxStrategy = () => this.updateIsOpened$.next(false);
+    }
   }
 
   @HostListener('mouseenter') onMouseEnter() {
@@ -106,12 +132,11 @@ export class ApparatusEntryComponent implements OnInit {
 
   toggleAppEntryBox(e: MouseEvent) {
     e.stopPropagation();
-    const value = this.statusService.updateApparatusExponent$.value === this.data.exponent ? null : this.data.exponent;
-    this.statusService.updateApparatusExponent$.next(value)
+    this.toggleAppBoxStrategy();
   }
 
   closeAppEntryBox() {
-    this.statusService.updateApparatusExponent$.next(null)
+    this.closeAppBoxStrategy();
   }
 
   stopPropagation(e: MouseEvent) {
