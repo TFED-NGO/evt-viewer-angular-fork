@@ -18,6 +18,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
   public gridsterOptions: GridsterConfig = {}; // cant be null at the start
   private editionsSubscription: Subscription;
   error: string | null;
+  private readonly flashClass = "flash-highlight";
 
   constructor(
     private synopsisService: SynopsisService,
@@ -54,8 +55,9 @@ export class SynopsisComponent implements OnInit, OnDestroy {
         const correspFromUrl = Corresp.createOrDefault(this.route.snapshot.queryParamMap.get('corresp'));
         if (correspFromUrl) {
           const edition = this.editions.find(x => x.editionInfo.editionId.toLowerCase().startsWith(correspFromUrl.editionId.toLowerCase()));
-          const page = edition.pages.find(x => !!findBy(x.originalContent, `[*|id="${correspFromUrl.correspId}"]`));
-          if (!page) throw new Error(`Page for correspId ${correspFromUrl.correspId} not found`);
+          const firstId = correspFromUrl.correspIds[0]; // for searching page, the first correspId is enough
+          const page = edition.pages.find(x => !!findBy(x.originalContent, `[*|id="${firstId}"]`));
+          if (!page) throw new Error(`Page for correspId ${firstId} not found`);
 
           this.changePage({
             editionId: edition.editionInfo.editionId,
@@ -64,7 +66,7 @@ export class SynopsisComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.changeXmlId({
               editionId: edition.editionInfo.editionId,
-              xmlId: correspFromUrl.correspId
+              xmlIds: correspFromUrl.correspIds
             });
           }, 1000);
         }
@@ -91,15 +93,18 @@ export class SynopsisComponent implements OnInit, OnDestroy {
   changePageAndSetItsFirstXmlId(args: PageChangedArgs): void {
     this.changePage(args);
     const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
-    this.changeXmlId({ editionId: args.editionId, xmlId: edition.selectedPage.xmlIds[0] })
+    this.changeXmlId({ editionId: args.editionId, xmlIds: [edition.selectedPage.xmlIds[0]] })
   }
 
   changeXmlId(args: XmlIdChangedArgs): void {
+    const elements = Array.from(document.getElementsByClassName(this.flashClass));
+    elements.forEach(x => x.classList.remove(this.flashClass));
+
     const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
-    const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlId);
+    const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlIds[0]); // selector only support one id at a time for now
     edition.selectedPage.selectedXmlId = newXmlId;
 
-    this.scrollIntoView(newXmlId);
+    this.scrollIntoView(args.xmlIds);
 
     const otherEditions = this.editions.filter(x => x.editionInfo.editionId !== args.editionId);
     for (const otherEdition of otherEditions) {
@@ -119,12 +124,17 @@ export class SynopsisComponent implements OnInit, OnDestroy {
       }
 
       const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.editions.map(x => x.editionData), otherEdition.editionData, newPage);
+
+      for (const xmlId of args.xmlIds) {
+        const element = this.synopsisService.getPageElementByAttributeOrDefault(newPage, { key: "corresp", value: xmlId });
+        const elementXmlId = element?.getAttribute("xml:id");
+        console.log("Element found is", element, newXmlId, elementXmlId);
+        
+        this.scrollIntoView([elementXmlId]);
+      }
+      
       const element = this.synopsisService.getPageElementByAttributeOrDefault(newPage, { key: "corresp", value: newXmlId });
       const elementXmlId = element?.getAttribute("xml:id");
-      console.log("Element found is", element, newXmlId, elementXmlId);
-
-      this.scrollIntoView(elementXmlId);
-
       if (!newPageXmlIds.length && elementXmlId) {
         newPageXmlIds.push(elementXmlId)
       }
@@ -141,20 +151,18 @@ export class SynopsisComponent implements OnInit, OnDestroy {
     }
   }
 
-  private scrollIntoView(xmlId: string) {
-    const flashClass = "flash-highlight";
+  private scrollIntoView(xmlIds: string[]) {
     const tryFind = () => {
-      const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
-      if (!el) {
-        requestAnimationFrame(tryFind); // try again next frame
-      } else {
-        const elements = Array.from(document.getElementsByClassName(flashClass));
-        elements.forEach(x => x.classList.remove(flashClass))
-
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        setTimeout(() => {
-          el.classList.add(flashClass);
-        }, 500);
+      for (const xmlId of xmlIds) {
+        const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
+        if (!el) {
+          requestAnimationFrame(tryFind); // try again next frame
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            el.classList.add(this.flashClass);
+          }, 500);
+        }
       }
     };
     requestAnimationFrame(tryFind);

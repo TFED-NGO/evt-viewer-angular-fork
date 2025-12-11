@@ -31,7 +31,7 @@ export class SynopsisTextPanelComponent implements OnInit {
   }
 
   changeXmlId(xmlId: string): void {
-    this.onXmlIdChanged.emit({ editionId: this.edition.editionInfo.editionId, xmlId: xmlId })
+    this.onXmlIdChanged.emit({ editionId: this.edition.editionInfo.editionId, xmlIds: [xmlId] })
   }
 
   changeSelection(items: EntitiesSelectItem[]) {

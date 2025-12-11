@@ -361,21 +361,50 @@ export class Reading extends GenericElement {
     varSeq?: number;
     notes: Note[];
     lacunas: Lacunas;
-    corresp: Corresp;
+    correspList: CorrespList;
+}
+
+export class CorrespList {
+    corresps: Corresp[] = [];
+
+    private constructor(public value: string) {
+        if(!value) return;
+        const correspValues = value.split(" ");
+        for (const correspValue of correspValues) {
+            const corresp = Corresp.createOrDefault(correspValue);
+            if (corresp) this.corresps.push(corresp);
+        }
+    }
+
+    static create(value: string): CorrespList {
+        return new CorrespList(value);
+    }
 }
 
 export class Corresp {
     editionId: string;
-    correspId: string;
+    correspIds: string[] = [];
 
     private constructor(public value: string) {
         const parts = value.split(':');
         this.editionId = parts[0];
-        this.correspId = parts[1];
+
+        const lastPart = parts[1];
+        const isRange = lastPart.toLowerCase().startsWith("range");
+        if (isRange) {
+            const valueBetweenParenthesis = lastPart.match(/\(([^)]*)\)/)[1];
+            const values = valueBetweenParenthesis.split(",");
+            this.correspIds.push(...values);
+        }
+        else {
+            this.correspIds.push(lastPart);
+        }
+        // cv188:range(CV188_w_002-025,CV188_w_002-026) ce34-5:range(CE34-5_w_002-025,CE34-5_w_002-026)
+        // cv188:CV188_w_002-025 cv188:CV188_w_002-026
     }
 
     static createOrDefault(value: string): Corresp {
-        return value ? new Corresp(value) : null; 
+        return value ? new Corresp(value) : null;
     }
 }
 

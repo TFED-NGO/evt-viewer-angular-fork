@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
-import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
+import { ApparatusEntry, ChangeLayerData, Corresp, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
 import { distinctUntilChanged } from 'rxjs';
@@ -117,12 +117,12 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToSynoptic(rdg: Reading){
+  navigateToSynoptic(corresp: Corresp){
     this.statusService.updateViewMode$.next(
       this.statusService.availableViewModes.find(x => x.id === "synopticEdition")
     );
     this.statusService.updateApparatus$.next(this.data.id);
-    this.statusService.updateCorresp$.next(rdg.corresp.value);
+    this.statusService.updateCorresp$.next(corresp.value);
   }
 }
 

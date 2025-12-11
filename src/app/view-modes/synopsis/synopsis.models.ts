@@ -39,7 +39,7 @@ export interface PageChangedArgs {
 
 export interface XmlIdChangedArgs {
     editionId: string;
-    xmlId: string;
+    xmlIds: string[];
 }
 
 export interface EditionLevelChangedArgs{

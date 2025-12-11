@@ -8,8 +8,7 @@
                         [editionLevel]="editionLevel"></evt-reading>
                     <ng-template #criticalContent>
                         <span class="me-1" *ngFor="let content of data.criticalContent">
-                            <evt-content-viewer [content]="content"
-                                [editionLevel]="editionLevel"></evt-content-viewer>
+                            <evt-content-viewer [content]="content" [editionLevel]="editionLevel"></evt-content-viewer>
                         </span>
                     </ng-template>
                     <span>]</span>
@@ -33,10 +32,12 @@
                         </span>
                         <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
                             <span class="info-label px-2 fw-bold">Resp:</span>
-                            <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
+                            <evt-witness-resp-metadata
+                                [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                         </span>
-                        <span *ngIf="readingItem.reading.corresp" class="px-2 clickable" (click)="navigateToSynoptic(readingItem.reading)">
-                            {{ readingItem.reading.corresp.editionId }}
+                        <span *ngFor="let corresp of readingItem.reading.correspList.corresps" class="px-1 clickable"
+                            (click)="navigateToSynoptic(corresp)">
+                            {{ corresp.editionId }}
                         </span>
                     </div>
                 </div>
@@ -67,7 +68,7 @@
                     </div>
                 </ng-template>
             </li>
-          
+
             <li ngbNavItem="notSignificantRdg" *ngIf="this.notSignificantReadings.length > 0">
                 <a class="app-detail-btn" ngbNavLink [class.active]="this.currentTab === 'ortographicVariants'"
                     (click)="onTabClicked('ortographicVariants')">{{'ortographicVariants' | translate}}</a>
@@ -91,14 +92,13 @@
             </li>
 
             <li ngbNavItem="varSeq" *ngIf="editionLevel == 'changesView' && readings.length > 0">
-                <a class="source-detail-btn" [class.active]="this.currentTab === 'varSeq'" ngbNavLink 
+                <a class="source-detail-btn" [class.active]="this.currentTab === 'varSeq'" ngbNavLink
                     (click)="onTabClicked('varSeq')">{{'varSeq' | translate}}</a>
                 <ng-template ngbNavContent>
-                    <evt-readings-sequence 
-                        [data]="readings">
+                    <evt-readings-sequence [data]="readings">
                     </evt-readings-sequence>
                 </ng-template>
-            </li> 
+            </li>
 
             <li ngbNavItem="info">
                 <a class="app-detail-btn" [class.active]="this.currentTab === 'info'" ngbNavLink
@@ -152,7 +152,8 @@
                             </span>
                             <span *ngIf="readingItem.reading.attributes.resp" class="d-flex align-items-start">
                                 <span class="info-label pe-2">Resp:</span>
-                                <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
+                                <evt-witness-resp-metadata
+                                    [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                             </span>
 
                             <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
