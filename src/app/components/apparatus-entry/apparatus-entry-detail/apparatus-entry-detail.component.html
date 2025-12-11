@@ -35,6 +35,9 @@
                             <span class="info-label px-2 fw-bold">Resp:</span>
                             <evt-witness-resp-metadata [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                         </span>
+                        <span *ngIf="readingItem.reading.corresp" class="px-2 clickable" (click)="navigateToSynoptic(readingItem.reading)">
+                            {{ readingItem.reading.corresp.editionId }}
+                        </span>
                     </div>
                 </div>
             </div>

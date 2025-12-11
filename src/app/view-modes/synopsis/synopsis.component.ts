@@ -3,6 +3,9 @@ import { SynopsisService } from './synopsis.service';
 import { Subscription, tap } from 'rxjs';
 import { EditionLevelChangedArgs, PageChangedArgs, SynopsisEdition, XmlIdChangedArgs } from './synopsis.models';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
+import { ActivatedRoute } from '@angular/router';
+import { Corresp } from 'src/app/models/evt-models';
+import { findBy } from 'src/app/utils/dom-utils';
 
 @Component({
   selector: 'evt-synopsis',
@@ -17,7 +20,8 @@ export class SynopsisComponent implements OnInit, OnDestroy {
   error: string | null;
 
   constructor(
-    private synopsisService: SynopsisService
+    private synopsisService: SynopsisService,
+    private route: ActivatedRoute
   ) {
   }
 
@@ -46,20 +50,48 @@ export class SynopsisComponent implements OnInit, OnDestroy {
           },
           mobileBreakpoint: 0
         };
-      })).subscribe(() => this.changePage({
-        editionId: this.editions[0].editionInfo.editionId,
-        pageId: this.editions[0].selectedPage.page.id
-      }));
+      })).subscribe(() => {
+        const correspFromUrl = Corresp.createOrDefault(this.route.snapshot.queryParamMap.get('corresp'));
+        if (correspFromUrl) {
+          const edition = this.editions.find(x => x.editionInfo.editionId.toLowerCase().startsWith(correspFromUrl.editionId.toLowerCase()));
+          const page = edition.pages.find(x => !!findBy(x.originalContent, `[*|id="${correspFromUrl.correspId}"]`));
+          if (!page) throw new Error(`Page for correspId ${correspFromUrl.correspId} not found`);
+
+          this.changePage({
+            editionId: edition.editionInfo.editionId,
+            pageId: page.id
+          });
+          setTimeout(() => {
+            this.changeXmlId({
+              editionId: edition.editionInfo.editionId,
+              xmlId: correspFromUrl.correspId
+            });
+          }, 1000);
+        }
+        else {
+          this.changePageAndSetItsFirstXmlId({
+            editionId: this.editions[0].editionInfo.editionId,
+            pageId: this.editions[0].selectedPage.page.id
+          });
+        }
+      });
   }
 
   changePage(args: PageChangedArgs): void {
     const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     const newPage = edition.pages.find(x => x.id == args.pageId);
-    const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.editions.map(x => x.editionData), edition.editionData, newPage);
+    const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(
+      this.editions.map(x => x.editionData),
+      edition.editionData,
+      newPage);
     edition.selectedPage.page = newPage;
     edition.selectedPage.xmlIds = newPageXmlIds;
+  }
 
-    this.changeXmlId({ editionId: edition.editionInfo.editionId, xmlId: newPageXmlIds[0] })
+  changePageAndSetItsFirstXmlId(args: PageChangedArgs): void {
+    this.changePage(args);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
+    this.changeXmlId({ editionId: args.editionId, xmlId: edition.selectedPage.xmlIds[0] })
   }
 
   changeXmlId(args: XmlIdChangedArgs): void {
@@ -110,14 +142,18 @@ export class SynopsisComponent implements OnInit, OnDestroy {
   }
 
   private scrollIntoView(xmlId: string) {
+    const flashClass = "flash-highlight";
     const tryFind = () => {
       const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
       if (!el) {
         requestAnimationFrame(tryFind); // try again next frame
       } else {
+        const elements = Array.from(document.getElementsByClassName(flashClass));
+        elements.forEach(x => x.classList.remove(flashClass))
+
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         setTimeout(() => {
-          el.classList.toggle("flash-highlight");
+          el.classList.add(flashClass);
         }, 500);
       }
     };

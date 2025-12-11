@@ -9,6 +9,7 @@ import { EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible } from
 import { ApparatusEntryDetailComponent } from './apparatus-entry-detail/apparatus-entry-detail.component';
 import { WitnessPanelService } from 'src/app/panels/witness-panel/witness-panel.service';
 import { EVTStatusService } from 'src/app/services/evt-status.service';
+import { ActivatedRoute } from '@angular/router';
 
 export interface ApparatusEntryComponent extends EditionlevelSusceptible, Highlightable, ShowDeletionsSusceptible { }
 
@@ -23,17 +24,31 @@ export class ApparatusEntryComponent implements OnInit {
   @Input() data: ApparatusEntry;
   @Input() selectedLayer: string;
 
-  public updateIsOpened$ = new BehaviorSubject<boolean>(false);
+  public updateIsOpened$ = new BehaviorSubject<boolean>(undefined);
   public isOpened$ = combineLatest([
-    this.statusService.currentApparatusExponent$.pipe(
+    this.updateIsOpened$,
+    this.statusService.currentApparatus$.pipe(
       map(exponent => this.data.exponent != null && this.data.exponent === exponent)
     ),
-    this.updateIsOpened$
+    this.route.queryParamMap.pipe(
+      map(x => {
+        const app = x.get("app");
+        return this.data.id === app;
+      }),
+    )
   ]).pipe(
-    map(([matchesExponent, localUpdate]) => matchesExponent || localUpdate)
+    map(([updateIsOpened, matchesExponent, initialMatchesIdFromUrl]) => {
+      // updateIsOpened is undefined at the start so the other parameters are evaluated.
+      // Then, when the user click on the apparatus entry to close or open the box, 
+      // it should have the precedence over the other parameters.
+      if (updateIsOpened !== undefined) {
+        return updateIsOpened;
+      }
+      else {
+        return matchesExponent || initialMatchesIdFromUrl;
+      }
+    })
   );
-
-
 
   get lacunaStart() {
     const reading = this.getWitnessReadingOrDefault();
@@ -64,7 +79,7 @@ export class ApparatusEntryComponent implements OnInit {
   selectedReading?: Reading;
 
   private toggleAppBoxStrategy: Function;
-  private closeAppBoxStrategy: Function;
+  private closeAppBox: Function;
 
   variance$ = this.evtModelService.appVariance$.pipe(
     map((variances) => variances[this.data.id]),
@@ -82,6 +97,7 @@ export class ApparatusEntryComponent implements OnInit {
   constructor(
     private evtModelService: EVTModelService,
     private statusService: EVTStatusService,
+    private route: ActivatedRoute,
     @Optional() private parentDetailComponent?: ApparatusEntryDetailComponent,
     @Optional() @SkipSelf() private parentAppComponent?: ApparatusEntryComponent,
     @Optional() private witnessPanelService?: WitnessPanelService,
@@ -101,17 +117,17 @@ export class ApparatusEntryComponent implements OnInit {
 
     if (this.data.exponent) { // depa
       this.toggleAppBoxStrategy = () => {
-        const value = this.statusService.updateApparatusExponent$.value === this.data.exponent ? null : this.data.exponent;
-        this.statusService.updateApparatusExponent$.next(value)
+        const value = this.statusService.updateApparatus$.value === this.data.exponent ? null : this.data.exponent;
+        this.statusService.updateApparatus$.next(value)
       }
-      this.closeAppBoxStrategy = () => this.statusService.updateApparatusExponent$.next(null);
+      this.closeAppBox = () => this.statusService.updateApparatus$.next(null);
     }
     else { // inline
       this.toggleAppBoxStrategy = () => {
         const value = this.updateIsOpened$.value;
         this.updateIsOpened$.next(!value);
       }
-      this.closeAppBoxStrategy = () => this.updateIsOpened$.next(false);
+      this.closeAppBox = () => this.updateIsOpened$.next(false);
     }
   }
 
@@ -136,7 +152,7 @@ export class ApparatusEntryComponent implements OnInit {
   }
 
   closeAppEntryBox() {
-    this.closeAppBoxStrategy();
+    this.closeAppBox();
   }
 
   stopPropagation(e: MouseEvent) {

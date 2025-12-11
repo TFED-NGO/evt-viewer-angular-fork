@@ -1,6 +1,6 @@
 import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
-import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { AdditionalAttributes, ApparatusEntry, Attribute, Corresp, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { createParsedWhiteSpace, removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser, ParseResult } from './parser-models';
@@ -17,10 +17,11 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     lacunaParser = createParser(LacunaParser, this.genericParse);
 
     public parse(rdg: XMLElement): Reading {
+        const attributes = this.attributeParser.parse(rdg);
         const result = {
             type: Reading,
             id: getID(rdg),
-            attributes: this.attributeParser.parse(rdg),
+            attributes,
             witIDs: this.parseReadingWitnesses(rdg) || [],
             excludedWitIDs: this.parseExcludedWitnesses(rdg),
             content: this.parseAppReadingContent(rdg),
@@ -30,6 +31,7 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             notes: this.parseReadingNotes(rdg),
             lacunas: this.parseLacunas(rdg),
             xPath: getXPath(rdg),
+            corresp: Corresp.createOrDefault(attributes.corresp)
         };
         return result;
     }

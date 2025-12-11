@@ -9,7 +9,7 @@ import { EVTModelService } from './evt-model.service';
 import { deepSearch } from '../utils/dom-utils';
 import { EditionSource } from './named-entities.service';
 
-export type URLParamsKeys = 'd' | 'ed' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app';
+export type URLParamsKeys = 'd' | 'ed' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app' | 'corresp';
 export type URLParams = { [T in URLParamsKeys]: string };
 
 @Injectable({
@@ -52,7 +52,8 @@ export class EVTStatusService {
     public updateVersions$: BehaviorSubject<string[]> = new BehaviorSubject([]);
     public updateChangeLayer$: BehaviorSubject<ChangeLayerData> = new BehaviorSubject(undefined);
     public updateLayer$: BehaviorSubject<string> = new BehaviorSubject(undefined);
-    public updateApparatusExponent$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+    public updateApparatus$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+    public updateCorresp$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
     public currentViewMode$ = this.updateViewMode$.asObservable();
     public currentDocument$ = merge(
@@ -103,9 +104,14 @@ export class EVTStatusService {
         this.updateVersions$,
     );
 
-    public currentApparatusExponent$ = merge(
+    public currentApparatus$ = merge(
         this.route.queryParams.pipe(map((params: URLParams) => params.app)),
-        this.updateApparatusExponent$,
+        this.updateApparatus$,
+    );
+
+    public currentCorresp$ = merge(
+        this.route.queryParams.pipe(map((params: URLParams) => params.corresp)),
+        this.updateCorresp$,
     );
 
     public currentChanges$ = merge(
@@ -132,7 +138,8 @@ export class EVTStatusService {
         this.currentWitnesses$,
         this.currentVersions$,
         this.currentChanges$,
-        this.currentApparatusExponent$,
+        this.currentApparatus$,
+        this.currentCorresp$,
     ]).pipe(
         distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
         shareReplay(1),
@@ -145,7 +152,8 @@ export class EVTStatusService {
             witnesses,
             versions,
             changeLayerData,
-            currentApparatus
+            currentApparatus,
+            corresp,
         ]) => {
             if (viewMode.id === 'textText') {
                 if (editionLevels.length === 1) {
@@ -166,7 +174,8 @@ export class EVTStatusService {
                 witnesses,
                 versions,
                 changeLayerData,
-                currentApparatus
+                currentApparatus,
+                corresp
             };
         }),
     );
@@ -224,7 +233,8 @@ export class EVTStatusService {
             vs: status.versions.join(','),
             lr: status.changeLayerData.selectedLayer,
             fileConfigUrl: fileConfigUrl,
-            app: status.currentApparatus
+            app: status.currentApparatus,
+            corresp: status.corresp
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
@@ -257,4 +267,5 @@ export interface AppStatus {
     versions: string[];
     changeLayerData: ChangeLayerData;
     currentApparatus: string;
+    corresp: string;
 }

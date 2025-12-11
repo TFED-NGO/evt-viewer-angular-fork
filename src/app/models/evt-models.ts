@@ -360,7 +360,23 @@ export class Reading extends GenericElement {
     significant: boolean;
     varSeq?: number;
     notes: Note[];
-    lacunas: Lacunas
+    lacunas: Lacunas;
+    corresp: Corresp;
+}
+
+export class Corresp {
+    editionId: string;
+    correspId: string;
+
+    private constructor(public value: string) {
+        const parts = value.split(':');
+        this.editionId = parts[0];
+        this.correspId = parts[1];
+    }
+
+    static createOrDefault(value: string): Corresp {
+        return value ? new Corresp(value) : null; 
+    }
 }
 
 export class Lacunas {
