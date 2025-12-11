@@ -36,7 +36,7 @@
                                 [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                         </span>
                         <span *ngFor="let corresp of readingItem.reading.correspList.corresps" class="px-1 clickable"
-                            (click)="navigateToSynoptic(corresp)">
+                            [title]="corresp.value" (click)="navigateToSynoptic(corresp)">
                             {{ corresp.editionId }}
                         </span>
                     </div>
