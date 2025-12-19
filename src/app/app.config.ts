@@ -263,10 +263,7 @@ export interface FileConfig {
     };
 }
 
-export type EditionUrlType = 'main' | undefined;
-
 export interface EditionUrl {
-    type: EditionUrlType;
     value: string;
     enable: boolean;
     friendlyName: string;

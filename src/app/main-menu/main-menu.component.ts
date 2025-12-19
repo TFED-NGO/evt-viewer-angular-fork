@@ -3,12 +3,10 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 import { AppConfig } from '../app.config';
 import { ProjectInfoComponent } from '../components/project-info/project-info.component';
 import { EvtInfoComponent } from '../evt-info/evt-info.component';
-import { EVTModelService } from '../services/evt-model.service';
 import { ColorTheme, ThemesService } from '../services/themes.service';
 import { ShortcutsComponent } from '../shortcuts/shortcuts.component';
 import { EvtIconInfo } from '../ui-components/icon/icon.component';
@@ -22,20 +20,20 @@ import { ModalService } from '../ui-components/modal/modal.service';
 })
 export class MainMenuComponent {
   @Output() itemClicked = new EventEmitter<string>();
-  public dynamicItems: MainMenuItem[] = this.getDynamicItems();
-  public uiConfig = AppConfig.evtSettings.ui;
-  public fileConfig = AppConfig.evtSettings.files;
-  public editionConfig = AppConfig.evtSettings.edition;
+  public readonly dynamicItems: MainMenuItem[];
+  public readonly uiConfig = AppConfig.evtSettings.ui;
+  public readonly fileConfig = AppConfig.evtSettings.files;
+  public readonly editionConfig = AppConfig.evtSettings.edition;
 
   private isOpened = true;
-  private availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
+  private readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
 
   constructor(
     public themes: ThemesService,
     public translate: TranslateService,
     private modalService: ModalService,
-    private evtModelService: EVTModelService,
   ) {
+    this.dynamicItems = this.getDynamicItems();
   }
 
   closeMenu() {
@@ -65,9 +63,7 @@ export class MainMenuComponent {
           additionalClasses: 'icon',
         },
         label: 'openLists',
-        enabled$: this.evtModelService.namedEntities$.pipe(
-          map((ne) => this.editionConfig.showLists && ne.all.entities.length > 0),
-        ),
+        enabled$: of(this.editionConfig.showLists),
         callback: () => this.openGlobalDialogLists(),
       },
       {

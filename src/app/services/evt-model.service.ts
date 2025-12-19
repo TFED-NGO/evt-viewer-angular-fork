@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, map, shareReplay, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { combineLatestWith, distinctUntilChanged, map, shareReplay, switchMap } from 'rxjs/operators';
 import {
   ChangeLayerData,
   EditionStructure,
@@ -30,22 +30,38 @@ import { AnalogueEntriesParserService } from './xml-parsers/analogues-entries-pa
 import { AppConfig } from '../app.config';
 import { BibliographicEntriesParserService } from './xml-parsers/bibliographic-entries-parser.service';
 import { ModParserService } from './xml-parsers/mod-parser.service';
+import { EditionSource } from './named-entities.service';
 
 @Injectable({
-    providedIn: 'root',
+  providedIn: 'root',
 })
 export class EVTModelService {
-  public readonly editionSource$: Observable<OriginalEncodingNodeType> = this.editionDataService.mainEditionSource$.pipe(
-    map(x => x.editionData),
+  public readonly editionSources$: Observable<EditionSource[]> = this.editionDataService.allEditionSources$.pipe(
+    shareReplay(1),
+  );
+  public readonly updateEditionId$: BehaviorSubject<string> = new BehaviorSubject('');
+  public readonly currentEdition$: Observable<EditionSource> = combineLatest([
+    this.updateEditionId$,
+    this.editionSources$
+  ]).pipe(
+    map(([id, sources]) => {
+      return id ? sources.find(s => s.editionInfo.editionId == id) : sources[0];
+    }),
+    distinctUntilChanged(),
     shareReplay(1),
   );
 
-  public readonly title$ = this.editionSource$.pipe(
+  public readonly currentEditionData$: Observable<OriginalEncodingNodeType> = this.currentEdition$.pipe(
+    map(ed => ed.editionData),
+    shareReplay(1)
+  );
+
+  public readonly title$ = this.currentEditionData$.pipe(
     map((source) => this.prefatoryMatterParser.parseEditionTitle(source)),
     shareReplay(1),
   );
 
-  public readonly projectInfo$ = this.editionSource$.pipe(
+  public readonly projectInfo$ = this.currentEditionData$.pipe(
     map((source) => this.prefatoryMatterParser.parseProjectInfo(source)),
     shareReplay(1),
   );
@@ -55,7 +71,7 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  public readonly parsedEditionStructure$: Observable<EditionStructure> = this.editionSource$.pipe(
+  public readonly parsedEditionStructure$: Observable<EditionStructure> = this.currentEditionData$.pipe(
     map((source) => {
       return {
         source: source,
@@ -75,8 +91,8 @@ export class EVTModelService {
   );
 
   // NAMED ENTITIES
-  public readonly parsedLists$ = this.editionDataService.mainEditionSource$.pipe(
-    map((source) => this.namedEntitiesParser.parseLists(source)),
+  public readonly parsedLists$ = this.editionSources$.pipe(
+    map((editionSources) => this.namedEntitiesParser.parseLists(editionSources)),
     shareReplay(1),
   );
 
@@ -115,12 +131,12 @@ export class EVTModelService {
       lists, entities, AppConfig.evtSettings.edition.namedEntitiesLists.objects.namedEntityType)),
   );
 
-  public readonly verses$ = this.editionSource$.pipe(
+  public readonly verses$ = this.currentEditionData$.pipe(
     map((source) => this.linesVersesParser.parseVerses(source)),
     shareReplay(1),
   );
 
-  public readonly lines$ = this.editionSource$.pipe(
+  public readonly lines$ = this.currentEditionData$.pipe(
     map((source) => this.linesVersesParser.parseLines(source)),
     shareReplay(1),
   );
@@ -150,12 +166,17 @@ export class EVTModelService {
     shareReplay(1),
   );
 
+  public readonly noNamedEntities$: Observable<boolean> = this.namedEntities$.pipe(
+    map(ne => !ne.all.entities.length),
+    shareReplay(1),
+  );
+
   public entitiesOccurrences$: Observable<Map<NamedEntityOccurrence[]>> = this.pages$.pipe(
     map((pages) => this.namedEntitiesParser.parseNamedEntitiesOccurrences(pages)),
     shareReplay(1),
   );
 
-  public readonly witnesses$ = this.editionSource$.pipe(
+  public readonly witnesses$ = this.currentEditionData$.pipe(
     map((source) => this.witnessesParser.parseWitnesses(source)),
     shareReplay(1),
   );
@@ -165,15 +186,14 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-
   // CHANGES
-  public changeData$: Observable<ChangeLayerData> = this.editionSource$.pipe(
+  public changeData$: Observable<ChangeLayerData> = this.currentEditionData$.pipe(
     map((source) => this.modParser.buildChangeList(source)),
     shareReplay(1),
   );
 
   // APPARATUS ENTRIES
-  public readonly appEntries$ = this.editionSource$.pipe(
+  public readonly appEntries$ = this.currentEditionData$.pipe(
     map((source) => this.apparatusParser.parseAppEntries(source)),
     shareReplay(1),
   );
@@ -196,19 +216,19 @@ export class EVTModelService {
   );
 
   //QUOTED SOURCES
-  public readonly sourceEntries$ = this.editionSource$.pipe(
+  public readonly sourceEntries$ = this.currentEditionData$.pipe(
     map((source) => this.sourceParser.parseSourceEntries(source)),
     shareReplay(1),
   );
 
   // PARALLEL PASSAGES
-  public readonly analogueEntries$ = this.editionSource$.pipe(
+  public readonly analogueEntries$ = this.currentEditionData$.pipe(
     map((source) => this.analogueParser.parseAnaloguesEntries(source)),
     shareReplay(1),
   );
 
   // FACSIMILE
-  public readonly facsimile$: Observable<Facsimile[]> = this.editionSource$.pipe(
+  public readonly facsimile$: Observable<Facsimile[]> = this.currentEditionData$.pipe(
     map((source) => this.facsimileParser.parseFacsimile(source)),
     shareReplay(1),
   );
@@ -351,7 +371,7 @@ export class EVTModelService {
       }),
     );
 
-  public readonly surfaces$ = this.editionSource$.pipe(
+  public readonly surfaces$ = this.currentEditionData$.pipe(
     map((source) => this.facsimileParser.parseSurfaces(source)),
     shareReplay(1),
   );
@@ -367,12 +387,12 @@ export class EVTModelService {
   );
 
   // CHAR DECL
-  public readonly characters$ = this.editionSource$.pipe(
+  public readonly characters$ = this.currentEditionData$.pipe(
     map((source) => this.characterDeclarationsParser.parseChars(source)),
     shareReplay(1),
   );
 
-  public readonly glyphs$ = this.editionSource$.pipe(
+  public readonly glyphs$ = this.currentEditionData$.pipe(
     map((source) => this.characterDeclarationsParser.parseGlyphs(source)),
     shareReplay(1),
   );
@@ -384,12 +404,12 @@ export class EVTModelService {
     map(([chars, glyphs]) => chars.concat(glyphs)),
   );
 
-  public readonly msDesc$ = this.editionSource$.pipe(
+  public readonly msDesc$ = this.currentEditionData$.pipe(
     map((source) => this.msDescParser.parseMsDesc(source)),
     shareReplay(1),
   );
 
-  public readonly bibliographicEntries$ = this.editionSource$.pipe(
+  public readonly bibliographicEntries$ = this.currentEditionData$.pipe(
     map((source) => this.bibliographicEntriesParser.parseBibliographicEntries(source)),
     shareReplay(1),
   )
@@ -409,7 +429,7 @@ export class EVTModelService {
     private sourceParser: SourceEntriesParserService,
     private bibliographicEntriesParser: BibliographicEntriesParserService,
     private modParser: ModParserService,
-  ) {    
+  ) {
   }
 
   getPage(pageId: string): Observable<Page> {

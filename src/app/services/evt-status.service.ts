@@ -7,8 +7,9 @@ import { AppConfig, EditionLevel, EditionLevelType } from '../app.config';
 import { ChangeLayerData, Page, ViewMode } from '../models/evt-models';
 import { EVTModelService } from './evt-model.service';
 import { deepSearch } from '../utils/dom-utils';
+import { EditionSource } from './named-entities.service';
 
-export type URLParamsKeys = 'd' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app';
+export type URLParamsKeys = 'd' | 'ed' | 'p' | 'el' | 'ws' | 'vs' | 'lr' | 'app' | 'corresp';
 export type URLParams = { [T in URLParamsKeys]: string };
 
 @Injectable({
@@ -51,12 +52,22 @@ export class EVTStatusService {
     public updateVersions$: BehaviorSubject<string[]> = new BehaviorSubject([]);
     public updateChangeLayer$: BehaviorSubject<ChangeLayerData> = new BehaviorSubject(undefined);
     public updateLayer$: BehaviorSubject<string> = new BehaviorSubject(undefined);
-    public updateApparatusExponent$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+    public updateApparatus$: BehaviorSubject<string> = new BehaviorSubject(undefined);
+    public updateCorresp$: BehaviorSubject<string> = new BehaviorSubject(undefined);
 
     public currentViewMode$ = this.updateViewMode$.asObservable();
     public currentDocument$ = merge(
         this.route.queryParams.pipe(map((params: URLParams) => params.d)),
         this.updateDocument$,
+    );
+    public currentEdition$ = merge(
+        this.route.queryParams.pipe(map((params: URLParams) => params.ed)),
+        this.evtModelService.updateEditionId$,
+    ).pipe(
+        mergeMap((editionId) => this.evtModelService.editionSources$.pipe(
+            map((editionSources) => !editionId ? editionSources[0]
+                : editionSources.find((ed) => ed.editionInfo.editionId === editionId))
+        ))
     );
     public currentPage$ = merge(
         merge(
@@ -64,8 +75,8 @@ export class EVTStatusService {
             this.updatePageId$,
         ).pipe(
             mergeMap((id) => this.evtModelService.pages$.pipe(
-                map((pages) => !id ? pages[0] : pages.find((p) => p.id === id) || pages[0])),
-            ),
+                map((pages) => !id ? pages[0] : pages.find((p) => p.id === id) || pages[0]),
+            )),
         ),
         this.updatePage$.pipe(
             filter((p) => !!p),
@@ -75,6 +86,7 @@ export class EVTStatusService {
             map(([n, pages]) => n < 0 ? pages[pages.length - 1] : pages[n]),
         ),
     );
+    
     public currentEditionLevels$ = merge(
         this.route.queryParams.pipe(
             map((params: URLParams) => (params.el?.split(',') ?? [])),
@@ -92,9 +104,14 @@ export class EVTStatusService {
         this.updateVersions$,
     );
 
-    public currentApparatusExponent$ = merge(
+    public currentApparatus$ = merge(
         this.route.queryParams.pipe(map((params: URLParams) => params.app)),
-        this.updateApparatusExponent$,
+        this.updateApparatus$,
+    );
+
+    public currentCorresp$ = merge(
+        this.route.queryParams.pipe(map((params: URLParams) => params.corresp)),
+        this.updateCorresp$,
     );
 
     public currentChanges$ = merge(
@@ -104,7 +121,7 @@ export class EVTStatusService {
         ).pipe(
             filter((n) => n !== undefined),
             withLatestFrom(this.updateLayer$),
-            map(([data,selectedLayer]) => {
+            map(([data, selectedLayer]) => {
                 data.selectedLayer = selectedLayer;
 
                 return data;
@@ -115,24 +132,28 @@ export class EVTStatusService {
     public currentStatus$: Observable<AppStatus> = combineLatest([
         this.updateViewMode$,
         this.currentDocument$,
+        this.currentEdition$,
         this.currentPage$,
         this.currentEditionLevels$,
         this.currentWitnesses$,
         this.currentVersions$,
         this.currentChanges$,
-        this.currentApparatusExponent$,
+        this.currentApparatus$,
+        this.currentCorresp$,
     ]).pipe(
         distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
         shareReplay(1),
         map(([
             viewMode,
             document,
+            edition,
             page,
             editionLevels,
             witnesses,
             versions,
             changeLayerData,
-            currentApparatus
+            currentApparatus,
+            corresp,
         ]) => {
             if (viewMode.id === 'textText') {
                 if (editionLevels.length === 1) {
@@ -147,12 +168,14 @@ export class EVTStatusService {
             return {
                 viewMode,
                 document,
+                edition,
                 page,
                 editionLevels,
                 witnesses,
                 versions,
                 changeLayerData,
-                currentApparatus
+                currentApparatus,
+                corresp
             };
         }),
     );
@@ -203,13 +226,15 @@ export class EVTStatusService {
     getUrlFromStatus(fileConfigUrl: string, status: AppStatus) {
         const params = {
             d: status.document || '',
+            ed: status.edition?.editionInfo?.editionId || '',
             p: status.page?.id ?? '',
             el: status.editionLevels.join(','),
             ws: status.witnesses.join(','),
             vs: status.versions.join(','),
             lr: status.changeLayerData.selectedLayer,
             fileConfigUrl: fileConfigUrl,
-            app: status.currentApparatus
+            app: status.currentApparatus,
+            corresp: status.corresp
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
@@ -221,7 +246,7 @@ export class EVTStatusService {
 
     /** to avoid loops this function must not be fed with nodes */
     getPageElementsByClassList(classList: string[]) {
-        const attributesNotIncludedInSearch = ['originalEncoding','type','spanElements','includedElements'];
+        const attributesNotIncludedInSearch = ['originalEncoding', 'type', 'spanElements', 'includedElements'];
         const maxEffort = 4000;
 
         return this.currentStatus$.pipe(
@@ -235,10 +260,12 @@ export class EVTStatusService {
 export interface AppStatus {
     viewMode: ViewMode;
     document: string;
+    edition: EditionSource;
     page: Page;
     editionLevels: EditionLevelType[];
     witnesses: string[];
     versions: string[];
     changeLayerData: ChangeLayerData;
     currentApparatus: string;
+    corresp: string;
 }

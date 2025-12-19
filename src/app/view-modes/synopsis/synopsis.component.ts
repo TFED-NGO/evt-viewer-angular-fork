@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SynopsisService } from './synopsis.service';
-import { combineLatest, map, Subscription } from 'rxjs';
+import { Subscription, tap } from 'rxjs';
 import { EditionLevelChangedArgs, PageChangedArgs, SynopsisEdition, XmlIdChangedArgs } from './synopsis.models';
 import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from 'angular-gridster2';
+import { ActivatedRoute } from '@angular/router';
+import { Corresp } from 'src/app/models/evt-models';
+import { findBy } from 'src/app/utils/dom-utils';
 
 @Component({
   selector: 'evt-synopsis',
@@ -10,95 +13,102 @@ import { CompactType, DisplayGrid, GridsterConfig, GridsterItem, GridType } from
   styleUrls: ['./synopsis.component.scss']
 })
 export class SynopsisComponent implements OnInit, OnDestroy {
-  public readonly gridsterOptions: GridsterConfig = {
-    gridType: GridType.Fit,
-    displayGrid: DisplayGrid.None,
-    margin: 0,
-    maxCols: 3,
-    maxRows: 1,
-    draggable: {
-      enabled: false,
-      ignoreContentClass: 'no-drag'
-    },
-    resizable: {
-      enabled: false,
-    },
-  };
-
-  public otherPanelGridsterItem: GridsterItem = { cols: 2, rows: 1, y: 0, x: 1 };
-
-  public otherPanelGridsterOptions: GridsterConfig = {
-    gridType: GridType.ScrollHorizontal,
-    displayGrid: DisplayGrid.None,
-    compactType: CompactType.CompactLeft,
-    scrollToNewItems: true,
-    margin: 0,
-    maxRows: 1,
-    draggable: {
-      enabled: true,
-      ignoreContent: true,
-      dragHandleClass: 'panel-header',
-    },
-    resizable: {
-      enabled: false,
-    },
-    mobileBreakpoint: 0,
-    // itemResizeCallback: this.updateFixedColWidth.bind(this),
-    // itemChangeCallback: this.itemChange.bind(this),
-  };
-
-  public allEditions: SynopsisEdition[] = [];
-  public mainEdition: SynopsisEditionItem;
-  public otherEditions: SynopsisEditionItem[] = [];
-
+  public editions: SynopsisEdition[] = [];
+  public editionsItems: SynopsisEditionItem[] = [];
+  public gridsterOptions: GridsterConfig = {}; // cant be null at the start
   private editionsSubscription: Subscription;
   error: string | null;
+  private readonly flashClass = "flash-highlight";
 
   constructor(
-    private synopsisService: SynopsisService
+    private synopsisService: SynopsisService,
+    private route: ActivatedRoute
   ) {
   }
 
   ngOnInit() {
-    this.editionsSubscription = combineLatest([
-      this.synopsisService.allEditions$,
-      this.synopsisService.mainEdition$,
-      this.synopsisService.otherEditions$
-    ]).pipe(
-      map(([_, main, others]) => {
-        this.mainEdition = {
-          edition: main,
-          gridsterItem: { cols: 1, rows: 1, y: 0, x: 0 }
-        }
-        this.otherEditions = others.map((x, i) => ({
+    this.editionsSubscription = this.synopsisService.allEditions$.pipe(
+      tap((editionSources) => {
+        this.editionsItems = editionSources.map((x, i) => ({
           edition: x,
-          gridsterItem: { cols: 1, rows: 1, y: 0, x: i + 1 }
+          gridsterItem: { cols: 1, rows: 1, y: 0, x: i }
         }));
-        this.allEditions = [this.mainEdition.edition, ...this.otherEditions.map(x => x.edition)]
-      })).subscribe(() => this.changePage({
-        editionTitle: this.mainEdition.edition.editionTitle,
-        pageId: this.mainEdition.edition.selectedPage.page.id
-      }));
+        this.editions = [...this.editionsItems.map(x => x.edition)];
+        this.gridsterOptions = {
+          gridType: this.editionsItems.length <= 3 ? GridType.Fit : GridType.ScrollHorizontal,
+          displayGrid: DisplayGrid.OnDragAndResize,
+          compactType: CompactType.CompactLeft,
+          scrollToNewItems: true,
+          margin: 0,
+          maxRows: 1,
+          draggable: {
+            enabled: true,
+            ignoreContent: true,
+            dragHandleClass: 'panel-header',
+          },
+          resizable: {
+            enabled: false,
+          },
+          mobileBreakpoint: 0
+        };
+      })).subscribe(() => {
+        const correspFromUrl = Corresp.createOrDefault(this.route.snapshot.queryParamMap.get('corresp'));
+        if (correspFromUrl) {
+          const edition = this.editions.find(x => x.editionInfo.editionId.toLowerCase().startsWith(correspFromUrl.editionId.toLowerCase()));
+          const firstId = correspFromUrl.correspIds[0]; // for searching page, the first correspId is enough
+          const page = edition.pages.find(x => !!findBy(x.originalContent, `[*|id="${firstId}"]`));
+          if (!page) throw new Error(`Page for correspId ${firstId} not found`);
+
+          this.changePage({
+            editionId: edition.editionInfo.editionId,
+            pageId: page.id
+          });
+          setTimeout(() => {
+            this.changeXmlId({
+              editionId: edition.editionInfo.editionId,
+              xmlIds: correspFromUrl.correspIds
+            });
+          }, 1000);
+        }
+        else {
+          this.changePageAndSetItsFirstXmlId({
+            editionId: this.editions[0].editionInfo.editionId,
+            pageId: this.editions[0].selectedPage.page.id
+          });
+        }
+      });
   }
 
   changePage(args: PageChangedArgs): void {
-    const edition = this.allEditions.find(x => x.editionTitle === args.editionTitle);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     const newPage = edition.pages.find(x => x.id == args.pageId);
-    const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.allEditions.map(x => x.editionData), edition.editionData, newPage);
+    const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(
+      this.editions.map(x => x.editionData),
+      edition.editionData,
+      newPage);
     edition.selectedPage.page = newPage;
     edition.selectedPage.xmlIds = newPageXmlIds;
+  }
 
-    this.changeXmlId({ editionTitle: edition.editionTitle, xmlId: newPageXmlIds[0] })
+  changePageAndSetItsFirstXmlId(args: PageChangedArgs): void {
+    this.changePage(args);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
+    this.changeXmlId({ editionId: args.editionId, xmlIds: [edition.selectedPage.xmlIds[0]] })
   }
 
   changeXmlId(args: XmlIdChangedArgs): void {
-    const edition = this.allEditions.find(x => x.editionTitle === args.editionTitle);
-    const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlId);
+    const elements = Array.from(document.getElementsByClassName(this.flashClass));
+    elements.forEach(x => x.classList.remove(this.flashClass));
+
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
+    const newXmlId = edition.selectedPage.xmlIds.find(x => x === args.xmlIds[0]); // selector only support one id at a time for now
     edition.selectedPage.selectedXmlId = newXmlId;
 
-    const otherEditions = this.allEditions.filter(x => x.editionTitle !== args.editionTitle);
+    this.scrollIntoView(args.xmlIds);
+
+    const otherEditions = this.editions.filter(x => x.editionInfo.editionId !== args.editionId);
     for (const otherEdition of otherEditions) {
-      console.group(otherEdition.editionTitle)
+      console.group(otherEdition.editionInfo.editionTitle)
 
       const newPage = this.synopsisService.getCorrespPageOrDefault(otherEdition.pages, newXmlId);
       if (!newPage) {
@@ -113,11 +123,18 @@ export class SynopsisComponent implements OnInit, OnDestroy {
         console.log("The corresp page found is the current one")
       }
 
-      const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.allEditions.map(x => x.editionData), otherEdition.editionData, newPage);
+      const newPageXmlIds = this.synopsisService.getXmlIdsWithCorrespInOtherEditions(this.editions.map(x => x.editionData), otherEdition.editionData, newPage);
+
+      for (const xmlId of args.xmlIds) {
+        const element = this.synopsisService.getPageElementByAttributeOrDefault(newPage, { key: "corresp", value: xmlId });
+        const elementXmlId = element?.getAttribute("xml:id");
+        console.log("Element found is", element, newXmlId, elementXmlId);
+        
+        this.scrollIntoView([elementXmlId]);
+      }
+      
       const element = this.synopsisService.getPageElementByAttributeOrDefault(newPage, { key: "corresp", value: newXmlId });
       const elementXmlId = element?.getAttribute("xml:id");
-      console.log("Element found is", element, newXmlId, elementXmlId);
-
       if (!newPageXmlIds.length && elementXmlId) {
         newPageXmlIds.push(elementXmlId)
       }
@@ -134,8 +151,25 @@ export class SynopsisComponent implements OnInit, OnDestroy {
     }
   }
 
+  private scrollIntoView(xmlIds: string[]) {
+    const tryFind = () => {
+      for (const xmlId of xmlIds) {
+        const el = document.querySelector(`[data-id='${xmlId}']`) as HTMLElement;
+        if (!el) {
+          requestAnimationFrame(tryFind); // try again next frame
+        } else {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          setTimeout(() => {
+            el.classList.add(this.flashClass);
+          }, 500);
+        }
+      }
+    };
+    requestAnimationFrame(tryFind);
+  }
+
   changeEditionLevel(args: EditionLevelChangedArgs) {
-    const edition = this.allEditions.find(x => x.editionTitle === args.editionTitle);
+    const edition = this.editions.find(x => x.editionInfo.editionId === args.editionId);
     edition.editionLevel = args.editionLevel;
   }
 
