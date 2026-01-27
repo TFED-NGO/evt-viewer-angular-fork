@@ -25,7 +25,7 @@ export class StructureXmlParserService {
   private appParser = AppParser.create();
   private frontOrigContentAttr = 'document_front';
   private readonly frontTagName = 'front';
-  private readonly structureSeparatorsSelector = AppConfig.evtSettings.edition.structureSeparatorsSelector;
+  private readonly structureSeparators = AppConfig.evtSettings.edition.structureSeparators;
   private readonly bodyTagName = 'body';
   //private readonly backTagName = 'back';
 
@@ -47,7 +47,8 @@ export class StructureXmlParserService {
     const body: XMLElement = source.querySelector(this.bodyTagName);
     this.back = source.querySelector('back');
 
-    const pbs = Array.from(source.querySelectorAll(this.structureSeparatorsSelector));//.filter((p) => !p.getAttribute('ed'));
+    const selector = this.structureSeparators.join(',');
+    const pbs = Array.from(source.querySelectorAll(selector));//.filter((p) => !p.getAttribute('ed'));
     const frontPbs = pbs.filter((p) => isNestedInElem(p, this.frontTagName));
     const bodyPbs = pbs.filter((p) => isNestedInElem(p, this.bodyTagName));
     const doc = source.firstElementChild.ownerDocument;
@@ -506,7 +507,7 @@ export class StructureXmlParserService {
 
     const nextNode = nextPb || Array.from(doc.querySelectorAll(ancestorTagName)).reverse()[0].lastChild;
     const originalContent = getElementsBetweenTreeNode(pb, nextNode)
-      .filter((n) => !this.structureSeparatorsSelector.includes(n.tagName))
+      .filter((n) => !this.structureSeparators.includes(n.tagName))
       .filter((c) => ![4, 7, 8].includes(c.nodeType)); // Filter comments, CDATAs, and processing instructions
 
     return {

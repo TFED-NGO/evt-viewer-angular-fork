@@ -236,7 +236,7 @@ export interface EditionConfig {
     maxImageZoomLevel: number;
     showSubstitutionMarker: boolean;
     multiPageEngineForCriticalEdition: boolean;
-    structureSeparatorsSelector: string;
+    structureSeparators: string[];
     exponentEnumerateBy: string | 'global';
 }
 
