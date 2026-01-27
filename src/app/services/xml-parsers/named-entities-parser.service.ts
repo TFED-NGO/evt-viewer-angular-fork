@@ -15,11 +15,11 @@ import { ErrorsService } from '../errors.service';
   providedIn: 'root',
 })
 export class NamedEntitiesParserService {
-  private namedEntitiesOccurrenceSelector: string;
+  private entitiesOccurrenceSelectors: string[];
 
   constructor(private errorsService: ErrorsService) {
-    this.namedEntitiesOccurrenceSelector = AppConfig.evtSettings.edition.namedEntitiesOccurrenceSelector;
-    if (!this.namedEntitiesOccurrenceSelector) {
+    this.entitiesOccurrenceSelectors = AppConfig.evtSettings.edition.entitiesOccurrenceSelectors;
+    if (!this.entitiesOccurrenceSelectors.length) {
       this.errorsService.logError("No namedEntitiesOccurrenceSelector found in edition config");
     }
   }
@@ -96,11 +96,12 @@ export class NamedEntitiesParserService {
       .filter((e) => e.nodeType === 1)
       .map((e) => {
         const occurrences = [];
-        if (this.namedEntitiesOccurrenceSelector.indexOf(e.tagName) >= 0 && e.getAttribute('ref')) { // Handle first level page contents
+        if (this.entitiesOccurrenceSelectors.includes(e.tagName) && e.getAttribute('ref')) { // Handle first level page contents
           occurrences.push(this.parseNamedEntityOccurrence(e));
         }
 
-        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(this.namedEntitiesOccurrenceSelector))
+        const selector = this.entitiesOccurrenceSelectors.join(',');
+        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(selector))
           .map((el) => this.parseNamedEntityOccurrence(el)));
       })
       .filter((e) => e.length > 0)

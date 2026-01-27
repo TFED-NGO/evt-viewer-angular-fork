@@ -67,7 +67,14 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"namedEntitiesOccurrenceSelector": "persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref], term[ref]",
+	"entitiesOccurrenceSelector": [
+		"persName[ref]",
+		"placeName[ref]",
+		"orgName[ref]",
+		"geogName[ref]",
+		"event[ref]",
+		"term[ref]"
+	],
 	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
