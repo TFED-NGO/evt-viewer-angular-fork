@@ -148,9 +148,7 @@ edition:
       strato-5: "#352400"
 
   multiPageEngineForCriticalEdition: false
-  editionStructureSeparator: 
-    - pb
-    - seg
+  editionStructureSeparator: "pb, seg"
   exponentEnumerateBy: seg
   transformWitnessId: true
 
