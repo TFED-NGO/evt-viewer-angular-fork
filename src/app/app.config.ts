@@ -12,7 +12,7 @@ import * as yaml from 'js-yaml';
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
-    private readonly defaultFileConfigUrl = 'assets/config/config.yml';
+    private readonly defaultFileConfigUrl = 'assets/config/config.yaml';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
     private readonly hostConfig$: Observable<HostConfig> = this.http.get<HostConfig>("assets/config/host_config.json");
     public readonly fileConfigUrl$: Observable<string> = this.hostConfig$.pipe(
