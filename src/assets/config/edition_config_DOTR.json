@@ -189,5 +189,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"structureSeparatorsSelector": "pb, div[type='chapter']"
 }

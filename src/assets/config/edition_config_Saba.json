@@ -185,5 +185,5 @@
   "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
   "syncZonesHighlightButton": false,
-  "editionStructureSeparator": "pb"
+  "structureSeparatorsSelector": "pb"
 }
