@@ -1,6 +1,6 @@
 editionUrls:
   - type: main
-    value: assets/data/text/saba.xml
+    value: assets/data/saba.xml
     enable: true
 
 editionImagesSource:
@@ -12,7 +12,7 @@ editionImagesSource:
     enable: false
 
 imagesFolderUrls:
-  single: assets/data/images/myedition/
+  single: assets/data/images/single/
   double: assets/data/images/double/
 
 configurationUrls:
