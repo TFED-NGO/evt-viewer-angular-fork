@@ -1,5 +1,5 @@
 {
-	"editionTitle": "LegesLangobardorum",
+	"editionTitle": "Codice Pelavicino Digitale",
 	"badge": "beta",
 	"editionHome": "http://pelavicino.labcd.unipi.it/",
 	"availableEditionLevels": [
@@ -31,8 +31,8 @@
 	"downloadableXMLSource": true,
 	"namedEntitiesLists": {
 		"persons": {
-			"enable": true,
 			"defaultLabel": "Persons",
+			"enable": true,
 			"listSelector": "listPerson",
 			"namedEntityType": "person"
 		},
@@ -60,6 +60,12 @@
 			"listSelector": "listEvent",
 			"namedEntityType": "event"
 		},
+		"objects": {
+			"enable": true,
+			"defaultLabel": "Objects",
+			"listSelector": "listObject",
+			"namedEntityType": "object"
+		},
 		"entries": {
 			"enable": true,
 			"defaultLabel": "Entries",
@@ -68,7 +74,7 @@
 		}
 	},
 	"namedEntitiesOccurrenceSelector": "persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref], term[ref]",
-	"showLists": true,
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -118,12 +124,6 @@
 					"value": "measure",
 					"label": "measures",
 					"enable": true
-				},
-				{
-					"value": "term",
-					"label": "terms",
-					"color": "#98d4f7",
-					"enable": true
 				}
 			],
 			"enable": true
@@ -146,7 +146,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
