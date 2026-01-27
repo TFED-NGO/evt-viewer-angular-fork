@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { map, Observable, /*tap*/ } from 'rxjs';
 import { ApparatusEntry, Attribute, GenericElement, Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
@@ -28,6 +28,11 @@ export class WitnessPanelComponent implements OnInit {
   );
 
   currentPage$: Observable<Page> = this.pages$.pipe(
+    // TODO: check currentPageId when adding witness from the modal
+    // tap(pages => {
+    //   console.log("pages", pages);
+    //   console.log("pageId", this.witnessItem.currentPageId);
+    // }),
     map(pages => pages.find(p => p.id === this.witnessItem.currentPageId)),
   );
 
