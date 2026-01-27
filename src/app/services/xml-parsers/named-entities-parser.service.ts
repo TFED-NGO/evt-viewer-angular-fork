@@ -14,7 +14,7 @@ import { AppConfig } from 'src/app/app.config';
   providedIn: 'root',
 })
 export class NamedEntitiesParserService {
-  private namedEntitiesOccurrenceSelector = AppConfig.evtSettings.edition.namedEntitiesOccurrenceSelector;
+  private entitiesOccurrenceSelectors = AppConfig.evtSettings.edition.entitiesOccurrenceSelectors;
 
   public parseLists(editionSource: EditionSource) {
     const listsToParse = AppConfig.getListsToParseTagNames();
@@ -64,11 +64,12 @@ export class NamedEntitiesParserService {
       .filter((e) => e.nodeType === 1)
       .map((e) => {
         const occurrences = [];
-        if (this.namedEntitiesOccurrenceSelector.indexOf(e.tagName) >= 0 && e.getAttribute('ref')) { // Handle first level page contents
+        if (this.entitiesOccurrenceSelectors.includes(e.tagName) && e.getAttribute('ref')) { // Handle first level page contents
           occurrences.push(this.parseNamedEntityOccurrence(e));
         }
 
-        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(this.namedEntitiesOccurrenceSelector))
+        const selector = this.entitiesOccurrenceSelectors.join(',');
+        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(selector))
           .map((el) => this.parseNamedEntityOccurrence(el)));
       })
       .filter((e) => e.length > 0)

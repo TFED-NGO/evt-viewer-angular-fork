@@ -1,12 +1,12 @@
 {
-	"editionTitle": "LegesLangobardorum",
+	"editionTitle": "The Dream of the Rood",
 	"badge": "beta",
-	"editionHome": "http://pelavicino.labcd.unipi.it/",
+	"editionHome": "http://vbd.humnet.unipi.it/beta2/",
 	"availableEditionLevels": [
 		{
 			"id": "diplomatic",
 			"label": "diplomatic",
-			"enable": false,
+			"enable": true,
 			"hidden": false
 		},
 		{
@@ -18,21 +18,21 @@
 		{
 			"id": "critical",
 			"label": "critical",
-			"enable": false,
+			"enable": true,
 			"hidden": false
 		},
 		{
 			"id": "changesView",
 			"label": "changes",
-			"enable": false,
+			"enable": true,
 			"hidden": true
 		}
 	],
 	"downloadableXMLSource": true,
 	"namedEntitiesLists": {
 		"persons": {
-			"enable": true,
 			"defaultLabel": "Persons",
+			"enable": true,
 			"listSelector": "listPerson",
 			"namedEntityType": "person"
 		},
@@ -67,8 +67,7 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"namedEntitiesOccurrenceSelector": "persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref], term[ref]",
-	"showLists": true,
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -98,7 +97,7 @@
 					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		},
 		{
 			"label": "Other",
@@ -118,23 +117,17 @@
 					"value": "measure",
 					"label": "measures",
 					"enable": true
-				},
-				{
-					"value": "term",
-					"label": "terms",
-					"color": "#98d4f7",
-					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		}
 	],
 	"notSignificantVariants": [
 		"type=orthographic"
 	],
-	"defaultEdition": "interpretative",
+	"defaultEdition": "diplomatic",
 	"defaultViewMode": "imageText",
-	"proseVersesToggler": false,
+	"proseVersesToggler": true,
 	"defaultTextFlow": "prose",
 	"verseNumberPrinter": 5,
 	"readingColorLight": "rgb(208, 220, 255)",
@@ -146,7 +139,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
@@ -196,5 +189,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"structureSeparators": ["pb", "div[type='chapter']"]
 }

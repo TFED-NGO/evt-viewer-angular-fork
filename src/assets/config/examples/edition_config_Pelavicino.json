@@ -60,6 +60,12 @@
 			"listSelector": "listEvent",
 			"namedEntityType": "event"
 		},
+		"objects": {
+			"enable": true,
+			"defaultLabel": "Objects",
+			"listSelector": "listObject",
+			"namedEntityType": "object"
+		},
 		"entries": {
 			"enable": true,
 			"defaultLabel": "Entries",
@@ -67,7 +73,15 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"showLists": true,
+	"entitiesOccurrenceSelector": [
+		"persName[ref]",
+		"placeName[ref]",
+		"orgName[ref]",
+		"geogName[ref]",
+		"event[ref]",
+		"term[ref]"
+	],
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -139,7 +153,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
@@ -189,5 +203,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"structureSeparators": ["pb", "div[type='chapter']"]
 }

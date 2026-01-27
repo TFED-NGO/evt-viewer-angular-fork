@@ -1,7 +1,7 @@
 import { AttributesMap } from 'ng-dynamic-component';
 import { ParserRegister, xmlParser } from '.';
 import {
-    Addition, Analogue, Anchor, Attributes, Damage, Deletion, Gap, GenericElement, Lb, Milestone, Note, NoteLayout,
+    Addition, Analogue, Anchor, Attributes, Damage, Deletion, Gap, GenericElement, Lb, Milestone, Note, NoteClass, NoteLayout,
     Paragraph, PlacementType, Ptr, QuoteEntry, Space, Span, SpanGrp, Subst, Supplied, Term, Text, Verse, VersesGroup, Word, XMLElement,
 } from '../../models/evt-models';
 import { getElementsBetweenTreeNode, getXPath, isNestedInElem, xpath } from '../../utils/dom-utils';
@@ -197,6 +197,7 @@ export class NoteParser extends EmptyParser implements Parser<XMLElement> {
         const attributes = this.attributeParser.parse(xml);
         const noteElement = {
             type: Note,
+            class: NoteClass,
             noteType,
             noteLayout,
             exponent: attributes.n,

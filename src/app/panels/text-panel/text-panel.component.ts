@@ -27,8 +27,6 @@ export class TextPanelComponent {
     return this._mc;
   }
 
-  public orderedLayers: string[];
-
   public selLayer: string;
   @Input() set selectedLayer(layer: string) {
     this.selLayer = layer;
@@ -97,7 +95,7 @@ export class TextPanelComponent {
       this.textFlow = this.defaultTextFlow;
     }
     if (e && this.showDeletions === undefined) {
-      this.showDeletions = true;
+      this.showDeletions = false;
     }
   }
   public get editionLevelID() {

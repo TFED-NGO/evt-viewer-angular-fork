@@ -85,6 +85,7 @@ export class NamedEntityRefParser extends EmptyParser implements Parser<XMLEleme
             persname: 'person',
             orgname: 'org',
             event: 'event',
+            objectname: 'object',
             term: 'term'
         };
         
@@ -224,6 +225,16 @@ export class OrganizationParser extends EntityParser {
         return {
             ...super.parse(xml),
             label: textLabel('orgName', xml),
+        };
+    }
+}
+
+@xmlParser('object', ObjectParser)
+export class ObjectParser extends EntityParser {
+    parse(xml: XMLElement): NamedEntity {
+        return {
+            ...super.parse(xml),
+            label: textLabel('objectName', xml),
         };
     }
 }
