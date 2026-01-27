@@ -66,7 +66,7 @@ export class MainMenuComponent {
         },
         label: 'openLists',
         enabled$: this.evtModelService.namedEntities$.pipe(
-          map((ne) => this.editionConfig.showLists && ne.all.entities.length > 0),
+          map((ne) => this.editionConfig.showEntitiesLists && ne.all.entities.length > 0),
         ),
         callback: () => this.openGlobalDialogLists(),
       },

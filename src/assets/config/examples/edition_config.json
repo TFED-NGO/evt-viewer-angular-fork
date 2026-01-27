@@ -1,7 +1,7 @@
 {
-  "editionTitle": "Progetto Saba1919",
+  "editionTitle": "My Digital Edition",
   "badge": "beta",
-  "editionHome": "",
+  "editionHome": "evt.labcd.unipi.it/",
   "availableEditionLevels": [
     {
       "id": "diplomatic",
@@ -28,7 +28,7 @@
       "hidden": true
     }
   ],
-  "downloadableXMLSource": false,
+  "downloadableXMLSource": true,
   "namedEntitiesLists": {
     "persons": {
 			"defaultLabel": "Persons",
@@ -67,7 +67,7 @@
 			"namedEntityType": "entry"
 		}
   },
-  "showLists": true,
+  "showEntitiesLists": true,
   "entitiesSelectItems": [
     {
       "label": "Named Entities",
@@ -125,10 +125,10 @@
   "notSignificantVariants": [
     "type=orthographic"
   ],
-  "defaultEdition": "changesView",
-  "defaultViewMode": "documentalMixed",
+  "defaultEdition": "critical",
+  "defaultViewMode": "collation",
   "proseVersesToggler": true,
-  "defaultTextFlow": "verses",
+  "defaultTextFlow": "prose",
   "verseNumberPrinter": 5,
   "readingColorLight": "rgb(255 241 208)",
   "readingColorDark": "rgb(101, 138, 255)",
@@ -139,7 +139,7 @@
       "source"
     ]
   },
-  "biblView": {
+  "biblTab": {
     "propsToShow": [
       "author",
       "title",
@@ -154,7 +154,8 @@
     "showEmptyValues": false,
     "inline": true,
     "commaSeparated": true,
-    "showMainElemTextContent": true
+    "showMainElemTextContent": true,
+    "defaultImageZoomLevel": 0.8
   },
   "analogueMarkers": [
     "ParallelPassage",
@@ -167,10 +168,10 @@
   ],
   "showSubstitutionMarker": true,
   "showSeparatorBetweenChanges": true,
-  "startingFromDefinitiveLayer": false,
+  "startingFromDefinitiveLayer": true,
   "showChangeLayerMarkerInText": true,
   "changeSequenceView": {
-    "showVarSeqAttr": true,
+    "showVarSeqAttr": false,
     "showSeqAttr": false,
     "layerColors": {
       "strato-0": "#d4a03b",
@@ -184,6 +185,7 @@
   "defaultImageZoomLevel": 0.8,
   "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
-  "syncZonesHighlightButton": false,
-  "editionStructureSeparator": "pb"
+  "editionStructureSeparator": "pb,seg",
+  "exponentEnumerateBy": "seg",
+  "transformWitnessId": true
 }

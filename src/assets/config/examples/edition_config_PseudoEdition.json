@@ -1,7 +1,7 @@
 {
-	"editionTitle": "Codice Pelavicino Digitale",
+	"editionTitle": "Pseudo Edition",
 	"badge": "beta",
-	"editionHome": "http://pelavicino.labcd.unipi.it/",
+	"editionHome": "",
 	"availableEditionLevels": [
 		{
 			"id": "diplomatic",
@@ -12,13 +12,13 @@
 		{
 			"id": "interpretative",
 			"label": "interpretative",
-			"enable": true,
+			"enable": false,
 			"hidden": false
 		},
 		{
 			"id": "critical",
-			"label": "critical",
-			"enable": false,
+			"label": "Critical",
+			"enable": true,
 			"hidden": false
 		},
 		{
@@ -67,7 +67,7 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"showLists": true,
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -97,7 +97,7 @@
 					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		},
 		{
 			"label": "Other",
@@ -119,14 +119,14 @@
 					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		}
 	],
 	"notSignificantVariants": [
 		"type=orthographic"
 	],
-	"defaultEdition": "interpretative",
-	"defaultViewMode": "imageText",
+	"defaultEdition": "critical",
+	"defaultViewMode": "readingText",
 	"proseVersesToggler": false,
 	"defaultTextFlow": "prose",
 	"verseNumberPrinter": 5,
@@ -139,7 +139,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
@@ -159,7 +159,8 @@
 			"showVarSeqAttr": false,
 			"showSeqAttr": false,
 			"layerColors": []
-		}
+		},
+		"defaultImageZoomLevel": 0.8
 	},
 	"analogueMarkers": [
 		"ParallelPassage",
@@ -189,5 +190,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"editionStructureSeparator": "pb, div"
 }

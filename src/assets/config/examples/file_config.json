@@ -2,7 +2,7 @@
 	"editionUrls": [
 		{
 			"type": "main",
-			"value": "assets/data/pelavicino.xml",
+			"value": "assets/data/text/igitur.xml",
 			"enable": true
 		}
 	],
@@ -17,12 +17,12 @@
 		}
 	},
 	"imagesFolderUrls": {
-		"single": "assets/data/images/single/",
+		"single": "assets/data/images/myedition/",
 		"double": "assets/data/images/double/"
 	},
 	"configurationUrls": {
-		"edition": "assets/config/edition_config_Pelavicino.json",
-		"ui": "assets/config/ui_config_Pelavicino.json",
+		"edition": "assets/config/edition_config_igitur.json",
+		"ui": "assets/config/ui_config_igitur.json",
 		"editorialConventions": "assets/config/editorial_conventions_config.json"
 	}
 }
