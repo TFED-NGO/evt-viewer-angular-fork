@@ -52,7 +52,7 @@ export class WitnessPanelComponent implements OnInit {
   private processSource(source: HTMLElement): Page[] {
     const originalPages = this.structureParser.parsePages(source).pages;
     const lacunaPairs = this.structureParser.groupedByWitLacunas.get(this.witnessItem.id);
-    const separator = AppConfig.evtSettings.edition.editionStructureSeparator;
+    const separator = AppConfig.evtSettings.edition.structureSeparators;
     const el = document.createElement('w');
     el.innerText = ' ';
     const emptyElement = this.genericParseService.parse(el);

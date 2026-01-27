@@ -191,7 +191,7 @@
   "defaultImageZoomLevel": 0.8,
   "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
-  "editionStructureSeparator": "pb,seg",
+  "structureSeparators": ["pb" , "seg"],
   "exponentEnumerateBy": "seg",
   "transformWitnessId": true
 }
