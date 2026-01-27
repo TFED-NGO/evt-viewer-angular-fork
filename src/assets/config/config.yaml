@@ -74,7 +74,13 @@ edition:
       defaultLabel: Entries
       listSelector: "div[type='glossary']"
       namedEntityType: entry
-
+  entitiesOccurrenceSelectors: 
+    - persName[ref]
+    - placeName[ref]
+    - orgName[ref]
+    - geogName[ref] 
+    - event[ref]
+    - term[ref]
   showEntitiesLists: true
   entitiesSelectItems:
     - label: Named Entities
@@ -148,7 +154,9 @@ edition:
       strato-5: "#352400"
 
   multiPageEngineForCriticalEdition: false
-  editionStructureSeparator: "pb, seg"
+  structureSeparators: 
+    - pb
+    - seg
   exponentEnumerateBy: seg
   transformWitnessId: true
 

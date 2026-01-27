@@ -207,7 +207,7 @@ export interface EditionConfig {
         entries: NamedEntitiesListConfig;
         objects: NamedEntitiesListConfig;
     }>;
-    namedEntitiesOccurrenceSelector: string;
+    entitiesOccurrenceSelectors: string[];
     entitiesSelectItems: EntitiesSelectItemGroup[];
     notSignificantVariants: string[];
     defaultEdition: EditionLevelType;
