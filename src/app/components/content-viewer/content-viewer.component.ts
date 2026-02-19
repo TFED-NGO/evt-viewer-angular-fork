@@ -124,17 +124,27 @@ export class ContentViewerComponent implements OnDestroy {
     map(() => ({})),
     shareReplay(1),
   );
-  public attributes: Observable<AttributesMap> = this.contentChange.pipe(
-    filter((parsedContent) => !!parsedContent),
-    map((parsedContent) => ({ ...parsedContent.attributes || {}, ...{ class: `${parsedContent.class || ''}` } })),
+
+  public semanticAttributes: Observable<AttributesMap> = this.contentChange.pipe(
+    filter(Boolean),
+    map(parsedContent => {
+      const attrs = { ...(parsedContent.attributes || {}) };
+
+      delete attrs.id;
+      delete attrs.style;
+      delete attrs.class;
+
+      return attrs;
+    }),
     shareReplay(1),
   );
+
 
   public context$ = combineLatest([
     this.parsedContent,
     this.inputs,
     this.outputs,
-    this.attributes,
+    this.semanticAttributes,
   ]).pipe(
     map(([parsedContent, inputs, outputs, attributes]) => (
       { parsedContent, inputs, outputs, attributes }
@@ -153,40 +163,40 @@ export class ContentViewerComponent implements OnDestroy {
       highlightColor: this.entitiesSelectService.getHighlightColor(data?.attributes ?? {}, data?.class, ith),
     };
   }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @HostListener('click',['$event']) mouseClick($event: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  @HostListener('click', ['$event']) mouseClick($event: any) {
 
-    if (!this._content.content){
+    if (!this._content.content) {
 
-      if (this._content.type.name === AdditionComponent.name){
-          return;
+      if (this._content.type.name === AdditionComponent.name) {
+        return;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const lbId = (this._content as any).lbId;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const correspId =  (this._content as any).correspId;
+      const correspId = (this._content as any).correspId;
 
-      if ((lbId === '' || correspId === '')){
+      if ((lbId === '' || correspId === '')) {
         return;
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if ((this._content as any).text === '' || (this._content as any).text === ' ' ||
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._content as any).type.name === Verse.name ||
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (this._content as any).type.name === Paragraph.name
-          ){
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this._content as any).type.name === Verse.name ||
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (this._content as any).type.name === Paragraph.name
+      ) {
         return;
       }
 
-      const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+      const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
       const findElement = elementsSelected
-          .find((e)=>e.corresp === correspId && e.id === lbId);
+        .find((e) => e.corresp === correspId && e.id === lbId);
 
 
-      if (findElement){
+      if (findElement) {
         this.evtHighlineService.lineBeginningSelected$.next(
-          elementsSelected.filter((e)=>e.corresp !== correspId && e.id !== lbId),
+          elementsSelected.filter((e) => e.corresp !== correspId && e.id !== lbId),
         );
 
 
@@ -202,47 +212,47 @@ export class ContentViewerComponent implements OnDestroy {
     $event.preventDefault();
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @HostListener('mouseover',['$event']) mouseOver($event: any) {
-    if (this._content.type.name === AdditionComponent.name){
+  @HostListener('mouseover', ['$event']) mouseOver($event: any) {
+    if (this._content.type.name === AdditionComponent.name) {
       return;
     }
- // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const lbId = (this._content as any).lbId;
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const correspId = (this._content as any).correspId;
 
-    if ((lbId === '' ||correspId  === '') ){
+    if ((lbId === '' || correspId === '')) {
       return;
     }
-     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const textComponent = (this._content as any).text;
 
     if (textComponent === '' || textComponent === ' ' ||
-        ((this._content as GenericElement).type.name === Verse.name && !(this._content as GenericElement).attributes['facs'] ) ||
-         (this._content as GenericElement).type.name === Paragraph.name
-        ){
+      ((this._content as GenericElement).type.name === Verse.name && !(this._content as GenericElement).attributes['facs']) ||
+      (this._content as GenericElement).type.name === Paragraph.name
+    ) {
       return;
     }
 
     $event.preventDefault();
-    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
 
-    if ((this._content as GenericElement).type.name === Verse.name && (this._content as GenericElement).attributes['facs'] ){
+    if ((this._content as GenericElement).type.name === Verse.name && (this._content as GenericElement).attributes['facs']) {
 
       const facsId = (this._content as GenericElement).attributes['facs'].replace('#', '');
       const id = (this._content as GenericElement).attributes['id'];
       this.evtHighlineService.lineBeginningSelected$.next([
         {
-        id: facsId, corresp: id, selected: undefined,
-      }, ...elementsSelected]);
+          id: facsId, corresp: id, selected: undefined,
+        }, ...elementsSelected]);
 
 
     } else {
 
       this.evtHighlineService.lineBeginningSelected$.next([
         {
-        id: lbId, corresp: correspId, selected: undefined,
-      }, ...elementsSelected]);
+          id: lbId, corresp: correspId, selected: undefined,
+        }, ...elementsSelected]);
     }
   }
 
@@ -250,7 +260,7 @@ export class ContentViewerComponent implements OnDestroy {
   @HostListener('mouseleave', ['$event']) mouseLeave($event: any) {
 
     $event.preventDefault();
-    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter( (e) => e.selected);
+    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
     this.evtHighlineService.lineBeginningSelected$.next(elementsSelected);
   }
 
