@@ -5,5 +5,5 @@
 <ng-template #dynamicTemplate let-parsedContent="parsedContent" let-inputs="inputs" let-outputs="outputs"
     let-attributes="attributes">
     <ndc-dynamic [ndcDynamicComponent]="parsedContent.type" [ndcDynamicInputs]="inputs" [ndcDynamicOutputs]="outputs"
-        [ndcDynamicAttributes]="attributes"></ndc-dynamic>
+        [ndcDynamicAttributes]="attributes" [ngClass]="parsedContent.class" [ngStyle]="parsedContent.attributes.style"></ndc-dynamic>
 </ng-template>

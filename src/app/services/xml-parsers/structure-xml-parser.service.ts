@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../../app.config';
-import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
+import { ApparatusEntry, ApparatusEntryExponent, Attribute, Cb, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
 import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AlphabetService } from '../alphabet.service';
 import { AppParser } from './app-parser';
 import { ErrorsService } from '../errors.service';
+import { ParserRegister } from '.';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,7 @@ export class StructureXmlParserService {
   ) {
   }
 
+  private divParser = ParserRegister.get('div');
   private appParser = AppParser.create();
   private frontOrigContentAttr = 'document_front';
   private readonly frontTagName = 'front';
@@ -35,7 +37,7 @@ export class StructureXmlParserService {
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
-  parsePages(source: XMLElement): EditionStructure {
+  public parsePages(source: XMLElement): EditionStructure {
     const editionStructure = {
       pages: [] as Page[],
       documentApparatusEntries: new DocumentApparatusEntries()
@@ -69,12 +71,58 @@ export class StructureXmlParserService {
       editionStructure.pages.push(...frontPages, ...bodyPages);
     }
 
+    for (const page of editionStructure.pages) {
+      const parent = this.divParser.parse(document.createElement('div')) as GenericElement;
+      parent.content = [...page.parsedContent];
+      const shouldSubstitute = this.processCbRecursive(parent, page.parsedContent as GenericElement[]);
+      if (shouldSubstitute) {
+        page.parsedContent = [parent];
+      }
+    }
+
     const backElements = source.getElementsByTagName('back');
     if (backElements.length === 0) return editionStructure;
 
     this.loadLacunas(backElements, source);
 
     return editionStructure;
+  }
+
+  public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
+    if (!this.allApps.length) {
+      this.allApps = Array.from(source.querySelectorAll("app"));
+      if (!this.allApps.length) {
+        this.errorService.logWarning('There are no apps in the source');
+        this.errorService.loadingEnd();
+        return;
+      }
+
+      for (const app of this.allApps) {
+        addIsDepaAttribute(app);
+      }
+
+      // this can load after some times as errors can be available later
+      setTimeout(() => this.checkDepaErrors(source), 1_000);
+    }
+
+    const result = this.getDocumentApparatusEntries(editionStructure.pages);
+    result.apps.forEach((value, key) => {
+      editionStructure.documentApparatusEntries.apps.set(key, value);
+    });
+
+    this.processApparatusExponents(source, editionStructure);
+
+    function addIsDepaAttribute(app: HTMLElement) {
+      const isDepa = !app.closest("body");
+      app.setAttribute("isDepa", isDepa.toString());
+    }
+  }
+
+  private isIgnorableNode(node: GenericElement): boolean {
+    if (node.type.name !== 'Text') return false;
+
+    const text = (node as any).text ?? '';
+    return text.trim().length === 0;
   }
 
   private loadLacunas(backElements: HTMLCollectionOf<Element>, source: HTMLElement) {
@@ -119,36 +167,6 @@ export class StructureXmlParserService {
       }
       const pairs = this.groupedByWitLacunas.get(startWit);
       pairs.push({ start: startAnchor, end: endAnchor });
-    }
-  }
-
-  public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
-    if (!this.allApps.length) {
-      this.allApps = Array.from(source.querySelectorAll("app"));
-      if (!this.allApps.length) {
-        this.errorService.logWarning('There are no apps in the source');
-        this.errorService.loadingEnd();
-        return;
-      }
-
-      for (const app of this.allApps) {
-        addIsDepaAttribute(app);
-      }
-
-      // this can load after some times as errors can be available later
-      setTimeout(() => this.checkDepaErrors(source), 1_000);
-    }
-
-    const result = this.getDocumentApparatusEntries(editionStructure.pages);
-    result.apps.forEach((value, key) => {
-      editionStructure.documentApparatusEntries.apps.set(key, value);
-    });
-
-    this.processApparatusExponents(source, editionStructure);
-
-    function addIsDepaAttribute(app: HTMLElement) {
-      const isDepa = !app.closest("body");
-      app.setAttribute("isDepa", isDepa.toString());
     }
   }
 
@@ -535,6 +553,59 @@ export class StructureXmlParserService {
     };
   }
 
+  private processCbRecursive(
+    parent: GenericElement,
+    children: GenericElement[] = []
+  ): boolean {
+    for (const child of children) {
+      this.processCbRecursive(child, child.content as GenericElement[]);
+    }
+    
+    if (!children?.length) return false;
+    if (!children.some(x => x.type.name === Cb.tag)) return;
+    
+    const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
+    if (children[firstRealIndex]?.type.name !== Cb.tag) {
+      throw new Error("First real element must be <cb/>");
+    }
+
+    const cbIndexes = children
+      .map((c, i) => c.type?.name === Cb.tag ? i : -1)
+      .filter(i => i !== -1);
+    if (!cbIndexes.length) return false;
+
+    const columns: GenericElement[] = [];
+    for (let i = 0; i < cbIndexes.length; i++) {
+      const start = cbIndexes[i] + 1;
+      const end = cbIndexes[i + 1] ?? children.length;
+
+      const columnChildren = children.slice(start, end);
+
+      const div = document.createElement('div');
+      div.classList.add('tei-column');
+
+      const parsedDiv = this.divParser.parse(div) as GenericElement;
+      parsedDiv.content = columnChildren;
+
+      columns.push(parsedDiv);
+    }
+
+    parent.content = columns;
+
+    const columnCount = columns.length;
+    parent.attributes = {
+      ...parent.attributes,
+      style: `
+      display: grid;
+      grid-template-columns: repeat(${columnCount}, 1fr);
+      column-gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: start;
+    `
+    };
+
+    return true;
+  }
+
   private getPageUrl(id) {
     // TODO: check if exists <graphic> element connected to page and return its url
     // TODO: handle multiple version of page
@@ -548,7 +619,7 @@ export class StructureXmlParserService {
 
 
   parsePageContent(doc: Document, pageContent: OriginalEncodingNodeType[]): Array<ParseResult<GenericElement>> {
-    return pageContent
+    const content = pageContent
       .map((node) => {
 
         const origEl = getEditionOrigNode(node, doc);
@@ -576,7 +647,24 @@ export class StructureXmlParserService {
 
         return [this.genericParserService.parse(origEl)];
       })
-      .reduce((x, y) => x.concat(y), []);
+      .reduce((x, y) => x.concat(y), [])
+      .filter(c => !this.isIgnorableNode(c as GenericElement));
+
+    content.forEach(c => {
+      this.normalizeTree(c as GenericElement);
+    });
+    return content;
+  }
+
+  private normalizeTree(node: GenericElement): void {
+    if (!node.content?.length) return;
+
+    node.content = node.content
+      .filter(child => !this.isIgnorableNode(child as GenericElement))
+      .map(child => {
+        this.normalizeTree(child as GenericElement);
+        return child;
+      });
   }
 
   hasOriginalContent(el: XMLElement): boolean {
