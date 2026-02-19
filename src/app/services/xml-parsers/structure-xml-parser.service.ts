@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../../app.config';
-import { Anchor, ApparatusEntry, ApparatusEntryExponent, Attribute, Cb, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
+import { Anchor, ApparatusEntry, ApparatusEntryExponent, Attribute, Cb, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, Text, XMLElement } from '../../models/evt-models';
 import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
@@ -119,7 +119,7 @@ export class StructureXmlParserService {
   }
 
   private isIgnorableNode(node: GenericElement): boolean {
-    if (node.type.name !== 'Text') return false;
+    if (node.type.name !== Text.name) return false;
 
     const text = (node as any).text ?? '';
     return text.trim().length === 0;
@@ -341,7 +341,7 @@ export class StructureXmlParserService {
       const item = items[i];
       onShouldResetCounter(item);
 
-      if (item.type?.name === 'ApparatusEntry') {
+      if (item.type?.name === ApparatusEntry.name) {
         const app = item as ApparatusEntry;
         if (!app) throw new Error("Invalid type " + app);
 
@@ -403,7 +403,7 @@ export class StructureXmlParserService {
         }
       }
       // in other cases exponents are added to the items array, so we skip them
-      else if (item?.type?.name === ApparatusEntryExponent.name) {
+      else if (item.type?.name === ApparatusEntryExponent.name) {
         //console.log("The element is an exponent, skipping", item);
         continue;
       }
@@ -589,15 +589,15 @@ export class StructureXmlParserService {
     }
     
     if (!children?.length) return false;
-    if (!children.some(x => x.type.name === Cb.tag)) return;
+    if (!children.some(x => x.type.name === Cb.name)) return;
     
     const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
-    if (children[firstRealIndex]?.type.name !== Cb.tag) {
+    if (children[firstRealIndex]?.type.name !== Cb.name) {
       throw new Error("First real element must be <cb/>");
     }
 
     const cbIndexes = children
-      .map((c, i) => c.type?.name === Cb.tag ? i : -1)
+      .map((c, i) => c.type?.name === Cb.name ? i : -1)
       .filter(i => i !== -1);
     if (!cbIndexes.length) return false;
 

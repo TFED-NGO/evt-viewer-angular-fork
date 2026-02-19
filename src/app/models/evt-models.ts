@@ -461,7 +461,6 @@ export class Paragraph extends GenericElement {
 }
 
 export class Cb extends GenericElement {
-    static readonly tag = 'Cb'; // use this instead of Cb.name because it can change in prod
     id: string;
     n?: string;
 }
