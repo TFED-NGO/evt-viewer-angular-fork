@@ -1,7 +1,7 @@
 import { Injectable, Type } from '@angular/core';
 import { AppParser, RdgParser } from './app-parser';
 import {
-    AdditionParser, AnchorParser, AttributeMapParser, AttributeParser, DamageParser, DeletionParser, GapParser,
+    AdditionParser, AnchorParser, AttributeMapParser, AttributeParser, CBParser, DamageParser, DeletionParser, GapParser,
     GenericElemParser, LBParser, MilestoneParser, NoteParser, ParagraphParser, PtrParser, SpanParser, SuppliedParser,
     TermParser, TextParser, VerseParser, VersesGroupParser, WordParser,
 } from './basic-parsers';
@@ -130,6 +130,7 @@ export function ParsersDecl(declarations: Array<Type<any>>) {
     LangUsageParser,
     LayoutDescParser,
     LayoutParser,
+    CBParser,
     LBParser,
     ListChangeParser,
     ListTransposeParser,

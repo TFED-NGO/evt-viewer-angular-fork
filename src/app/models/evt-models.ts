@@ -22,6 +22,14 @@ export interface HighlightData {
     highlightColor: string;
 }
 
+/* TODO: semantic and layout attributes should not be in the same property, consider changing to this
+    semanticAttributes?: Attributes;  // TEI/XML attributes
+    layout?: {
+        class?: string;
+        style?: string;
+        id?: string;
+    };
+*/
 export class GenericElement {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type: Type<any>;
@@ -450,6 +458,12 @@ export class Paragraph extends GenericElement {
     n: string;
     source: QuoteEntry;
     analogue: Analogue;
+}
+
+export class Cb extends GenericElement {
+    static readonly tag = 'Cb'; // use this instead of Cb.name because it can change in prod
+    id: string;
+    n?: string;
 }
 
 export class Lb extends GenericElement {
