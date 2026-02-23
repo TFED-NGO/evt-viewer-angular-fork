@@ -3,6 +3,7 @@ import { EditionLevelType, EditorialConventionAttributes } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
 import { ISDEPA_ATTRIBUTE } from './constants';
+import { ViewerSource } from './evt-polymorphic-models';
 
 export interface EditorialConvention {
     element: string;
@@ -1558,7 +1559,7 @@ export interface XMLImagesValues {
 }
 
 export interface ViewerDataType {
-    type: string;
+    source: ViewerSource;
     value: ViewerDataValue;
 }
 

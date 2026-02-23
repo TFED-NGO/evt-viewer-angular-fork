@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { combineLatestWith, distinctUntilChanged, map, shareReplay, switchMap } from 'rxjs/operators';
+import { combineLatestWith, distinctUntilChanged, map, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
 import {
   ChangeLayerData,
   EditionStructure,
@@ -27,10 +27,11 @@ import { StructureXmlParserService } from './xml-parsers/structure-xml-parser.se
 import { WitnessesParserService } from './xml-parsers/witnesses-parser.service';
 import { SourceEntriesParserService } from './xml-parsers/source-entries-parser.service';
 import { AnalogueEntriesParserService } from './xml-parsers/analogues-entries-parser.service';
-import { AppConfig } from '../app.config';
+import { AppConfig, ImagesSourceNotSupported } from '../app.config';
 import { BibliographicEntriesParserService } from './xml-parsers/bibliographic-entries-parser.service';
 import { ModParserService } from './xml-parsers/mod-parser.service';
 import { EditionSource } from './named-entities.service';
+import { ViewSourceFactory } from '../models/evt-polymorphic-models';
 
 @Injectable({
   providedIn: 'root',
@@ -56,26 +57,27 @@ export class EVTModelService {
     shareReplay(1)
   );
 
-  public readonly title$ = this.currentEditionData$.pipe(
+  public readonly currentEditionTitle$ = this.currentEditionData$.pipe(
     map((source) => this.prefatoryMatterParser.parseEditionTitle(source)),
     shareReplay(1),
   );
 
-  public readonly projectInfo$ = this.currentEditionData$.pipe(
+  public readonly currentEditionProjectInfo$ = this.currentEditionData$.pipe(
     map((source) => this.prefatoryMatterParser.parseProjectInfo(source)),
     shareReplay(1),
   );
 
-  public readonly styleDefaults$ = this.projectInfo$.pipe(
+  public readonly currentEditionStyleDefaults$ = this.currentEditionProjectInfo$.pipe(
     map((projectInfo) => projectInfo?.encodingDesc?.styleDefDecl),
     shareReplay(1),
   );
 
-  public readonly parsedEditionStructure$: Observable<EditionStructure> = this.currentEditionData$.pipe(
-    map((source) => {
+  public readonly currentEditionStructure$: Observable<EditionStructure> = this.currentEditionData$.pipe(
+    withLatestFrom(this.currentEdition$),
+    map(([source, edition]) => {
       return {
         source: source,
-        edition: this.editionStructureParser.parsePages(source)
+        edition: this.editionStructureParser.parsePages(edition.editionSource.imagesSource, source)
       };
     }),
     map(({ source, edition }) => {
@@ -85,7 +87,7 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  public readonly pages$: Observable<Page[]> = this.parsedEditionStructure$.pipe(
+  public readonly pages$: Observable<Page[]> = this.currentEditionStructure$.pipe(
     map((source) => source.pages),
     shareReplay(1),
   );
@@ -310,14 +312,18 @@ export class EVTModelService {
 
   public readonly imageDouble$: Observable<{ type: string, value: { xmlImages: XMLImagesValues[] } } | undefined> =
     this.facsimileImageDouble$.pipe(
-      map((fs) => {
+      withLatestFrom(this.currentEdition$),
+      map(([fs, edition]) => {
+        const imagesSource = edition.editionSource.imagesSource;
+        if (imagesSource.kind !== 'EditionXml' && imagesSource.kind !== 'ExternalXml')
+          throw new ImagesSourceNotSupported(imagesSource);
+
+        const imagesFolderUrl = imagesSource.imagesFolderUrls.double;
         if (fs?.graphics?.length > 0) {
           //const editionImages = AppConfig.evtSettings.files.editionImagesSource;
           const result: XMLImagesValues[] = fs.graphics.map((g) => {
 
             const fileName = g.url;
-
-            const imagesFolderUrl = AppConfig.evtSettings.files.imagesFolderUrls.double;
             const url = `${imagesFolderUrl}${fileName}`;
             const r: XMLImagesValues = {
               url: url,
@@ -335,9 +341,6 @@ export class EVTModelService {
             },
           };
         } else if (fs?.surfaceGrps?.length > 0) {
-          const editionImages = AppConfig.evtSettings.files.editionImagesSource;
-          console.log(editionImages);
-
           const result: XMLImagesValues[] = fs.surfaceGrps.map((sGrp) => {
 
             const fileName = sGrp.surfaces.reduce((pv, cv) => {
@@ -348,7 +351,6 @@ export class EVTModelService {
               return pv + '-' + cv.corresp.replace('#', '');
             }, '');
 
-            const imagesFolderUrl = AppConfig.evtSettings.files.imagesFolderUrls.double;
             const url = `${imagesFolderUrl}${fileName}.jpg`;
             const r: XMLImagesValues = {
               url: url,
@@ -374,6 +376,16 @@ export class EVTModelService {
   public readonly surfaces$ = this.currentEditionData$.pipe(
     map((source) => this.facsimileParser.parseSurfaces(source)),
     shareReplay(1),
+  );
+
+  public readonly imageViewer$ = this.surfaces$.pipe(
+    withLatestFrom(this.currentEdition$),
+    map(([surfaces, edition]) => {
+      const imagesSource = edition.editionSource.imagesSource;
+      if (!imagesSource) throw new Error("Image source is required");
+
+      return ViewSourceFactory.create(imagesSource).getDataType(surfaces);
+    }),
   );
 
   public readonly hsLines$ = this.surfaces$.pipe(

@@ -67,7 +67,7 @@ export class SynopsisService {
 
     private mapToSynopsisEdition(editionSources: EditionSource[]) {
         const result = editionSources.map(source => {
-            const pages = this.editionStructureParser.parsePages(source.editionData).pages;
+            const pages = this.editionStructureParser.parsePages(source.editionSource.imagesSource, source.editionData).pages;
             const defaultPage = pages[0];
             const xmlIds = this.getXmlIdsWithCorrespInOtherEditions(
                 editionSources.map(x => x.editionData), source.editionData, defaultPage);

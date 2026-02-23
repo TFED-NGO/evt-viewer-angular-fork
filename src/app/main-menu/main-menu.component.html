@@ -14,8 +14,8 @@
             <span class="no-action" data-prevent-close="true">
                 <evt-icon [iconInfo]="{icon: 'language', additionalClasses: 'icon'}"></evt-icon>
                 {{ 'changeLanguage' | translate }}
-                <img *ngFor="let language of getAvailableLanguages(); trackBy: trackLanguages"
-                    src="../../assets/images/{{language.code}}.png" class="flag" alt="language icon"
+                <img *ngFor="let language of availableLangs; trackBy: trackLanguages"
+                    [src]="language.iconUrl" class="flag" alt="language icon"
                     [class.active]="translate.currentLang === language.code" [title]="language.label | translate"
                     (click)="selectLanguage($event, language);" />
             </span>

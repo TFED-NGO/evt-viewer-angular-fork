@@ -21,13 +21,13 @@ import { EVTModelService } from '../services/evt-model.service';
 })
 export class MainMenuComponent {
   @Output() itemClicked = new EventEmitter<string>();
-  public readonly dynamicItems: MainMenuItem[];
-  public readonly uiConfig = AppConfig.evtSettings.ui;
-  public readonly fileConfig = AppConfig.evtSettings.files;
-  public readonly editionConfig = AppConfig.evtSettings.edition;
 
+  public readonly dynamicItems: MainMenuItem[] = this.getDynamicItems();
+  public readonly uiConfig = AppConfig.evtSettings.ui;
+  public readonly editionTextSources = AppConfig.evtSettings.editionTextSources;
+  public readonly editionConfig = AppConfig.evtSettings.edition;
+  public readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
   private isOpened = true;
-  private readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
 
   constructor(
     public themes: ThemesService,
@@ -119,11 +119,7 @@ export class MainMenuComponent {
   private downloadXML() {
     // TODO downloadXML
     this.itemClicked.emit('downloadXML');
-    if (this.fileConfig && this.fileConfig.editionUrls) {
-      this.fileConfig.editionUrls.forEach((url) => window.open(url.value, '_blank'));
-    } else {
-      alert('Loading data... \nPlease try again later.');
-    }
+      this.editionTextSources.forEach((s) => window.open(s.url, '_blank'));
   }
 
   openShortCuts() {
