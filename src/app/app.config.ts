@@ -8,6 +8,7 @@ import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-m
 import { EditorialConventionLayout } from './models/evt-models';
 import { reduceCssUnit, updateCSS } from './utils/dom-utils';
 import * as yaml from 'js-yaml';
+import { isAbsoluteUrl } from './utils/js-utils';
 
 @Injectable()
 export class AppConfig {
@@ -81,9 +82,13 @@ export class AppConfig {
                                             console.error('Only one image source config should be enabled per edition', sourceConfig);
                                             throw new Error();
                                         }
+
                                         imagesSource = imagesSources[0];
+                                        if (imagesSource.kind === 'ExternalXml' || imagesSource.kind === 'IiifManifest')
+                                            if (!isAbsoluteUrl(imagesSource.url))
+                                                throw new Error(`Url is not absolute: ${imagesSource.url}`);
                                     }
-                                    
+
                                     return {
                                         ...sourceConfig,
                                         editorialConventionsConfig,

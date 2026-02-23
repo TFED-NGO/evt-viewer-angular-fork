@@ -3,7 +3,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import { EditionXmlSource, ExternalXmlSource, IiifManifestSource, ImagesSource, ImagesSourceNotSupported } from '../app.config';
 import { Surface, ViewerDataType, XMLImagesValues } from './evt-models';
-import { isAbsoluteUrl } from '../utils/js-utils';
 
 export interface OsdTileSource {
     type?: string;
@@ -94,7 +93,6 @@ class EditionSource extends ViewerSource {
         const xmlImages: XMLImagesValues[] = data.map((s) => {
             const url = (s.corresp ?? s.graphics[0].url);
             if (this.imagesSource.kind === 'ExternalXml') {
-                if (!isAbsoluteUrl(url)) throw new Error(`Url is not absolute: ${url}`);
                 return { url: this.imagesSource.url + imagesFolder + url };
             }
             else {
