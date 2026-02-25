@@ -57,6 +57,10 @@ export class AppConfig {
                     switchMap((configFile) => {
                         const { edition, ui, editionTextSourcesConfig } = configFile;
 
+                        edition.mainMenuConfig.downloadLinks?.forEach(x => {
+                            if (!isAbsoluteUrl(x.url)) throw new Error(`Donwload link should be absolute: ${x.url}`);
+                        });
+
                         this.updateStyleFromConfig(edition, ui);
                         // Handle default values => TODO: Decide how to handle defaults!!
                         if (ui.defaultLocalization) {
@@ -239,6 +243,17 @@ export type BibliographicStyle = Partial<{
     inBrackets: BibliographicProperties[];
 }>;
 
+export interface DownloadLinks {
+    label: string;
+    url: string;
+}
+
+export interface MainMenuConfig {
+    downloadableXMLSource: boolean;
+    showEntitiesLists: boolean;
+    downloadLinks: DownloadLinks[]
+}
+
 export interface EditionConfig {
     editionTitle: string;
     badge: string;
@@ -246,8 +261,7 @@ export interface EditionConfig {
     logoUrl?: string;
     defaultEditionLevel: EditionLevelType;
     availableEditionLevels: EditionLevel[];
-    downloadableXMLSource: boolean;
-    showEntitiesLists: boolean;
+    mainMenuConfig: MainMenuConfig;
     namedEntitiesLists: Partial<{
         persons: NamedEntitiesListConfig;
         places: NamedEntitiesListConfig;

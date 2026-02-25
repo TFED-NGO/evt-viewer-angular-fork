@@ -97,7 +97,7 @@ edition:
     # Configure download links
     # Allow the user to download other edition documents, e.g. a PDF version of the edition
     downloadLinks:
-      - label: asd
+      - label: example
         url: value
 
   # Customize the list of available named entities to be highlighted and to be shown
