@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, mergeMap, shareReplay, tap } from 'rxjs/operators';
-import { AppConfig, EditionUrl } from '../app.config';
+import { AppConfig, EditionTextSource } from '../app.config';
 import { parseXml } from '../utils/xml-utils';
 import { PrefatoryMatterParserService } from './xml-parsers/prefatory-matter-parser.service';
 import { EditionInfo, EditionSource } from './named-entities.service';
@@ -12,45 +12,25 @@ import { v4 as uuidv4 } from 'uuid';
   providedIn: 'root',
 })
 export class EditionDataService {
-  private readonly editionUrls = AppConfig.evtSettings.files.editionUrls || [];
-  private readonly mainUrl = this.editionUrls.find(x => this.isMainUrl(x)) ?? this.editionUrls[0];
-  private readonly otherUrls = this.editionUrls.filter(x => !this.isMainUrl(x)) ?? this.editionUrls.slice(1);
-
-  readonly mainEditionSource$: Observable<EditionSource> = this.loadAndParseMainEditionData().pipe(
-    shareReplay(1));
-  readonly otherEditionSources$: Observable<EditionSource[]> = this.loadOtherEditionsData().pipe(
-    shareReplay(1));
-  readonly allEditionSources$: Observable<EditionSource[]> = forkJoin({
-    main: this.mainEditionSource$,
-    others: this.otherEditionSources$,
-  }).pipe(
-    map(({ main, others }) => [main, ...others]),
-    shareReplay(1));
+  private readonly editionTextSources = AppConfig.evtSettings.editionTextSources;
+  public readonly allEditionSources$: Observable<EditionSource[]> =
+    forkJoin(
+      this.editionTextSources.map(s =>
+        this.loadAndParseEditionData(s)
+      )
+    ).pipe(
+      shareReplay(1)
+    );
 
   constructor(
     private http: HttpClient,
     private prefatoryMatterParser: PrefatoryMatterParserService
   ) {
-
   }
 
-  private loadAndParseMainEditionData(): Observable<EditionSource> {
-    return this.loadAndParseEditionData(this.mainUrl);
-  }
-
-  private loadOtherEditionsData(): Observable<EditionSource[]> {
-    if (!this.otherUrls.length) return of([]);
-
-    const requests = this.otherUrls.map(editionUrl => this.loadAndParseEditionData(editionUrl));
-    return forkJoin(requests);
-  }
-
-  private isMainUrl(url: EditionUrl): boolean {
-    return url.type === 'main';
-  }
-
-  private loadAndParseEditionData(editionUrl: EditionUrl): Observable<EditionSource> {
-    return this.http.get(editionUrl.value, { responseType: 'text' }).pipe(
+  private loadAndParseEditionData(source: EditionTextSource): Observable<EditionSource> {
+    const { url, friendlyName, glossaryUrl } = source;
+    return this.http.get(url, { responseType: 'text' }).pipe(
       map((source) => parseXml(source)),
       tap(source => {
         setId(source.lastElementChild as HTMLElement);
@@ -68,22 +48,28 @@ export class EditionDataService {
         }
       }),
       // merge lists if both urls and xi:include are specified
-      mergeMap((editionData) => this.loadXIinclude(editionData, editionUrl.value.substring(0, editionUrl.value.lastIndexOf('/') + 1))),
+      mergeMap((editionData) => this.loadXIinclude(editionData, url.substring(0, url.lastIndexOf('/') + 1))),
       mergeMap(editionData =>
         forkJoin({
           editionData: of(editionData),
-          glossary: editionUrl.glossaryUrl ? this.http.get(editionUrl.glossaryUrl, { responseType: 'text' }) : of(''),
+          glossary: glossaryUrl ? this.http.get(glossaryUrl, { responseType: 'text' }) : of(''),
         })
       ),
       map(({ editionData, glossary }) => {
         const editionInfo: EditionInfo = {
+          editionId: url.split('/').pop().split('.')[0], // assets/data/myFile.xml => myFile --- TODO: improve with proper id in xml 
           editionTitle: this.prefatoryMatterParser.parseEditionTitle(editionData),
-          editionFriendlyName: editionUrl.friendlyName
+          editionFriendlyName: friendlyName
         };
         const parsedGlossary = glossary ? parseXml(glossary) : null;
-        return { editionData, editionInfo, glossary: parsedGlossary };
+        const editionSource: EditionSource = { editionSource: source, editionData, editionInfo, glossary: parsedGlossary };
+        return editionSource;
       }),
-      catchError(() => throwError(() => this.createError()))
+      catchError((e) => throwError(() => {
+        console.error(e.message);
+        return this.createError()
+      }
+      ))
     );
   }
 
@@ -104,7 +90,7 @@ export class EditionDataService {
               includedElement = includedDoc.querySelector('text');
             }
 
-            if(!includedElement) throw new Error("No element to include found");
+            if (!includedElement) throw new Error("No element to include found");
             // element.parentNode.replaceChild(includedTextElem, element);
             element.parentNode.appendChild(includedElement);
           }),
@@ -130,7 +116,7 @@ export class EditionDataService {
   }
 
   private createError() {
-    if (!this.editionUrls || this.editionUrls.length === 0) {
+    if (!this.editionTextSources || this.editionTextSources.length === 0) {
       return new Error('Missing configuration for edition files. Data cannot be loaded.');
     } else {
       return new Error('There was an error in loading edition files.');

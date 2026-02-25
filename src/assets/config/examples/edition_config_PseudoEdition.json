@@ -1,7 +1,7 @@
 {
-	"editionTitle": "LegesLangobardorum",
+	"editionTitle": "Pseudo Edition",
 	"badge": "beta",
-	"editionHome": "http://pelavicino.labcd.unipi.it/",
+	"editionHome": "",
 	"availableEditionLevels": [
 		{
 			"id": "diplomatic",
@@ -12,13 +12,13 @@
 		{
 			"id": "interpretative",
 			"label": "interpretative",
-			"enable": true,
+			"enable": false,
 			"hidden": false
 		},
 		{
 			"id": "critical",
-			"label": "critical",
-			"enable": false,
+			"label": "Critical",
+			"enable": true,
 			"hidden": false
 		},
 		{
@@ -31,8 +31,8 @@
 	"downloadableXMLSource": true,
 	"namedEntitiesLists": {
 		"persons": {
-			"enable": true,
 			"defaultLabel": "Persons",
+			"enable": true,
 			"listSelector": "listPerson",
 			"namedEntityType": "person"
 		},
@@ -67,8 +67,7 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"namedEntitiesOccurrenceSelector": "persName[ref], placeName[ref], orgName[ref], geogName[ref], event[ref], term[ref]",
-	"showLists": true,
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -98,7 +97,7 @@
 					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		},
 		{
 			"label": "Other",
@@ -118,22 +117,16 @@
 					"value": "measure",
 					"label": "measures",
 					"enable": true
-				},
-				{
-					"value": "term",
-					"label": "terms",
-					"color": "#98d4f7",
-					"enable": true
 				}
 			],
-			"enable": true
+			"enable": false
 		}
 	],
 	"notSignificantVariants": [
 		"type=orthographic"
 	],
-	"defaultEdition": "interpretative",
-	"defaultViewMode": "imageText",
+	"defaultEdition": "critical",
+	"defaultViewMode": "readingText",
 	"proseVersesToggler": false,
 	"defaultTextFlow": "prose",
 	"verseNumberPrinter": 5,
@@ -146,7 +139,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
@@ -166,7 +159,8 @@
 			"showVarSeqAttr": false,
 			"showSeqAttr": false,
 			"layerColors": []
-		}
+		},
+		"defaultImageZoomLevel": 0.8
 	},
 	"analogueMarkers": [
 		"ParallelPassage",
@@ -196,5 +190,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"structureSeparators": ["pb", "div"]
 }

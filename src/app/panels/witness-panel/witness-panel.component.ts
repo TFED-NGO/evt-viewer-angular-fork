@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { map, Observable, /*tap*/ } from 'rxjs';
+import { map, Observable, shareReplay, withLatestFrom } from 'rxjs';
 import { ApparatusEntry, Attribute, GenericElement, Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
@@ -7,7 +7,7 @@ import { WitnessItem } from 'src/app/view-modes/collation/collation.component';
 import { WitnessPanelService } from './witness-panel.service';
 import { AppParser } from 'src/app/services/xml-parsers/app-parser';
 import { isElementBetween } from 'src/app/utils/dom-utils';
-import { AppConfig } from 'src/app/app.config';
+import { AppConfig, ImagesSource } from 'src/app/app.config';
 import { GenericParserService } from 'src/app/services/xml-parsers/generic-parser.service';
 
 @Component({
@@ -23,18 +23,17 @@ export class WitnessPanelComponent implements OnInit {
 
   private appParser = AppParser.create();
 
-  pages$: Observable<Page[]> = this.evtModelService.editionSource$.pipe(
-    map(source => this.processSource(source)),
+  pages$: Observable<Page[]> = this.evtModelService.currentEditionData$.pipe(
+    withLatestFrom(this.evtModelService.currentEdition$),
+    map(([source, edition]) => this.processSource(edition.editionSource.imagesSource, source)),
+    shareReplay(1)
   );
 
   currentPage$: Observable<Page> = this.pages$.pipe(
-    // TODO: check currentPageId when adding witness from the modal
-    // tap(pages => {
-    //   console.log("pages", pages);
-    //   console.log("pageId", this.witnessItem.currentPageId);
-    // }),
     map(pages => pages.find(p => p.id === this.witnessItem.currentPageId)),
   );
+
+  private readonly appExponentsArray = Array.from(this.structureParser.appExponents.values());
 
   constructor(
     private evtModelService: EVTModelService,
@@ -49,10 +48,10 @@ export class WitnessPanelComponent implements OnInit {
     this.witnessPanelService.anchestorsIds = this.witnessItem.anchestorsIds;
   }
 
-  private processSource(source: HTMLElement): Page[] {
-    const originalPages = this.structureParser.parsePages(source).pages;
+  private processSource(imagesSource: ImagesSource, source: HTMLElement): Page[] {
+    const originalPages = this.structureParser.parsePages(imagesSource, source).pages;
     const lacunaPairs = this.structureParser.groupedByWitLacunas.get(this.witnessItem.id);
-    const separator = AppConfig.evtSettings.edition.editionStructureSeparator;
+    const separator = AppConfig.evtSettings.edition.structureSeparators;
     const el = document.createElement('w');
     el.innerText = ' ';
     const emptyElement = this.genericParseService.parse(el);
@@ -91,65 +90,90 @@ export class WitnessPanelComponent implements OnInit {
 
     const appsData: AppData[] = this.structureParser.allApps
       .map(app => {
-        const parsedApp = this.appParser.parse(app) as ApparatusEntry;
-        const from = Attribute.createFromOrDefault(app);
-        if (!from) {
-          console.error("App has no from attribute, is it inline?", app);
-          return { app: parsedApp, from: null, to: null }
+        const parsedApp = this.appParser.parse(app) as ApparatusEntry; AppParser
+        const currentAppExponent = this.getExponent(parsedApp);
+        parsedApp.exponent = currentAppExponent?.label;
+
+        const isDepa = parsedApp.isDepa();
+        if (!isDepa) {
+          return { app: parsedApp, from: null, to: null };
         }
 
+        const from = Attribute.createFromOrDefault(app);
+        if (!from) {
+          console.error("From attribute is required", app);
+          throw new Error("From attribute is required");
+        }
         const to = Attribute.createToOrDefault(app);
         return { app: parsedApp, from, to };
       });
 
-    const appExponentsArray = Array.from(this.structureParser.appExponents.values());
     for (const page of originalPages) {
-      for (let i = 0; i < page.parsedContent.length; i++) {
-        const element = page.parsedContent[i] as GenericElement;
-
-        const foundAppDatas = appsData.filter(appData => {
-          const result = this.filterApparatusEntries(appData, element);
-          return result;
-        });
-
-        for (const { app, from, to, } of foundAppDatas) {
-          const fromResult = this.findElementIndexOrDefault(page.parsedContent as GenericElement[], from.valueWithoutRef);
-          if (!fromResult) continue;
-
-          const currentAppExponent = appExponentsArray.find(exponent => {
-            const areEqual = exponent.appEntry.originalEncoding.outerHTML === app.originalEncoding.outerHTML;
-            return areEqual;
-          })
-          app.exponent = currentAppExponent?.label;
-
-          const { index: fromIndex, parent: fromParent } = fromResult;
-
-          let toResult = { index: fromIndex, parent: fromParent };
-          if (to) {
-            const foundElement = this.findElementIndexOrDefault(page.parsedContent as GenericElement[], to.valueWithoutRef);
-            toResult = foundElement ?? toResult;
-          }
-
-          const { index: toIndex, parent: toParent } = toResult;
-          if (fromParent === toParent) {
-            const deleteCount = Math.abs(toIndex - fromIndex) + 1;
-            fromParent.splice(fromIndex, deleteCount, app);
-          } else {
-            console.error("from and to elements are in different parent nodes. Cannot splice.");
-          }
-        }
-      }
+      this.processContent(page.parsedContent as GenericElement[], appsData);
     }
 
     return originalPages;
   }
 
-  private filterApparatusEntries(appData: AppData, element: GenericElement) {
+  private processContent(parsedContent: GenericElement[], appsData: AppData[]) {
+    for (let i = 0; i < parsedContent.length; i++) {
+      const element = parsedContent[i] as GenericElement;
+      if (Array.isArray(element.content)) {
+        this.processContent(element.content as GenericElement[], appsData);
+      }
+
+      if (element instanceof ApparatusEntry) {
+        const currentAppExponent = this.getExponent(element)
+        element.exponent = currentAppExponent?.label;
+      }
+
+      const depaApps = appsData.filter(appData => {
+        const result = this.doesDepaAppMatchElement(appData, element);
+        return result;
+      });
+
+      for (const { app, from, to, } of depaApps) {
+        const fromResult = this.findElementIndexOrDefault(parsedContent, from.valueWithoutRef);
+        if (!fromResult) continue;
+
+        const { index: fromIndex, parent: fromParent } = fromResult;
+
+        let toResult = { index: fromIndex, parent: fromParent };
+        if (to) {
+          const foundElement = this.findElementIndexOrDefault(parsedContent, to.valueWithoutRef);
+          toResult = foundElement ?? toResult;
+        }
+
+        const { index: toIndex, parent: toParent } = toResult;
+        if (fromParent === toParent) {
+          const deleteCount = Math.abs(toIndex - fromIndex) + 1;
+          fromParent.splice(fromIndex, deleteCount, app);
+        } else {
+          console.error("from and to elements are in different parent nodes. Cannot splice.");
+        }
+      }
+    }
+  }
+
+  private getExponent(element: ApparatusEntry) {
+    return this.appExponentsArray.find(exponent => {
+      const areEqual = exponent.appEntry.originalEncoding.outerHTML === element.originalEncoding.outerHTML;
+      return areEqual;
+    });
+  }
+
+  /**
+   * Check if the app matches the element, return false for inline apps.
+   * @param appData 
+   * @param element 
+   * @returns 
+   */
+  private doesDepaAppMatchElement(appData: AppData, element: GenericElement) {
     const { app, from, to } = appData;
     const hasAnyReading = app.orderedReadings
       .some(r => r.witIDs.includes(this.witnessItem.id) || r.witIDs.some(x => this.witnessItem.anchestorsIds.includes(x)));
 
-    if (!hasAnyReading) return false;
+    if (!hasAnyReading || !app.isDepa()) return false;
 
     const elementId = element.attributes['id'];
     if (elementId) {

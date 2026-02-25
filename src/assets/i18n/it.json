@@ -234,5 +234,6 @@
     "hidePanel": "Nascondi questo pannello",
     "openApparatusTab": "Apri il tab degli apparati",
     "openPinBoard": "Apri la bacheca degli appunti"
-  }
+  },
+  "noNamedEntities": "Non ci sono named entities da mostrare"
 }

@@ -61,3 +61,24 @@ evt-reading evt-note,
 evt-addition evt-note {
   display: none;
 }
+
+.flash-highlight {
+  animation: flash-bg 1s ease-in-out 3, hold-yellow 0.4s ease forwards;
+  animation-delay: 0s, 3s; /* second animation starts after the 3 flashes */
+}
+
+@keyframes flash-bg {
+  0%   { background-color: transparent; }
+  50%  { background-color: #ffeb3b80; }
+  100% { background-color: transparent; }
+}
+
+@keyframes hold-yellow {
+  from { background-color: transparent; }
+  to   { background-color: #ffeb3b80; }
+}
+
+.clickable:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

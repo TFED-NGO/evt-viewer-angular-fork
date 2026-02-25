@@ -1,7 +1,7 @@
 {
-  "editionTitle": "My Digital Edition",
+  "editionTitle": "Progetto Saba1919",
   "badge": "beta",
-  "editionHome": "evt.labcd.unipi.it/",
+  "editionHome": "",
   "availableEditionLevels": [
     {
       "id": "diplomatic",
@@ -28,7 +28,7 @@
       "hidden": true
     }
   ],
-  "downloadableXMLSource": true,
+  "downloadableXMLSource": false,
   "namedEntitiesLists": {
     "persons": {
 			"defaultLabel": "Persons",
@@ -65,15 +65,9 @@
 			"defaultLabel": "Entries",
 			"listSelector": "div[type='glossary']",
 			"namedEntityType": "entry"
-		},
-    "objects": {
-      "enable": true,
-      "defaultLabel": "Objects",
-      "listSelector": "listObject",
-      "namedEntityType": "object"
-    }
+		}
   },
-  "showLists": true,
+  "showEntitiesLists": true,
   "entitiesSelectItems": [
     {
       "label": "Named Entities",
@@ -131,10 +125,10 @@
   "notSignificantVariants": [
     "type=orthographic"
   ],
-  "defaultEdition": "critical",
-  "defaultViewMode": "collation",
+  "defaultEdition": "changesView",
+  "defaultViewMode": "documentalMixed",
   "proseVersesToggler": true,
-  "defaultTextFlow": "prose",
+  "defaultTextFlow": "verses",
   "verseNumberPrinter": 5,
   "readingColorLight": "rgb(255 241 208)",
   "readingColorDark": "rgb(101, 138, 255)",
@@ -145,7 +139,7 @@
       "source"
     ]
   },
-  "biblView": {
+  "biblTab": {
     "propsToShow": [
       "author",
       "title",
@@ -160,8 +154,7 @@
     "showEmptyValues": false,
     "inline": true,
     "commaSeparated": true,
-    "showMainElemTextContent": true,
-    "defaultImageZoomLevel": 0.8
+    "showMainElemTextContent": true
   },
   "analogueMarkers": [
     "ParallelPassage",
@@ -174,10 +167,10 @@
   ],
   "showSubstitutionMarker": true,
   "showSeparatorBetweenChanges": true,
-  "startingFromDefinitiveLayer": true,
+  "startingFromDefinitiveLayer": false,
   "showChangeLayerMarkerInText": true,
   "changeSequenceView": {
-    "showVarSeqAttr": false,
+    "showVarSeqAttr": true,
     "showSeqAttr": false,
     "layerColors": {
       "strato-0": "#d4a03b",
@@ -191,7 +184,6 @@
   "defaultImageZoomLevel": 0.8,
   "maxImageZoomLevel": 2,
   "multiPageEngineForCriticalEdition": false,
-  "editionStructureSeparator": "pb,seg",
-  "exponentEnumerateBy": "seg",
-  "transformWitnessId": true
+  "syncZonesHighlightButton": false,
+  "structureSeparators": ["pb"]
 }

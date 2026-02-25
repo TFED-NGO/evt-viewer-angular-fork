@@ -7,7 +7,7 @@ import { HoverService } from 'src/app/services/hover.service';
 import { isElementBetween } from 'src/app/utils/dom-utils';
 import { EditionlevelSusceptible } from '../../components-mixins';
 
-export interface ApparatusEntryExponentComponent extends EditionlevelSusceptible {}
+export interface ApparatusEntryExponentComponent extends EditionlevelSusceptible { }
 
 @register(ApparatusEntryExponent)
 @Component({
@@ -18,7 +18,7 @@ export interface ApparatusEntryExponentComponent extends EditionlevelSusceptible
 
 export class ApparatusEntryExponentComponent implements OnDestroy {
   @Input() data: ApparatusEntryExponent;
-  @ViewChild('evtNoteButton', { read: ElementRef }) evtNoteButton!: ElementRef;
+  @ViewChild('evtExponent', { read: ElementRef }) evtExponent!: ElementRef;
 
   noteType: string = 'critical'; // Temp, it's probably correct but needs confirmation
   apparatusDetailsShown$ = combineLatest([
@@ -45,10 +45,13 @@ export class ApparatusEntryExponentComponent implements OnDestroy {
     }),
     tap(isSelected => {
       if (isSelected) {
-        this.evtNoteButton?.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const el = this.evtExponent?.nativeElement;
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          el.classList.toggle("flash-highlight");
+        }, 1000);
       }
-    })
-  );
+    }));
 
   isHighlighted$ = combineLatest([
     this.updateHovered$,

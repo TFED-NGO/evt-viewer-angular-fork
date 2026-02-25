@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
 import { combineLatestWith, distinctUntilChanged, filter, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { Page, Point, Surface, ViewerDataType } from '../../models/evt-models';
-import { OsdTileSource, ViewerDataInput, ViewerSource } from '../../models/evt-polymorphic-models';
+import { OsdTileSource, ViewerDataInput } from '../../models/evt-polymorphic-models';
 import { uuid } from '../../utils/js-utils';
 import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
 import { EVTModelService } from '../../services/evt-model.service';
@@ -79,17 +79,12 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
   get options() { return this._options; }
   optionsChange = new BehaviorSubject({});
 
-  private _viewerDataType: string; // tslint:disable-line: variable-name
+  private viewerDataType: ViewerDataType;
   public _viewerSource: ViewerDataInput; // tslint:disable-line: variable-name
   @Input() set viewerData(v: ViewerDataType) {
-    this._viewerDataType = v.type;
-    try {
-
-      this._viewerSource = ViewerSource.getSource(v, v.type);
-      this.sourceChange.next(this._viewerSource);
-    } catch {
-
-    }
+    this.viewerDataType = v;
+    this._viewerSource = v.source.getSource(v);
+    this.sourceChange.next(this._viewerSource);
   }
   sourceChange = new BehaviorSubject<ViewerDataInput>([]);
 
@@ -161,7 +156,7 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
     this.div.nativeElement.id = this.viewerId;
 
     try {
-      this.tileSources = ViewerSource.getTileSource(this.sourceChange, this._viewerDataType, this.http);
+      this.tileSources = this.viewerDataType.source.getTileSource(this.sourceChange, this.http);
     } catch {
       this.tileSources = of([]);
     }

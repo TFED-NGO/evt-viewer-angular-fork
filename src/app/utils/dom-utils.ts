@@ -82,7 +82,7 @@ export function isNodeNestedInElem(
  * @returns calculated xpath of the given element
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function xpath(el: any): string { 
+export function xpath(el: any): string {
   try {
     if (typeof el === 'string') {
       // document.evaluate(xpathExpression, contextNode, namespaceResolver, resultType, result );
@@ -241,7 +241,7 @@ export function updateCSS(rules: Array<[string, string]>) {
 export function reduceCssUnit(value: string, multiplier: number): string {
   const match = value.match(/^(\d*\.?\d+)([a-zA-Z%]+)$/);
   if (!match) {
-      throw new Error("Invalid css unit provided");
+    throw new Error("Invalid css unit provided");
   }
   const [, number, unit] = match;
   const numberFloat = parseFloat(number);
@@ -457,4 +457,11 @@ export function getXPath(el: any): string {
 
   // // Return selector
   // return selector;
+}
+
+export function findBy(elements: HTMLElement[], selector: string) {
+  const el = document.createElement("div");
+  el.append(...elements);
+  const result = el.querySelector(selector);
+  return result;
 }

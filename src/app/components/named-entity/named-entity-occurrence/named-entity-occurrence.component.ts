@@ -3,6 +3,7 @@ import { Component, Input } from '@angular/core';
 import { NamedEntityOccurrence, NamedEntityOccurrenceRef } from '../../../models/evt-models';
 import { EVTStatusService } from '../../../services/evt-status.service';
 import { EditionInfo } from 'src/app/services/named-entities.service';
+import { EVTModelService } from 'src/app/services/evt-model.service';
 
 @Component({
   selector: 'evt-named-entity-occurrence',
@@ -28,12 +29,14 @@ export class NamedEntityOccurrenceComponent {
 
   constructor(
     private evtStatusService: EVTStatusService,
+    private evtModelService: EVTModelService,
   ) {
   }
 
   goToOccurrenceRef(ref: NamedEntityOccurrenceRef) {
     this.evtStatusService.updateDocument$.next(ref.docId);
     this.evtStatusService.currentNamedEntityId$.next(this.entityId);
+    this.evtModelService.updateEditionId$.next(this.editionInfo.editionId);
     this.evtStatusService.updatePageId$.next(this.occurrence.pageId);
   }
 
