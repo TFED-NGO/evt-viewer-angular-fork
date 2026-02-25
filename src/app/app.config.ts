@@ -7,13 +7,13 @@ import { EntitiesSelectItemGroup } from './components/entities-select/entities-s
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { EditorialConventionLayout } from './models/evt-models';
 import { reduceCssUnit, updateCSS } from './utils/dom-utils';
+import * as yaml from 'js-yaml';
+import { isAbsoluteUrl } from './utils/js-utils';
 
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
-    private readonly uiConfigUrl = 'assets/config/ui_config.json';
-    private readonly defaultFileConfigUrl = 'assets/config/file_config.json';
-    private readonly editionConfigUrl = 'assets/config/edition_config.json';
+    private readonly defaultFileConfigUrl = 'assets/config/config.yaml';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
     private readonly hostConfig$: Observable<HostConfig> = this.http.get<HostConfig>("assets/config/host_config.json");
     public readonly fileConfigUrl$: Observable<string> = this.hostConfig$.pipe(
@@ -40,35 +40,71 @@ export class AppConfig {
     load() {
         return new Promise<void>((resolve) => {
             this.fileConfigUrl$.pipe(
-                switchMap(fileConfigUrl => this.http.get<FileConfig>(fileConfigUrl).pipe(
+                switchMap(mainConfigUrl => this.http.get(mainConfigUrl, { responseType: 'text' }).pipe(
+                    map((yamlText: string) => {
+                        try {
+                            const parsed = yaml.load(yamlText) as EVTConfigRaw;
+                            return parsed;
+                        } catch (e) {
+                            console.error('Error parsing YAML config file:', e);
+                            throw e;
+                        }
+                    }),
                     catchError((err) => {
                         alert("Config file not found \n" + err.message);
                         return throwError(() => err);
                     }),
-                    switchMap((files: FileConfig) => forkJoin([
-                        this.http.get<UiConfig>(files.configurationUrls?.ui ?? this.uiConfigUrl),
-                        this.http.get<EditionConfig>(files.configurationUrls?.edition ?? this.editionConfigUrl),
-                        this.http.get<EditorialConventionsConfig>(
-                            files.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl),
-                    ]).pipe(
-                        map(([ui, edition, editorialConventions]) => {
-                            console.log(ui, edition, files);
-                            this.updateStyleFromConfig(edition, ui);
-                            // Handle default values => TODO: Decide how to handle defaults!!
-                            if (ui.defaultLocalization) {
-                                if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
-                                    this.translate.use(ui.defaultLocalization);
-                                } else {
-                                    const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
-                                    if (firstAvailableLang) {
-                                        this.translate.use(firstAvailableLang.code);
-                                    }
+                    switchMap((configFile) => {
+                        const { edition, ui, editionTextSourcesConfig } = configFile;
+
+                        this.updateStyleFromConfig(edition, ui);
+                        // Handle default values => TODO: Decide how to handle defaults!!
+                        if (ui.defaultLocalization) {
+                            if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
+                                this.translate.use(ui.defaultLocalization);
+                            } else {
+                                const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
+                                if (firstAvailableLang) {
+                                    this.translate.use(firstAvailableLang.code);
                                 }
                             }
+                        }
 
-                            return { ui, edition, files, editorialConventions };
-                        }),
-                    )))
+                        const sourcesRequests = editionTextSourcesConfig.map(sourceConfig =>
+                            this.http.get<EditorialConventionsConfig>(
+                                sourceConfig.editorialConventionsUrl ?? this.editorialConventionsConfigUrl
+                            ).pipe(
+                                map(editorialConventionsConfig => {
+                                    let imagesSource: ImagesSource = { kind: 'null' };
+                                    if (sourceConfig.imagesSources) {
+                                        const imagesSources = sourceConfig.imagesSources.filter(x => x.kind !== 'null' && x.enable);
+                                        if (imagesSources.length > 1) {
+                                            console.error('Only one image source config should be enabled per edition', sourceConfig);
+                                            throw new Error();
+                                        }
+
+                                        imagesSource = imagesSources[0];
+                                        if (imagesSource.kind === 'ExternalXml' || imagesSource.kind === 'IiifManifest')
+                                            if (!isAbsoluteUrl(imagesSource.url))
+                                                throw new Error(`Url is not absolute: ${imagesSource.url}`);
+                                    }
+
+                                    return {
+                                        ...sourceConfig,
+                                        editorialConventionsConfig,
+                                        imagesSource: imagesSource
+                                    }
+                                })
+                            ));
+                        return forkJoin(sourcesRequests).pipe(
+                            map((editionTextSources: EditionTextSource[]): EVTConfig => ({
+                                edition,
+                                ui,
+                                editionTextSources,
+                            }))
+                        );
+
+                    }))
                 ),
             ).subscribe((evtConfig) => {
                 AppConfig.evtSettings = evtConfig;
@@ -118,21 +154,40 @@ export class AppConfig {
 
     static getNamedEntityType(tagName: string): string {
         const lists = AppConfig.getListsToParseTagNames();
-        const list = lists.find(list => 
-            list.listSelector.toLowerCase().includes(tagName.toLowerCase()) 
+        const list = lists.find(list =>
+            list.listSelector.toLowerCase().includes(tagName.toLowerCase())
             || list.namedEntityType.toLowerCase() === tagName.toLowerCase());
         return list.namedEntityType;
     }
 }
 
-export interface EVTConfig {
-    ui: UiConfig;
+export type EVTConfig = Omit<EVTConfigRaw, 'editionTextSourcesConfig'> & {
+    editionTextSources: EditionTextSource[];
+}
+
+export type EditionTextSource = Omit<EditionTextSourceConfigRaw, "editorialConventionsUrl" | "imagesSources"> & {
+    editorialConventionsConfig: EditorialConventionsConfig;
+    imagesSource: ImagesSource;
+}
+
+// Raw types are for parsing, but then the app doesn't need all properties
+type EVTConfigRaw = {
+    editionTextSourcesConfig: EditionTextSourceConfigRaw[];
     edition: EditionConfig;
-    files: FileConfig;
-    editorialConventions: EditorialConventionsConfig;
+    ui: UiConfig;
+}
+
+type EditionTextSourceConfigRaw = {
+    url: string;
+    enable: boolean;
+    friendlyName?: string;
+    glossaryUrl?: string;
+    imagesSources?: ImagesSource[];
+    editorialConventionsUrl: string;
 }
 
 export interface UiConfig {
+    defaultViewMode: ViewModeId;
     availableViewModes: ViewMode[];
     localization: boolean;
     defaultLocalization: string;
@@ -140,6 +195,7 @@ export interface UiConfig {
         code: string;
         label: string;
         enable: boolean;
+        iconUrl: string;
     }>;
     enableNavBar: boolean;
     initNavBarOpened: boolean;
@@ -188,9 +244,11 @@ export interface EditionConfig {
     editionTitle: string;
     badge: string;
     editionHome: string;
-    showLists: boolean;
-    downloadableXMLSource: boolean;
+    logoUrl?: string;
+    defaultEditionLevel: EditionLevelType;
     availableEditionLevels: EditionLevel[];
+    downloadableXMLSource: boolean;
+    showEntitiesLists: boolean;
     namedEntitiesLists: Partial<{
         persons: NamedEntitiesListConfig;
         places: NamedEntitiesListConfig;
@@ -200,11 +258,9 @@ export interface EditionConfig {
         entries: NamedEntitiesListConfig;
         objects: NamedEntitiesListConfig;
     }>;
-    namedEntitiesOccurrenceSelector: string;
+    entitiesOccurrenceSelectors: string[];
     entitiesSelectItems: EntitiesSelectItemGroup[];
     notSignificantVariants: string[];
-    defaultEdition: EditionLevelType;
-    defaultViewMode: ViewModeId;
     proseVersesToggler: boolean;
     defaultTextFlow: TextFlow;
     verseNumberPrinter: number;
@@ -214,7 +270,7 @@ export interface EditionConfig {
         biblAttributeToMatch: string;
         elementAttributesToMatch: string[];
     }>;
-    biblView: Partial<{
+    biblTab: Partial<{
         propsToShow: string[];
         showAttrNames: boolean;
         showEmptyValues: boolean;
@@ -236,47 +292,52 @@ export interface EditionConfig {
     maxImageZoomLevel: number;
     showSubstitutionMarker: boolean;
     multiPageEngineForCriticalEdition: boolean;
-    editionStructureSeparator: string;
+    structureSeparators: string[];
     exponentEnumerateBy: string | 'global';
 }
-
-export type EditionImagesSources = 'manifest' | 'graphics';
 
 export interface HostConfig {
     allowedEVTAASConfigBaseUrls: string[];
 }
 
-export interface FileConfig {
-    editionUrls: EditionUrl[];
-    editionImagesSource: {
-        [T in EditionImagesSources]: EditionImagesConfig;
-    };
-    logoUrl?: string;
-    imagesFolderUrls?: {
-        single: string;
-        double: string;
-    };
-    configurationUrls?: {
-        edition: string;
-        ui: string;
-        editorialConventions: string;
-    };
-}
-
-export interface EditionUrl {
-    value: string;
-    enable: boolean;
-    friendlyName: string;
-    glossaryUrl: string;
-}
-
-export interface EditionImagesConfig {
-    value: string;
+export type IiifManifestSource = {
+    kind: "IiifManifest"
+    url: string;
     enable: boolean;
 }
+
+export type ExternalXmlSource = {
+    kind: "ExternalXml",
+    url: string;
+    enable: boolean;
+    imagesFolderUrls: ImageFolderUrls
+}
+
+export type EditionXmlSource = {
+    kind: "EditionXml",
+    enable: boolean;
+    imagesFolderUrls: ImageFolderUrls;
+}
+
+export type ImageFolderUrls = {
+    single: string;
+    double: string;
+}
+
+export type NullSource = {
+    kind: 'null';
+}
+
+export class ImagesSourceNotSupported extends Error {
+    constructor(imagesSource: ImagesSource) {
+        super(`Images source is not supported: ${imagesSource.kind}`);
+    }
+}
+
+export type ImagesSource = IiifManifestSource | ExternalXmlSource | EditionXmlSource | NullSource;
 
 export interface NamedEntitiesListConfig {
-    defaultLabel: string;
+    label: string;
     enable: boolean;
     listSelector: string;
     namedEntityType: string;

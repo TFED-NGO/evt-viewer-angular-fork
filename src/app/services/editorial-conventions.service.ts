@@ -26,7 +26,7 @@ export class EditorialConventionsService {
   }
 
   private getExternalConfigsOrEmpty(): EditorialConvention[] {
-    const customs = AppConfig.evtSettings.editorialConventions;
+    const customs = AppConfig.evtSettings.editionTextSources.map(x => x.editorialConventionsConfig);
     if (!customs) return [];
 
     return Object.keys(customs).map((key) => ({

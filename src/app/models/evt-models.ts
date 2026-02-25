@@ -3,6 +3,7 @@ import { EditionLevelType, EditorialConventionAttributes } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
 import { ISDEPA_ATTRIBUTE } from './constants';
+import { ViewerSource } from './evt-polymorphic-models';
 
 export interface EditorialConvention {
     element: string;
@@ -22,6 +23,14 @@ export interface HighlightData {
     highlightColor: string;
 }
 
+/* TODO: semantic and layout attributes should not be in the same property, consider changing to this
+    semanticAttributes?: Attributes;  // TEI/XML attributes
+    layout?: {
+        class?: string;
+        style?: string;
+        id?: string;
+    };
+*/
 export class GenericElement {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     type: Type<any>;
@@ -450,6 +459,11 @@ export class Paragraph extends GenericElement {
     n: string;
     source: QuoteEntry;
     analogue: Analogue;
+}
+
+export class Cb extends GenericElement {
+    id: string;
+    n?: string;
 }
 
 export class Lb extends GenericElement {
@@ -1545,7 +1559,7 @@ export interface XMLImagesValues {
 }
 
 export interface ViewerDataType {
-    type: string;
+    source: ViewerSource;
     value: ViewerDataValue;
 }
 

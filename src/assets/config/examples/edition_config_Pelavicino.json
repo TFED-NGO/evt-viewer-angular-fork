@@ -1,12 +1,12 @@
 {
-	"editionTitle": "The Dream of the Rood",
+	"editionTitle": "Codice Pelavicino Digitale",
 	"badge": "beta",
-	"editionHome": "http://vbd.humnet.unipi.it/beta2/",
+	"editionHome": "http://pelavicino.labcd.unipi.it/",
 	"availableEditionLevels": [
 		{
 			"id": "diplomatic",
 			"label": "diplomatic",
-			"enable": true,
+			"enable": false,
 			"hidden": false
 		},
 		{
@@ -18,13 +18,13 @@
 		{
 			"id": "critical",
 			"label": "critical",
-			"enable": true,
+			"enable": false,
 			"hidden": false
 		},
 		{
 			"id": "changesView",
 			"label": "changes",
-			"enable": true,
+			"enable": false,
 			"hidden": true
 		}
 	],
@@ -60,6 +60,12 @@
 			"listSelector": "listEvent",
 			"namedEntityType": "event"
 		},
+		"objects": {
+			"enable": true,
+			"defaultLabel": "Objects",
+			"listSelector": "listObject",
+			"namedEntityType": "object"
+		},
 		"entries": {
 			"enable": true,
 			"defaultLabel": "Entries",
@@ -67,7 +73,15 @@
 			"namedEntityType": "entry"
 		}
 	},
-	"showLists": true,
+	"entitiesOccurrenceSelector": [
+		"persName[ref]",
+		"placeName[ref]",
+		"orgName[ref]",
+		"geogName[ref]",
+		"event[ref]",
+		"term[ref]"
+	],
+	"showEntitiesLists": true,
 	"entitiesSelectItems": [
 		{
 			"label": "Named Entities",
@@ -97,7 +111,7 @@
 					"enable": true
 				}
 			],
-			"enable": false
+			"enable": true
 		},
 		{
 			"label": "Other",
@@ -119,15 +133,15 @@
 					"enable": true
 				}
 			],
-			"enable": false
+			"enable": true
 		}
 	],
 	"notSignificantVariants": [
 		"type=orthographic"
 	],
-	"defaultEdition": "diplomatic",
+	"defaultEdition": "interpretative",
 	"defaultViewMode": "imageText",
-	"proseVersesToggler": true,
+	"proseVersesToggler": false,
 	"defaultTextFlow": "prose",
 	"verseNumberPrinter": 5,
 	"readingColorLight": "rgb(208, 220, 255)",
@@ -139,7 +153,7 @@
 			"source"
 		]
 	},
-	"biblView": {
+	"biblTab": {
 		"propsToShow": [
 			"author",
 			"title",
@@ -189,5 +203,5 @@
 	"defaultImageZoomLevel": 0.8,
 	"maxImageZoomLevel": 2,
 	"multiPageEngineForCriticalEdition": false,
-	"editionStructureSeparator": "pb, div[type='chapter']"
+	"structureSeparators": ["pb", "div[type='chapter']"]
 }

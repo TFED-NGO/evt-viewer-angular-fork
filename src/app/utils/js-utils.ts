@@ -97,9 +97,14 @@ export function snakeToCamelCased(str) {
     return str.replace(/-([a-z])/g, (g) => g[1].toUpperCase());
 }
 
-export function isUrl(path: string) {
-    return /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/.test(path);
- }
+export function isAbsoluteUrl(path: string): boolean {
+  try {
+    new URL(path);
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Insert a separator every other element so the resulting array 
@@ -115,4 +120,14 @@ export function interleave<T>(items: T[], separator: T): T[] {
         if (i < items.length - 1) result.push(separator);
     }
     return result;
+}
+
+export function distinctBy<T, K>(array: T[], keySelector: (item: T) => K): T[] {
+    const seen = new Set<K>();
+    return array.filter(item => {
+        const key = keySelector(item);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    })
 }

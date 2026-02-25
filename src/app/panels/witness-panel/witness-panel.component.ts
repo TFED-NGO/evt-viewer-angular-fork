@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { map, Observable, shareReplay } from 'rxjs';
+import { map, Observable, shareReplay, withLatestFrom } from 'rxjs';
 import { ApparatusEntry, Attribute, GenericElement, Page } from 'src/app/models/evt-models';
 import { EVTModelService } from 'src/app/services/evt-model.service';
 import { StructureXmlParserService } from 'src/app/services/xml-parsers/structure-xml-parser.service';
@@ -7,7 +7,7 @@ import { WitnessItem } from 'src/app/view-modes/collation/collation.component';
 import { WitnessPanelService } from './witness-panel.service';
 import { AppParser } from 'src/app/services/xml-parsers/app-parser';
 import { isElementBetween } from 'src/app/utils/dom-utils';
-import { AppConfig } from 'src/app/app.config';
+import { AppConfig, ImagesSource } from 'src/app/app.config';
 import { GenericParserService } from 'src/app/services/xml-parsers/generic-parser.service';
 
 @Component({
@@ -24,7 +24,8 @@ export class WitnessPanelComponent implements OnInit {
   private appParser = AppParser.create();
 
   pages$: Observable<Page[]> = this.evtModelService.currentEditionData$.pipe(
-    map(source => this.processSource(source)),
+    withLatestFrom(this.evtModelService.currentEdition$),
+    map(([source, edition]) => this.processSource(edition.editionSource.imagesSource, source)),
     shareReplay(1)
   );
 
@@ -47,10 +48,10 @@ export class WitnessPanelComponent implements OnInit {
     this.witnessPanelService.anchestorsIds = this.witnessItem.anchestorsIds;
   }
 
-  private processSource(source: HTMLElement): Page[] {
-    const originalPages = this.structureParser.parsePages(source).pages;
+  private processSource(imagesSource: ImagesSource, source: HTMLElement): Page[] {
+    const originalPages = this.structureParser.parsePages(imagesSource, source).pages;
     const lacunaPairs = this.structureParser.groupedByWitLacunas.get(this.witnessItem.id);
-    const separator = AppConfig.evtSettings.edition.editionStructureSeparator;
+    const separator = AppConfig.evtSettings.edition.structureSeparators;
     const el = document.createElement('w');
     el.innerText = ' ';
     const emptyElement = this.genericParseService.parse(el);

@@ -19,7 +19,7 @@ export class EVTStatusService {
     public availableEditionLevels = AppConfig.evtSettings.edition.availableEditionLevels?.filter(((e) => e.enable)) || [];
 
     get defaultEditionLevel(): EditionLevel {
-        const defaultConfig = AppConfig.evtSettings.edition.defaultEdition;
+        const defaultConfig = AppConfig.evtSettings.edition.defaultEditionLevel;
         const availableEditionLevels = AppConfig.evtSettings.edition.availableEditionLevels?.filter(((e) => e.enable)) ?? [];
         return defaultConfig ? availableEditionLevels.find((e) => e.id === defaultConfig)
             : availableEditionLevels[0];
@@ -33,7 +33,7 @@ export class EVTStatusService {
         return AppConfig.evtSettings.ui.availableViewModes?.filter(((e) => e.enable)) ?? [];
     }
     get defaultViewMode(): ViewMode {
-        const defaultConfig = AppConfig.evtSettings.edition.defaultViewMode;
+        const defaultConfig = AppConfig.evtSettings.ui.defaultViewMode;
         let defaultViewMode = this.availableViewModes[0];
         if (defaultConfig) {
             defaultViewMode = this.availableViewModes.find((e) => e.id === defaultConfig) ?? defaultViewMode;

@@ -2,7 +2,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
-import { Observable, of } from 'rxjs';
+import { map, Observable, of } from 'rxjs';
 
 import { AppConfig } from '../app.config';
 import { ProjectInfoComponent } from '../components/project-info/project-info.component';
@@ -12,6 +12,7 @@ import { ShortcutsComponent } from '../shortcuts/shortcuts.component';
 import { EvtIconInfo } from '../ui-components/icon/icon.component';
 import { ModalComponent } from '../ui-components/modal/modal.component';
 import { ModalService } from '../ui-components/modal/modal.service';
+import { EVTModelService } from '../services/evt-model.service';
 
 @Component({
   selector: 'evt-main-menu',
@@ -20,18 +21,19 @@ import { ModalService } from '../ui-components/modal/modal.service';
 })
 export class MainMenuComponent {
   @Output() itemClicked = new EventEmitter<string>();
-  public readonly dynamicItems: MainMenuItem[];
-  public readonly uiConfig = AppConfig.evtSettings.ui;
-  public readonly fileConfig = AppConfig.evtSettings.files;
-  public readonly editionConfig = AppConfig.evtSettings.edition;
 
+  public readonly dynamicItems: MainMenuItem[] = this.getDynamicItems();
+  public readonly uiConfig = AppConfig.evtSettings.ui;
+  public readonly editionTextSources = AppConfig.evtSettings.editionTextSources;
+  public readonly editionConfig = AppConfig.evtSettings.edition;
+  public readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
   private isOpened = true;
-  private readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
 
   constructor(
     public themes: ThemesService,
     public translate: TranslateService,
     private modalService: ModalService,
+    private evtModelService: EVTModelService,
   ) {
     this.dynamicItems = this.getDynamicItems();
   }
@@ -63,7 +65,9 @@ export class MainMenuComponent {
           additionalClasses: 'icon',
         },
         label: 'openLists',
-        enabled$: of(this.editionConfig.showLists),
+        enabled$: this.evtModelService.namedEntities$.pipe(
+          map((ne) => this.editionConfig.showEntitiesLists && ne.all.entities.length > 0),
+        ),
         callback: () => this.openGlobalDialogLists(),
       },
       {
@@ -115,11 +119,7 @@ export class MainMenuComponent {
   private downloadXML() {
     // TODO downloadXML
     this.itemClicked.emit('downloadXML');
-    if (this.fileConfig && this.fileConfig.editionUrls) {
-      this.fileConfig.editionUrls.forEach((url) => window.open(url.value, '_blank'));
-    } else {
-      alert('Loading data... \nPlease try again later.');
-    }
+      this.editionTextSources.forEach((s) => window.open(s.url, '_blank'));
   }
 
   openShortCuts() {
