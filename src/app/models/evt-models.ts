@@ -2,6 +2,8 @@ import { Type } from '@angular/core';
 import { EditionLevelType, EditorialConventionAttributes } from '../app.config';
 import { ParseResult } from '../services/xml-parsers/parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from '../extensions/apparatus.extensions';
+import { ISDEPA_ATTRIBUTE } from './constants';
+import { ViewerSource } from './evt-polymorphic-models';
 
 export interface EditorialConvention {
     element: string;
@@ -112,8 +114,8 @@ export interface NamedEntities {
         entities: NamedEntity[];
     };
     objects: {
-       lists: NamedEntitiesList[];
-       entities: NamedEntity[];
+        lists: NamedEntitiesList[];
+        entities: NamedEntity[];
     };
     entries: {
         lists: NamedEntitiesList[];
@@ -253,6 +255,11 @@ export class ApparatusEntry extends GenericElement {
         const isWitnessExcluded = this.readings.some(x => x.excludedWitIDs.includes(witnessId));
         return isWitnessExcluded;
     }
+
+    isDepa() {
+        const isDepaValue = this.attributes[ISDEPA_ATTRIBUTE];
+        return isDepaValue === 'true';
+    }
 }
 
 export class AdditionalAttributes {
@@ -362,7 +369,52 @@ export class Reading extends GenericElement {
     significant: boolean;
     varSeq?: number;
     notes: Note[];
-    lacunas: Lacunas
+    lacunas: Lacunas;
+    correspList: CorrespList;
+}
+
+export class CorrespList {
+    corresps: Corresp[] = [];
+
+    private constructor(public value: string) {
+        if(!value) return;
+        const correspValues = value.split(" ");
+        for (const correspValue of correspValues) {
+            const corresp = Corresp.createOrDefault(correspValue);
+            if (corresp) this.corresps.push(corresp);
+        }
+    }
+
+    static create(value: string): CorrespList {
+        return new CorrespList(value);
+    }
+}
+
+export class Corresp {
+    editionId: string;
+    correspIds: string[] = [];
+
+    private constructor(public value: string) {
+        const parts = value.split(':');
+        this.editionId = parts[0];
+
+        const lastPart = parts[1];
+        const isRange = lastPart.toLowerCase().startsWith("range");
+        if (isRange) {
+            const valueBetweenParenthesis = lastPart.match(/\(([^)]*)\)/)[1];
+            const values = valueBetweenParenthesis.split(",");
+            this.correspIds.push(...values);
+        }
+        else {
+            this.correspIds.push(lastPart);
+        }
+        // cv188:range(CV188_w_002-025,CV188_w_002-026) ce34-5:range(CE34-5_w_002-025,CE34-5_w_002-026)
+        // cv188:CV188_w_002-025 cv188:CV188_w_002-026
+    }
+
+    static createOrDefault(value: string): Corresp {
+        return value ? new Corresp(value) : null;
+    }
 }
 
 export class Lacunas {
@@ -371,8 +423,8 @@ export class Lacunas {
 }
 
 export interface LacunaPair {
-  start?: HTMLElement;
-  end?: HTMLElement;
+    start?: HTMLElement;
+    end?: HTMLElement;
 }
 
 export class Lacuna extends GenericElement {
@@ -1507,7 +1559,7 @@ export interface XMLImagesValues {
 }
 
 export interface ViewerDataType {
-    type: string;
+    source: ViewerSource;
     value: ViewerDataValue;
 }
 

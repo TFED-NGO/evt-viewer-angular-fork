@@ -1,6 +1,6 @@
 <ng-container *ngIf="data.appEntry">
-    <span class="evt-exponent" [class.text-decoration-underline]="isHighlighted$ | async"
-        (click)="onExponentButtonClicked()" (mouseenter)="onHover(true)"
+    <span #evtExponent class="evt-exponent" [class.text-decoration-underline]="isHighlighted$ | async"
+        style="scroll-margin-top: 100px;" (click)="onExponentButtonClicked()" (mouseenter)="onHover(true)"
         (mouseleave)="onHover(false)">{{data.label}}</span>
 
     <ng-container *ngIf="apparatusDetailsShown$ | async">

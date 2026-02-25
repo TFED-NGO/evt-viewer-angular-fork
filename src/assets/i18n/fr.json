@@ -203,5 +203,6 @@
   "criticalNote": "Note critique",
   "showsDeletions": "Afficher les suppressions",
   "hidesDeletions": "Cacher les suppressions",
-  "noRelations": "Aucune relation"
+  "noRelations": "Aucune relation",
+  "noNamedEntities": "Il n’y a aucune entité nommée à afficher"
 }

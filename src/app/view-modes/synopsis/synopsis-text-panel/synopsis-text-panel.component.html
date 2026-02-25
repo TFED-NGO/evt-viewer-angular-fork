@@ -1,18 +1,24 @@
 <evt-panel [secondary]="secondary">
-    <div header-left class="d-flex align-items-center">
-        <div class="panel-title text-truncate me-1">{{ edition.editionTitle }}</div> 
-        <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
-            [selectedPage]="edition.selectedPage.pageSelectionList.selectedPage"
-            (onSelectionChanged)="changePage($event)"></evt-synopsis-page-selector>
-        <div class="mx-1">
-            <evt-synopsis-xml-id-selector [xmlIds]="edition.selectedPage.xmlIds"
-                [selectedXmlId]="edition.selectedPage.selectedXmlId"
-                (onXmlIdChanged)="changeXmlId($event)"></evt-synopsis-xml-id-selector>
+    <div header-left>
+        <div class="d-flex align-items-center">
+            <div class="panel-title text-truncate me-1" style="min-width: 200px;"
+                [title]="edition.editionInfo.editionFriendlyName ?? edition.editionInfo.editionTitle">{{
+                edition.editionInfo.editionFriendlyName ?? edition.editionInfo.editionTitle }}</div>
+            <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+                <evt-synopsis-page-selector [pageList]="edition.selectedPage.pageSelectionList"
+                    [selectedPage]="edition.selectedPage.pageSelectionList.selectedPage"
+                    (onSelectionChanged)="changePage($event)"></evt-synopsis-page-selector>
+            </div>
+            <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
+                <evt-synopsis-xml-id-selector [xmlIds]="edition.selectedPage.xmlIds"
+                    [selectedXmlId]="edition.selectedPage.selectedXmlId"
+                    (onXmlIdChanged)="changeXmlId($event)"></evt-synopsis-xml-id-selector>
+            </div>
         </div>
-        <div class="mx-1">
+        <!-- <div class="mx-1" (mousedown)="$event.stopPropagation()" (touchstart)="$event.stopPropagation()">
             <evt-synopsis-edition-level-selector [editionLevel]="edition.editionLevel"
                 (onEditionLevelChanged)="changeEditionLevel($event)"></evt-synopsis-edition-level-selector>
-        </div>
+        </div> -->
     </div>
     <div content evtAnnotator>
         <evt-page *ngIf="edition" [attr.data-id]="edition.selectedPage.page.id" [data]="edition.selectedPage.page"
