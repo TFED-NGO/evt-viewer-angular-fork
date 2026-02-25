@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { map, Observable, of } from 'rxjs';
 
-import { AppConfig } from '../app.config';
+import { AppConfig, DownloadLinks } from '../app.config';
 import { ProjectInfoComponent } from '../components/project-info/project-info.component';
 import { EvtInfoComponent } from '../evt-info/evt-info.component';
 import { ColorTheme, ThemesService } from '../services/themes.service';
@@ -27,6 +27,7 @@ export class MainMenuComponent {
   public readonly editionTextSources = AppConfig.evtSettings.editionTextSources;
   public readonly editionConfig = AppConfig.evtSettings.edition;
   public readonly availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
+  public readonly downloadLinks = AppConfig.evtSettings.edition.mainMenuConfig.downloadLinks;
   private isOpened = true;
 
   constructor(
@@ -66,7 +67,7 @@ export class MainMenuComponent {
         },
         label: 'openLists',
         enabled$: this.evtModelService.namedEntities$.pipe(
-          map((ne) => this.editionConfig.showEntitiesLists && ne.all.entities.length > 0),
+          map((ne) => this.editionConfig.mainMenuConfig.showEntitiesLists && ne.all.entities.length > 0),
         ),
         callback: () => this.openGlobalDialogLists(),
       },
@@ -87,7 +88,7 @@ export class MainMenuComponent {
           additionalClasses: 'icon',
         },
         label: 'downloadXML',
-        enabled$: of(AppConfig.evtSettings.edition.downloadableXMLSource),
+        enabled$: of(AppConfig.evtSettings.edition.mainMenuConfig.downloadableXMLSource),
         callback: () => this.downloadXML(),
       },
     ];
@@ -119,7 +120,12 @@ export class MainMenuComponent {
   private downloadXML() {
     // TODO downloadXML
     this.itemClicked.emit('downloadXML');
-      this.editionTextSources.forEach((s) => window.open(s.url, '_blank'));
+    this.editionTextSources.forEach((s) => window.open(s.url, '_blank'));
+  }
+
+  public download(link: DownloadLinks) {
+    this.itemClicked.emit('download');
+    window.open(link.url, '_blank');
   }
 
   openShortCuts() {
