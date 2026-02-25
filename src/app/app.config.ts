@@ -103,7 +103,6 @@ export class AppConfig {
                                 editionTextSources,
                             }))
                         );
-
                     }))
                 ),
             ).subscribe((evtConfig) => {
@@ -342,7 +341,9 @@ export interface NamedEntitiesListConfig {
     listSelector: string;
     namedEntityType: string;
 }
+
 export type EditionLevelType = 'diplomatic' | 'interpretative' | 'critical' | 'changesView';
+
 export interface EditionLevel {
     id: EditionLevelType;
     label: string;

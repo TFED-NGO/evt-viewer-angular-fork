@@ -169,6 +169,7 @@ export class StructureXmlParserService {
       pairs.push({ start: startAnchor, end: endAnchor });
     }
   }
+
   private processApparatusExponents(source: HTMLElement, editionStructure: EditionStructure) {
     let counter = 0;
     const result = this.getDocumentApparatusEntries(editionStructure.pages);
@@ -591,6 +592,59 @@ export class StructureXmlParserService {
     if (!children?.length) return false;
     if (!children.some(x => x.type.name === Cb.name)) return;
 
+    const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
+    if (children[firstRealIndex]?.type.name !== Cb.name) {
+      throw new Error("First real element must be <cb/>");
+    }
+
+    const cbIndexes = children
+      .map((c, i) => c.type?.name === Cb.name ? i : -1)
+      .filter(i => i !== -1);
+    if (!cbIndexes.length) return false;
+
+    const columns: GenericElement[] = [];
+    for (let i = 0; i < cbIndexes.length; i++) {
+      const start = cbIndexes[i] + 1;
+      const end = cbIndexes[i + 1] ?? children.length;
+
+      const columnChildren = children.slice(start, end);
+
+      const div = document.createElement('div');
+      div.classList.add('tei-column');
+
+      const parsedDiv = this.divParser.parse(div) as GenericElement;
+      parsedDiv.content = columnChildren;
+
+      columns.push(parsedDiv);
+    }
+
+    parent.content = columns;
+
+    const columnCount = columns.length;
+    parent.attributes = {
+      ...parent.attributes,
+      style: `
+      display: grid;
+      grid-template-columns: repeat(${columnCount}, 1fr);
+      column-gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: start;
+    `
+    };
+
+    return true;
+  }
+
+  private processCbRecursive(
+    parent: GenericElement,
+    children: GenericElement[] = []
+  ): boolean {
+    for (const child of children) {
+      this.processCbRecursive(child, child.content as GenericElement[]);
+    }
+    
+    if (!children?.length) return false;
+    if (!children.some(x => x.type.name === Cb.name)) return;
+    
     const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
     if (children[firstRealIndex]?.type.name !== Cb.name) {
       throw new Error("First real element must be <cb/>");

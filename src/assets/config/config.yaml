@@ -286,7 +286,6 @@ edition:
 #######################################
 # User interface customization
 #######################################
-
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
   defaultViewMode: collation
