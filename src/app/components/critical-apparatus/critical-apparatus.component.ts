@@ -6,7 +6,6 @@ import { ApparatusEntry } from 'src/app/models/evt-models';
 import { HoverService } from 'src/app/services/hover.service';
 import { distinctBy } from 'src/app/utils/js-utils';
 import { EditionLevelType } from 'src/app/app.config';
-import { distinctBy } from 'src/app/utils/js-utils';
 
 @Component({
   selector: 'evt-critical-apparatus',
