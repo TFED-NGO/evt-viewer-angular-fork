@@ -366,6 +366,9 @@ export function getTopMostAncestor(element: HTMLElement): HTMLElement {
 }
 
 export function isElementBetween(fromEl: HTMLElement, element: HTMLElement, toEl: HTMLElement): boolean {
+  if (!fromEl || !element || !toEl || !(fromEl instanceof Node) || !(element instanceof Node) || !(toEl instanceof Node)) {
+    return false;
+  }
   try {
     const isAfterFrom = fromEl.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING;
     const isBeforeTo = element.compareDocumentPosition(toEl) & Node.DOCUMENT_POSITION_FOLLOWING;
