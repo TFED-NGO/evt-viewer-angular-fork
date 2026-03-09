@@ -26,13 +26,17 @@ export class EditorialConventionsService {
   }
 
   private getExternalConfigsOrEmpty(): EditorialConvention[] {
-    const customs = AppConfig.evtSettings.editorialConventions;
-    if (!customs) return [];
+    const customsArray = AppConfig.evtSettings.editionTextSources.map(x => x.editorialConventionsConfig);
+    if (!customsArray) return [];
 
-    return Object.keys(customs).map((key) => ({
-      element: customs[key].markup.element,
-      attributes: customs[key].markup.attributes,
-      layouts: customs[key].layouts ?? {},
-    }));
+    return customsArray.reduce((acc, customs) => {
+      if (!customs) return acc;
+      const mapped = Object.keys(customs).map((key) => ({
+        element: customs[key].markup.element,
+        attributes: customs[key].markup.attributes,
+        layouts: customs[key].layouts ?? {},
+      }));
+      return acc.concat(mapped);
+    }, [] as EditorialConvention[]);
   }
 }

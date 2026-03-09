@@ -1,7 +1,7 @@
 import { AttributesMap } from 'ng-dynamic-component';
 import { ParserRegister, xmlParser } from '.';
 import {
-    Addition, Analogue, Anchor, Attributes, Damage, Deletion, Gap, GenericElement, Lb, Milestone, Note, NoteClass, NoteLayout,
+    Addition, Analogue, Anchor, Attributes, Cb, Damage, Deletion, Gap, GenericElement, Lb, Milestone, Note, NoteClass, NoteLayout,
     Paragraph, PlacementType, Ptr, QuoteEntry, Space, Span, SpanGrp, Subst, Supplied, Term, Text, Verse, VersesGroup, Word, XMLElement,
 } from '../../models/evt-models';
 import { getElementsBetweenTreeNode, getXPath, isNestedInElem, xpath } from '../../utils/dom-utils';
@@ -127,6 +127,24 @@ export class ParagraphParser extends EmptyParser implements Parser<XMLElement> {
         };
 
         return paragraphComponent;
+    }
+}
+
+@xmlParser('cb', CBParser)
+export class CBParser extends EmptyParser implements Parser<XMLElement> {
+    attributeParser = createParser(AttributeParser, this.genericParse);
+    parse(xml: XMLElement): Cb {
+        const attributes = this.attributeParser.parse(xml);
+        const { n } = attributes;
+
+        return {
+            id: getID(xml),
+            n: getDefaultN(n),
+            type: Cb,
+            content: [],
+            attributes,
+            xPath: getXPath(xml),
+        };
     }
 }
 

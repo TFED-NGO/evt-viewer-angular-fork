@@ -9,7 +9,7 @@ editionTextSourcesConfig:
   # In case your edition includes more files you can have different values for "type" besides main, e.g. you could have
   # "type: witness" or "type: translation" or other values
   - type: main
-    url: assets/data/saba.xml
+    url: assets/data/pseudoEdition.xml
     enable: true
 
     # A friendly name displayed instead of the url
@@ -47,12 +47,12 @@ editionTextSourcesConfig:
 # General configuration options for the edition
 edition:
   # The edition title. If you leave this ﬁeld empty, the default "EVT Viewer" title will be shown
-  editionTitle: EVT 3
+  editionTitle: Pseudo Edition
   # The badge text to be visualized following the edition title, it should be a short text string such as alpha, experimental
   badge: beta
   # If available, insert the URL of the web home page for the edition: if you specify an external web site there will be a
   # link pointing to it.
-  editionHome: evt.labcd.unipi.it/
+  editionHome: ""
 
   # You can add a custom logo which will precede the edition title, to do this just insert the
   # relative path to the logo image
@@ -70,13 +70,13 @@ edition:
       # Note that "label" the fallback value, EVT is going to look into the localization files (i18n folder) for the actual text
       label: diplomatic
       # Enable this edition level
-      enable: true
+      enable: false
       # Make it visible in the selector
       hidden: false
 
     - id: interpretative
       label: interpretative
-      enable: true
+      enable: false
       hidden: false
 
     - id: critical
@@ -86,7 +86,7 @@ edition:
 
     - id: changesView
       label: changes
-      enable: true
+      enable: false
       hidden: true
 
   mainMenuConfig:
@@ -227,7 +227,7 @@ edition:
   # that the verse number will only be shown every five verses.
   verseNumberPrinter: 5
   #
-  readingColorLight: "rgb(255 241 208)"
+  readingColorLight: "rgb(208, 220, 255)"
   #
   readingColorDark: "rgb(101, 138, 255)"
 
@@ -256,21 +256,21 @@ edition:
     showVarSeqAttr: false
     showSeqAttr: false
     layerColors:
-      strato-0: "#d4a03b"
-      strato-1: "#d99102"
-      strato-2: "#ac7301"
-      strato-3: "#855801"
-      strato-4: "#5f3f01"
-      strato-5: "#352400"
+      strato-0: "#71e5fa"
+      strato-1: "#609cf4"
+      strato-2: "#0d6efd"
+      strato-3: "#7B66FF"
+      strato-4: "#3e22f32"
+      strato-5: "#100077"
 
   #
   multiPageEngineForCriticalEdition: false
   #
   structureSeparators:
     - pb
-    - seg
+    - div
   #
-  exponentEnumerateBy: seg
+  exponentEnumerateBy: pb
   #
   transformWitnessId: true
 
@@ -288,7 +288,7 @@ edition:
 #######################################
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
-  defaultViewMode: collation
+  defaultViewMode: readingText
 
   # Select which view modes you want to be available in your edition.
   availableViewModes:
@@ -314,13 +314,13 @@ ui:
       iconSet: evt
       id: imageText
       label: Image Text
-      enable: true
+      enable: false
 
     - icon: txtTxt
       iconSet: evt
       id: textText
       label: Text Text
-      enable: true
+      enable: false
 
     - icon: collation
       iconSet: evt
@@ -344,13 +344,13 @@ ui:
       iconSet: evt
       id: documentalMixed
       label: Documental
-      enable: true
+      enable: false
 
     - icon: versions
       iconSet: evt
       id: synopticEdition
       label: Synoptic edition
-      enable: true
+      enable: false
 
   # Decide whether to have localization buttons to allow language change at runtime.
   localization: true
@@ -390,9 +390,9 @@ ui:
   # The secondary font to be used, in order by availability
   secondaryFontFamily: "Arial, sans-serif"
   # Size of the secondary font
-  secondaryFontSize: "1.1em"
+  secondaryFontSize: "0.8rem"
   # Select the default theme to be used when loading your edition.
-  theme: modern
+  theme: cmodernc
   # Button to activate the text-image linking
   syncZonesHighlightButton: true
   # Default image zoom level

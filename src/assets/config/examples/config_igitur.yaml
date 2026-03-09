@@ -9,7 +9,7 @@ editionTextSourcesConfig:
   # In case your edition includes more files you can have different values for "type" besides main, e.g. you could have
   # "type: witness" or "type: translation" or other values
   - type: main
-    url: assets/data/saba.xml
+    url: assets/data/igitur.xml
     enable: true
 
     # A friendly name displayed instead of the url
@@ -59,7 +59,7 @@ edition:
   logoUrl: "data/images/logo/logo.png"
 
   # Default edition level
-  defaultEditionLevel: critical
+  defaultEditionLevel: changesView
 
   # Choose the edition levels for your edition using boolean values (true|false), note that
   #   enable: enable the desired edition level or not
@@ -288,7 +288,7 @@ edition:
 #######################################
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
-  defaultViewMode: collation
+  defaultViewMode: documentalMixed
 
   # Select which view modes you want to be available in your edition.
   availableViewModes:

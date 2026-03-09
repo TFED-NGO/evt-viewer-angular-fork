@@ -8,3 +8,4 @@ export const ID_SELECTOR_PREFIX = '#';
 export const XMLID_ATTRIBUTE = 'xml:id';
 export const FROM_ATTRIBUTE = 'from';
 export const TO_ATTRIBUTE = 'to';
+export const ISDEPA_ATTRIBUTE = 'isDepa';

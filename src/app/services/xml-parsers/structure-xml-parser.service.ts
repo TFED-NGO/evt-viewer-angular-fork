@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { AppConfig } from '../../app.config';
-import { ApparatusEntry, ApparatusEntryExponent, Attribute, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, XMLElement } from '../../models/evt-models';
+import { AppConfig, ImagesSource } from '../../app.config';
+import { Anchor, ApparatusEntry, ApparatusEntryExponent, Attribute, Cb, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, Text, XMLElement } from '../../models/evt-models';
 import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
 import { getID, ParseResult } from './parser-models';
@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { AlphabetService } from '../alphabet.service';
 import { AppParser } from './app-parser';
 import { ErrorsService } from '../errors.service';
+import { ParserRegister } from '.';
 
 @Injectable({
   providedIn: 'root',
@@ -17,15 +18,16 @@ import { ErrorsService } from '../errors.service';
 export class StructureXmlParserService {
   constructor(
     private genericParserService: GenericParserService,
-    private alphabet: AlphabetService,
+    private alphabetService: AlphabetService,
     private errorService: ErrorsService,
   ) {
   }
 
+  private divParser = ParserRegister.get('div');
   private appParser = AppParser.create();
   private frontOrigContentAttr = 'document_front';
   private readonly frontTagName = 'front';
-  private readonly pageTagName = AppConfig.evtSettings.edition.editionStructureSeparator;
+  private readonly structureSeparators = AppConfig.evtSettings.edition.structureSeparators;
   private readonly bodyTagName = 'body';
   //private readonly backTagName = 'back';
 
@@ -35,7 +37,7 @@ export class StructureXmlParserService {
 
   readonly appExponents: Map<string, ApparatusEntryExponent> = new Map();
 
-  parsePages(source: XMLElement): EditionStructure {
+  public parsePages(imagesSource: ImagesSource, source: XMLElement): EditionStructure {
     const editionStructure = {
       pages: [] as Page[],
       documentApparatusEntries: new DocumentApparatusEntries()
@@ -47,25 +49,35 @@ export class StructureXmlParserService {
     const body: XMLElement = source.querySelector(this.bodyTagName);
     this.back = source.querySelector('back');
 
-    const pbs = Array.from(source.querySelectorAll(this.pageTagName)).filter((p) => !p.getAttribute('ed'));
+    const selector = this.structureSeparators.join(',');
+    const pbs = Array.from(source.querySelectorAll(selector));//.filter((p) => !p.getAttribute('ed'));
     const frontPbs = pbs.filter((p) => isNestedInElem(p, this.frontTagName));
     const bodyPbs = pbs.filter((p) => isNestedInElem(p, this.bodyTagName));
     const doc = source.firstElementChild.ownerDocument;
 
     if (frontPbs.length > 0 && bodyPbs.length > 0) {
-      const pages = pbs.map((pb: XMLElement, idx, arr: XMLElement[]) => this.parseDocumentPage(doc, pb, arr[idx + 1], 'text'));
+      const pages = pbs.map((pb: XMLElement, idx, arr: XMLElement[]) => this.parseDocumentPage(imagesSource, doc, pb, arr[idx + 1], 'text'));
       editionStructure.pages.push(...pages);
     }
     else {
       const frontPages = frontPbs.length === 0 && front && this.isMarkedAsOrigContent(front)
-        ? [this.parseSinglePage(doc, front, 'page_front', this.frontTagName, 'facs_front')]
-        : frontPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.frontTagName));
+        ? [this.parseSinglePage(imagesSource, doc, front, `page_front_${uuidv4()}`, this.frontTagName, 'facs_front')]
+        : frontPbs.map((pb, idx, arr) => this.parseDocumentPage(imagesSource, doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.frontTagName));
 
       const bodyPages = bodyPbs.length === 0
-        ? [this.parseSinglePage(doc, body, 'page1', 'mainText', 'facs1')] // TODO: tranlsate mainText
-        : bodyPbs.map((pb, idx, arr) => this.parseDocumentPage(doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.bodyTagName));
+        ? [this.parseSinglePage(imagesSource, doc, body, `page1_${uuidv4()}`, 'mainText', 'facs1')] // TODO: translate mainText
+        : bodyPbs.map((pb, idx, arr) => this.parseDocumentPage(imagesSource, doc, pb as HTMLElement, arr[idx + 1] as HTMLElement, this.bodyTagName));
 
       editionStructure.pages.push(...frontPages, ...bodyPages);
+    }
+
+    for (const page of editionStructure.pages) {
+      const parent = this.divParser.parse(document.createElement('div')) as GenericElement;
+      parent.content = [...page.parsedContent];
+      const shouldSubstitute = this.processCbRecursive(parent, page.parsedContent as GenericElement[]);
+      if (shouldSubstitute) {
+        page.parsedContent = [parent];
+      }
     }
 
     const backElements = source.getElementsByTagName('back');
@@ -74,6 +86,43 @@ export class StructureXmlParserService {
     this.loadLacunas(backElements, source);
 
     return editionStructure;
+  }
+
+  public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
+    if (!this.allApps.length) {
+      this.allApps = Array.from(source.querySelectorAll("app"));
+      if (!this.allApps.length) {
+        this.errorService.logWarning('There are no apps in the source');
+        this.errorService.loadingEnd();
+        return;
+      }
+
+      for (const app of this.allApps) {
+        addIsDepaAttribute(app);
+      }
+
+      // this can load after some times as errors can be available later
+      setTimeout(() => this.checkDepaErrors(source), 1_000);
+    }
+
+    const result = this.getDocumentApparatusEntries(editionStructure.pages);
+    result.apps.forEach((value, key) => {
+      editionStructure.documentApparatusEntries.apps.set(key, value);
+    });
+
+    this.processApparatusExponents(source, editionStructure);
+
+    function addIsDepaAttribute(app: HTMLElement) {
+      const isDepa = !app.closest("body");
+      app.setAttribute("isDepa", isDepa.toString());
+    }
+  }
+
+  private isIgnorableNode(node: GenericElement): boolean {
+    if (node.type.name !== Text.name) return false;
+
+    const text = (node as any).text ?? '';
+    return text.trim().length === 0;
   }
 
   private loadLacunas(backElements: HTMLCollectionOf<Element>, source: HTMLElement) {
@@ -121,36 +170,6 @@ export class StructureXmlParserService {
     }
   }
 
-  public processCriticalApparatus(source: HTMLElement, editionStructure: EditionStructure): void {
-    if (!this.allApps.length) {
-      this.allApps = Array.from(source.querySelectorAll("app"));
-      if (!this.allApps.length) {
-        this.errorService.logWarning('There are no apps in the source');
-        this.errorService.loadingEnd();
-        return;
-      }
-
-      for (const app of this.allApps) {
-        addIsDepaAttribute(app);
-      }
-
-      // this can load after some times as errors can be available later
-      setTimeout(() => this.checkDepaErrors(source), 1_000);
-    }
-
-    const result = this.getDocumentApparatusEntries(editionStructure.pages);
-    result.apps.forEach((value, key) => {
-      editionStructure.documentApparatusEntries.apps.set(key, value);
-    });
-
-    this.processApparatusExponents(source, editionStructure);
-
-    function addIsDepaAttribute(app: HTMLElement) {
-      const isDepa = !app.closest("body");
-      app.setAttribute("isDepa", isDepa.toString());
-    }
-  }
-
   private processApparatusExponents(source: HTMLElement, editionStructure: EditionStructure) {
     let counter = 0;
     const result = this.getDocumentApparatusEntries(editionStructure.pages);
@@ -177,7 +196,7 @@ export class StructureXmlParserService {
       this.addApparatusExponents(
         page.parsedContent,
         (app, exponent) => onApparatusEntryReplaced(page, app, exponent),
-        () => exponentLabelFactory(this.alphabet),
+        () => exponentLabelFactory(this.alphabetService),
         (item) => resetCounterCallback(item, enumeratedByJsonElements)
       );
     }
@@ -323,9 +342,16 @@ export class StructureXmlParserService {
       const item = items[i];
       onShouldResetCounter(item);
 
-      if (item.type?.name === 'ApparatusEntry') {
+      if (item.type?.name === ApparatusEntry.name) {
         const app = item as ApparatusEntry;
         if (!app) throw new Error("Invalid type " + app);
+
+        const callback = (content: any[]) => this.addApparatusExponents(
+          content,
+          onApparatusEntryReplaced,
+          getExponentLabel,
+          onShouldResetCounter);
+        this.addNestedApparatusExponents(app, callback);
 
         const id = this.getExponentId();
         const to = id; // the exponent itself as the To element
@@ -348,11 +374,11 @@ export class StructureXmlParserService {
         onApparatusEntryReplaced(item, exponent);
         app.exponent = exponent.label;
       }
-      else if (item.type?.name === 'Anchor') {
+      else if (item.type?.name === Anchor.name) {
         const anchorId = item.attributes['id'];
         const apps = this.getApparatusEntriesOrDefault(anchorId);
         if (!apps.length) {
-          console.warn("This anchor has not apparatus entry associated with its id and will be skipped", item);
+          //console.warn("This anchor has not apparatus entry associated with its id and will be skipped", item);
           continue;
         }
 
@@ -378,7 +404,7 @@ export class StructureXmlParserService {
         }
       }
       // in other cases exponents are added to the items array, so we skip them
-      else if (item.type?.name === 'ApparatusEntryExponent') {
+      else if (item.type?.name === ApparatusEntryExponent.name) {
         //console.log("The element is an exponent, skipping", item);
         continue;
       }
@@ -419,6 +445,27 @@ export class StructureXmlParserService {
       }
       else {
         //console.log('Node is not of interest for apparatus processing', item);
+      }
+    }
+  }
+
+  private addNestedApparatusExponents(app: ApparatusEntry, callback: (content: any[]) => void) {
+    const contentValues: ContentValue[] = [];
+    this.populateValuesWithContent(app, contentValues);
+    for (const value of contentValues) {
+      callback(value.content);
+    }
+  }
+
+  private populateValuesWithContent(obj: any, accumulator: ContentValue[]) {
+    const values = Object.values(obj)
+      .flatMap(x => x as any)
+      .filter(x => typeof (x) === 'object');
+    for (let index = 0; index < values.length; index++) {
+      const value = values[index];
+      if (value.content) {
+        accumulator.push(value);
+        this.populateValuesWithContent({ content: value.content }, accumulator);
       }
     }
   }
@@ -488,7 +535,7 @@ export class StructureXmlParserService {
       });
   }
 
-  parseDocumentPage(doc: Document, pb: XMLElement, nextPb: XMLElement, ancestorTagName: string): Page {
+  parseDocumentPage(imagesSource: ImagesSource, doc: Document, pb: XMLElement, nextPb: XMLElement, ancestorTagName: string): Page {
     /* If there is a next page we retrieve the elements between two page nodes
     otherweise we retrieve the nodes between the page node and the last node of the body node */
     // TODO: check if querySelectorAll can return an empty array in this case
@@ -499,14 +546,14 @@ export class StructureXmlParserService {
         facs: (pb.getAttribute('facs') || 'page').split('#').slice(-1)[0],
         originalContent: [pb],
         parsedContent: this.parsePageContent(doc, [pb]),
-        url: this.getPageUrl(getID(pb, 'page')),
-        facsUrl: this.getPageUrl((pb.getAttribute('facs') || getID(pb, 'page')).split('#').slice(-1)[0]),
+        url: this.getPageUrl(imagesSource, getID(pb, 'page')),
+        facsUrl: this.getPageUrl(imagesSource, (pb.getAttribute('facs') || getID(pb, 'page')).split('#').slice(-1)[0]),
       };
     }
 
     const nextNode = nextPb || Array.from(doc.querySelectorAll(ancestorTagName)).reverse()[0].lastChild;
     const originalContent = getElementsBetweenTreeNode(pb, nextNode)
-      .filter((n) => n.tagName !== this.pageTagName)
+      .filter((n) => !this.structureSeparators.includes(n.tagName))
       .filter((c) => ![4, 7, 8].includes(c.nodeType)); // Filter comments, CDATAs, and processing instructions
 
     return {
@@ -515,12 +562,12 @@ export class StructureXmlParserService {
       facs: (pb.getAttribute('facs') || 'page').split('#').slice(-1)[0],
       originalContent,
       parsedContent: this.parsePageContent(doc, originalContent),
-      url: this.getPageUrl(getID(pb, 'page')),
-      facsUrl: this.getPageUrl((pb.getAttribute('facs') || getID(pb, 'page')).split('#').slice(-1)[0]),
+      url: this.getPageUrl(imagesSource, getID(pb, 'page')),
+      facsUrl: this.getPageUrl(imagesSource, (pb.getAttribute('facs') || getID(pb, 'page')).split('#').slice(-1)[0]),
     };
   }
 
-  private parseSinglePage(doc: Document, el: XMLElement, id: string, label: string, facs: string): Page {
+  private parseSinglePage(imagesSource: ImagesSource, doc: Document, el: XMLElement, id: string, label: string, facs: string): Page {
     const originalContent: XMLElement[] = getElementsBetweenTreeNode(el.firstChild, el.lastChild);
 
     return {
@@ -529,25 +576,87 @@ export class StructureXmlParserService {
       facs,
       originalContent,
       parsedContent: this.parsePageContent(doc, originalContent),
-      url: this.getPageUrl(id),
-      facsUrl: this.getPageUrl(facs || id),
+      url: this.getPageUrl(imagesSource, id),
+      facsUrl: this.getPageUrl(imagesSource, facs || id),
     };
   }
 
-  private getPageUrl(id) {
+  private processCbRecursive(
+    parent: GenericElement,
+    children: GenericElement[] = []
+  ): boolean {
+    for (const child of children) {
+      this.processCbRecursive(child, child.content as GenericElement[]);
+    }
+    
+    if (!children?.length) return false;
+    if (!children.some(x => x.type.name === Cb.name)) return;
+    
+    const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
+    if (children[firstRealIndex]?.type.name !== Cb.name) {
+      throw new Error("First real element must be <cb/>");
+    }
+
+    const cbIndexes = children
+      .map((c, i) => c.type?.name === Cb.name ? i : -1)
+      .filter(i => i !== -1);
+    if (!cbIndexes.length) return false;
+
+    const columns: GenericElement[] = [];
+    for (let i = 0; i < cbIndexes.length; i++) {
+      const start = cbIndexes[i] + 1;
+      const end = cbIndexes[i + 1] ?? children.length;
+
+      const columnChildren = children.slice(start, end);
+
+      const div = document.createElement('div');
+      div.classList.add('tei-column');
+
+      const parsedDiv = this.divParser.parse(div) as GenericElement;
+      parsedDiv.content = columnChildren;
+
+      columns.push(parsedDiv);
+    }
+
+    parent.content = columns;
+
+    const columnCount = columns.length;
+    parent.attributes = {
+      ...parent.attributes,
+      style: `
+      display: grid;
+      grid-template-columns: repeat(${columnCount}, 1fr);
+      column-gap: clamp(1.5rem, 4vw, 3rem);
+      align-items: start;
+    `
+    };
+
+    return true;
+  }
+
+  private getPageUrl(imagesSource: ImagesSource, id: string) {
     // TODO: check if exists <graphic> element connected to page and return its url
     // TODO: handle multiple version of page
     const image = id.split('.')[0];
-
+    
     //Nel file_config imagesFolderUrls deve terminare già con uno /
-    return `${AppConfig.evtSettings.files.imagesFolderUrls.single}${image}.jpg`;
+    switch (imagesSource.kind) {
+      case 'IiifManifest':
+        return `${imagesSource.url}${image}.jpg`;
+      case 'EditionXml':
+      case 'ExternalXml':
+        return `${imagesSource.imagesFolderUrls.single}${image}.jpg`;
+      case 'null':
+        console.warn(`No image source defined for edition of page ${id}`);
+        return null;
+    }
   }
   // lbId = '';
   // quando trovi un lbId allora lbId = 'qualcosa'
 
 
   parsePageContent(doc: Document, pageContent: OriginalEncodingNodeType[]): Array<ParseResult<GenericElement>> {
-    return pageContent
+    const content = pageContent
       .map((node) => {
 
         const origEl = getEditionOrigNode(node, doc);
@@ -575,7 +684,24 @@ export class StructureXmlParserService {
 
         return [this.genericParserService.parse(origEl)];
       })
-      .reduce((x, y) => x.concat(y), []);
+      .reduce((x, y) => x.concat(y), [])
+      .filter(c => !this.isIgnorableNode(c as GenericElement));
+
+    content.forEach(c => {
+      this.normalizeTree(c as GenericElement);
+    });
+    return content;
+  }
+
+  private normalizeTree(node: GenericElement): void {
+    if (!node.content?.length) return;
+
+    node.content = node.content
+      .filter(child => !this.isIgnorableNode(child as GenericElement))
+      .map(child => {
+        this.normalizeTree(child as GenericElement);
+        return child;
+      });
   }
 
   hasOriginalContent(el: XMLElement): boolean {
@@ -603,4 +729,8 @@ function getEditionOrigNode(el: XMLElement, doc: Document) {
   }
 
   return el;
+}
+
+interface ContentValue {
+  content: any[]
 }

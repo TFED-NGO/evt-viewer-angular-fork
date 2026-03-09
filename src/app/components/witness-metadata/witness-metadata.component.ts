@@ -35,7 +35,7 @@ export class WitnessMetadataComponent implements OnInit {
     let newValue = [...this.statusService.updateWitnesses$.value, witnessAttrId];
     newValue = newValue.filter(this.onlyUnique);
     this.statusService.updateWitnesses$.next(newValue);
-    this.statusService.updateApparatusExponent$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
+    this.statusService.updateApparatus$.next(this.apparatusEntryDetailService.apparatusEntry.exponent);
   }
 
   private onlyUnique(value, index, array) {

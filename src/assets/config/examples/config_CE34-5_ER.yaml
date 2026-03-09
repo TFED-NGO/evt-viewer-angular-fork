@@ -9,7 +9,7 @@ editionTextSourcesConfig:
   # In case your edition includes more files you can have different values for "type" besides main, e.g. you could have
   # "type: witness" or "type: translation" or other values
   - type: main
-    url: assets/data/saba.xml
+    url: assets/data/igitur.xml
     enable: true
 
     # A friendly name displayed instead of the url
@@ -47,19 +47,19 @@ editionTextSourcesConfig:
 # General configuration options for the edition
 edition:
   # The edition title. If you leave this ﬁeld empty, the default "EVT Viewer" title will be shown
-  editionTitle: EVT 3
+  editionTitle: LegesLangobardorum
   # The badge text to be visualized following the edition title, it should be a short text string such as alpha, experimental
   badge: beta
   # If available, insert the URL of the web home page for the edition: if you specify an external web site there will be a
   # link pointing to it.
-  editionHome: evt.labcd.unipi.it/
+  editionHome: "http://pelavicino.labcd.unipi.it/"
 
   # You can add a custom logo which will precede the edition title, to do this just insert the
   # relative path to the logo image
   logoUrl: "data/images/logo/logo.png"
 
   # Default edition level
-  defaultEditionLevel: critical
+  defaultEditionLevel: interpretative
 
   # Choose the edition levels for your edition using boolean values (true|false), note that
   #   enable: enable the desired edition level or not
@@ -70,7 +70,7 @@ edition:
       # Note that "label" the fallback value, EVT is going to look into the localization files (i18n folder) for the actual text
       label: diplomatic
       # Enable this edition level
-      enable: true
+      enable: false
       # Make it visible in the selector
       hidden: false
 
@@ -81,12 +81,12 @@ edition:
 
     - id: critical
       label: critical
-      enable: true
+      enable: false
       hidden: false
 
     - id: changesView
       label: changes
-      enable: true
+      enable: false
       hidden: true
 
   mainMenuConfig:
@@ -147,12 +147,6 @@ edition:
       listSelector: "div[type='glossary']"
       namedEntityType: entry
 
-    objects:
-      enable: true
-      label: Objects
-      listSelector: listObject
-      namedEntityType: object
-
   # MISSING
   # Come si gestisce la lista semplice?
 
@@ -210,6 +204,10 @@ edition:
         - value: measure
           label: measures
           enable: true
+        - value: term
+          label: terms
+          color: "#98d4f7"
+          enable: true
 
   # Miscellaneous configuration options
 
@@ -227,7 +225,7 @@ edition:
   # that the verse number will only be shown every five verses.
   verseNumberPrinter: 5
   #
-  readingColorLight: "rgb(255 241 208)"
+  readingColorLight: "rgb(208, 220, 255)"
   #
   readingColorDark: "rgb(101, 138, 255)"
 
@@ -256,21 +254,21 @@ edition:
     showVarSeqAttr: false
     showSeqAttr: false
     layerColors:
-      strato-0: "#d4a03b"
-      strato-1: "#d99102"
-      strato-2: "#ac7301"
-      strato-3: "#855801"
-      strato-4: "#5f3f01"
-      strato-5: "#352400"
+      strato-0: "#71e5fa"
+      strato-1: "#609cf4"
+      strato-2: "#0d6efd"
+      strato-3: "#7B66FF"
+      strato-4: "#3e22f3"
+      strato-5: "#100077"
 
   #
   multiPageEngineForCriticalEdition: false
   #
   structureSeparators:
     - pb
-    - seg
+    - "div[type='chapter']"
   #
-  exponentEnumerateBy: seg
+  exponentEnumerateBy: pb
   #
   transformWitnessId: true
 
@@ -288,7 +286,7 @@ edition:
 #######################################
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
-  defaultViewMode: collation
+  defaultViewMode: imageText
 
   # Select which view modes you want to be available in your edition.
   availableViewModes:

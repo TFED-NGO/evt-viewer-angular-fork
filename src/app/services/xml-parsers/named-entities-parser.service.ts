@@ -9,28 +9,60 @@ import { GenericElemParser } from './basic-parsers';
 import { createParser } from './parser-models';
 import { EditionSource } from '../named-entities.service';
 import { AppConfig } from 'src/app/app.config';
+import { ErrorsService } from '../errors.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NamedEntitiesParserService {
-  private namedEntitiesOccurrenceSelector = AppConfig.evtSettings.edition.namedEntitiesOccurrenceSelector;
+  private entitiesOccurrenceSelectors: string[];
 
-  public parseLists(editionSource: EditionSource) {
+  constructor(private errorsService: ErrorsService) {
+    this.entitiesOccurrenceSelectors = AppConfig.evtSettings.edition.entitiesOccurrenceSelectors;
+    if (!this.entitiesOccurrenceSelectors.length) {
+      this.errorsService.logError("No namedEntitiesOccurrenceSelector found in edition config");
+    }
+  }
+
+  public parseLists(editionSources: EditionSource[]) {
     const listsToParse = AppConfig.getListsToParseTagNames();
     const listParser = ParserRegister.get('evt-named-entities-list-parser');
     // We consider only first level lists; inset lists will be considered
     const listsSelector = listsToParse.map(x => x.listSelector).toString();
-    const lists = Array.from(editionSource.editionData.querySelectorAll<XMLElement>(listsSelector));
-    const glossaryLists = editionSource.glossary ? Array.from(editionSource.glossary.querySelectorAll<XMLElement>(listsSelector)) : [];
-    const allLists =  [...lists, ...glossaryLists]
+    const lists = editionSources.flatMap(ed => Array.from(ed.editionData.querySelectorAll<XMLElement>(listsSelector)));
+    const glossaryLists = editionSources.flatMap(ed => ed.glossary ? Array.from(ed.glossary.querySelectorAll<XMLElement>(listsSelector)) : []);
+    const allLists = [...lists, ...glossaryLists]
       .filter((list) => !isNestedInElem(list, list.tagName))
       .map((l) => listParser.parse(l) as NamedEntitiesList);
 
+    const mergedLists: NamedEntitiesList[] = [];
+    const map = new Map<string, NamedEntitiesList>();
+    for (const list of allLists) {
+      const storedList = map.get(list.label);
+      if (!storedList) {
+        map.set(list.label, list);
+        mergedLists.push(list);
+      }
+      else {
+        storedList.content.push(...list.content);
+        const result = storedList.content.countBy(x => x.id);
+        result.forEach(x => {
+          if (x.count > 1) {
+            const duplicatedElements = x.items.map(y => y.originalEncoding);
+            this.errorsService.logError("More than one named entity has the same xml:id, keeping first one", duplicatedElements);
+            const first = x.items[0];
+            storedList.content = storedList.content.filter(entity => {
+              return entity.id !== x.key || entity === first;
+            });
+          }
+        });
+      }
+    }
+
     return {
-      lists: allLists,
-      entities: allLists.flatMap(({ content }) => content),
-      relations: allLists.flatMap(({ relations }) => relations)
+      lists: mergedLists,
+      entities: mergedLists.flatMap(({ content }) => content),
+      relations: mergedLists.flatMap(({ relations }) => relations)
     };
   }
 
@@ -64,11 +96,12 @@ export class NamedEntitiesParserService {
       .filter((e) => e.nodeType === 1)
       .map((e) => {
         const occurrences = [];
-        if (this.namedEntitiesOccurrenceSelector.indexOf(e.tagName) >= 0 && e.getAttribute('ref')) { // Handle first level page contents
+        if (this.entitiesOccurrenceSelectors.includes(e.tagName) && e.getAttribute('ref')) { // Handle first level page contents
           occurrences.push(this.parseNamedEntityOccurrence(e));
         }
 
-        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(this.namedEntitiesOccurrenceSelector))
+        const selector = this.entitiesOccurrenceSelectors.join(',');
+        return occurrences.concat(Array.from(e.querySelectorAll<XMLElement>(selector))
           .map((el) => this.parseNamedEntityOccurrence(el)));
       })
       .filter((e) => e.length > 0)

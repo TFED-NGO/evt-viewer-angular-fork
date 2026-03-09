@@ -1,10 +1,10 @@
 import { AppConfig } from 'src/app/app.config';
 import { ParserRegister, xmlParser } from '.';
-import { AdditionalAttributes, ApparatusEntry, Attribute, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
+import { AdditionalAttributes, ApparatusEntry, Attribute, CorrespList, GenericElement, Lacuna, Lacunas, Mod, Note, Reading, XMLElement } from '../../models/evt-models';
 import { createParsedWhiteSpace, removeSpaces } from '../../utils/xml-utils';
 import { AttributeParser, EmptyParser, NoteParser } from './basic-parsers';
 import { createParser, getID, Parser, ParseResult } from './parser-models';
-import { XMLID_ATTRIBUTE } from 'src/app/models/constants';
+import { ISDEPA_ATTRIBUTE, XMLID_ATTRIBUTE } from 'src/app/models/constants';
 import { getTopMostAncestor, getXPath } from 'src/app/utils/dom-utils';
 import { v4 as uuidv4 } from 'uuid';
 import { interleave } from 'src/app/utils/js-utils';
@@ -17,10 +17,11 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
     lacunaParser = createParser(LacunaParser, this.genericParse);
 
     public parse(rdg: XMLElement): Reading {
+        const attributes = this.attributeParser.parse(rdg);
         const result = {
             type: Reading,
             id: getID(rdg),
-            attributes: this.attributeParser.parse(rdg),
+            attributes,
             witIDs: this.parseReadingWitnesses(rdg) || [],
             excludedWitIDs: this.parseExcludedWitnesses(rdg),
             content: this.parseAppReadingContent(rdg),
@@ -30,6 +31,7 @@ export class RdgParser extends EmptyParser implements Parser<XMLElement> {
             notes: this.parseReadingNotes(rdg),
             lacunas: this.parseLacunas(rdg),
             xPath: getXPath(rdg),
+            correspList: CorrespList.create(attributes.corresp)
         };
         return result;
     }
@@ -143,7 +145,7 @@ export class AppParser extends EmptyParser implements Parser<XMLElement> {
     }
 
     public static isDepa(app: HTMLElement): boolean {
-        return JSON.parse(app.getAttribute("isDepa")) ?? false;
+        return JSON.parse(app.getAttribute(ISDEPA_ATTRIBUTE)) ?? false;
     }
 
     public parse(appEntryEl: XMLElement): ApparatusEntry {

@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, Optional } from '@angular/core';
-import { ApparatusEntry, ChangeLayerData, GenericElement, Reading } from '../../../models/evt-models';
+import { ApparatusEntry, ChangeLayerData, Corresp, GenericElement, Reading } from '../../../models/evt-models';
 import { register } from '../../../services/component-register.service';
 import { EVTModelService } from '../../../services/evt-model.service';
 import { distinctUntilChanged } from 'rxjs';
@@ -53,7 +53,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
 
   constructor(
     public evtModelService: EVTModelService,
-    public evtStatusService: EVTStatusService,
+    public statusService: EVTStatusService,
     private apparatusEntryDetailService: ApparatusEntryDetailService,
     @Optional() private witnessPanelService?: WitnessPanelService,
   ) {
@@ -65,7 +65,7 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     if (this.data.nestedAppsIDs.length > 0) {
       this.recoverNestedApps(this.data);
     }
-    this.subscriptions = this.evtStatusService.currentChanges$.pipe(distinctUntilChanged()).subscribe(({ next: (data) => this.getLayerData(data) }));
+    this.subscriptions = this.statusService.currentChanges$.pipe(distinctUntilChanged()).subscribe(({ next: (data) => this.getLayerData(data) }));
 
     this.significantReadings = this.data.readings.filter((rdg) => rdg?.significant);
     this.notSignificantReadings = this.data.readings.filter((rdg) => !rdg.significant);
@@ -80,7 +80,6 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
       const isWitnessExcluded = this.data.isWitnessExcluded(this.witnessPanelService.witnessId);
       this.showLemma = !isWitnessExcluded;
     }
-    console.log(this.editionLevel)
   }
 
   ngOnDestroy() {
@@ -116,6 +115,14 @@ export class ApparatusEntryDetailComponent implements OnInit, OnDestroy {
     else {
       this.currentTab = tab;
     }
+  }
+
+  navigateToSynoptic(corresp: Corresp){
+    this.statusService.updateViewMode$.next(
+      this.statusService.availableViewModes.find(x => x.id === "synopticEdition")
+    );
+    this.statusService.updateApparatus$.next(this.data.id);
+    this.statusService.updateCorresp$.next(corresp.value);
   }
 }
 
