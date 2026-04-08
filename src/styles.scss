@@ -55,7 +55,7 @@ body {
     position: relative !important;
   }
 
-  &.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  &.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
     border: none;
   }
 
@@ -100,7 +100,7 @@ body {
     }
   }
 
-  &.ng-select-opened > .ng-select-container {
+  &.ng-select-opened>.ng-select-container {
     .ng-arrow-wrapper {
       opacity: 1;
 
@@ -118,6 +118,7 @@ body {
       color: themed("toolsColor");
     }
   }
+
   .ng-dropdown-panel-items {
     @include set("box-shadow", "0 0.125rem 0.25rem rgba(0, 0, 0, 0.1)");
 
@@ -126,11 +127,13 @@ body {
         background-color: themed("toolsBackground") !important;
         color: themed("toolsColor");
       }
+
       &.ng-option-marked {
         @include themify($themes) {
           background-color: rgba(themed("baseColorDark"), 0.1) !important;
         }
       }
+
       &.ng-option-selected {
         @include themify($themes) {
           background-color: themed("baseColorDark") !important;
@@ -188,12 +191,12 @@ evt-biblio-list .msIdentifier {
   line-height: 1.4rem;
 }
 
-evt-quote-entry evt-source-detail > div {
+evt-quote-entry evt-source-detail>div {
   box-shadow: none !important;
   margin: 0 !important;
 }
 
-evt-analogue-entry evt-analogue-detail > div {
+evt-analogue-entry evt-analogue-detail>div {
   box-shadow: none !important;
   margin: 0 !important;
 }
@@ -233,10 +236,10 @@ evt-quote-entry evt-paragraph p {
 
 evt-apparatus-entry-detail evt-original-encoding-viewer pre,
 evt-mod-detail evt-original-encoding-viewer pre,
-evt-mod-group  evt-original-encoding-viewer pre,
+evt-mod-group evt-original-encoding-viewer pre,
 evt-source-detail evt-original-encoding-viewer pre,
 evt-analogue-detail evt-original-encoding-viewer pre {
-  margin-top:-1% !important;
+  margin-top: -1% !important;
   padding: 0 !important;
   background-color: transparent !important;
 }
@@ -253,12 +256,13 @@ evt-analogue-detail evt-original-encoding-viewer pre {
   border-radius: 0;
 }
 
-.highlightverse{
+.highlightverse {
   cursor: pointer;
-  background-color: rgba(230,206,160,0.8);
+  background-color: rgba(230, 206, 160, 0.8);
   color: #000000;
   padding: 3px 0px;
-  &.selected{
+
+  &.selected {
     background-color: rgb(248, 230, 191);
   }
 }
@@ -284,7 +288,8 @@ evt-analogue-detail evt-original-encoding-viewer pre {
   font-weight: 600;
 }
 
-.changeSeparator, .changeGroupSeparator {
+.changeSeparator,
+.changeGroupSeparator {
   display: none;
   font-family: cursive;
   font-weight: 600;
@@ -314,7 +319,8 @@ evt-analogue-detail evt-original-encoding-viewer pre {
   display: none;
 }
 
-.first-mod .changeGroupSeparator, .app-detail-content .changeGroupSeparator {
+.first-mod .changeGroupSeparator,
+.app-detail-content .changeGroupSeparator {
   display: none;
 }
 
@@ -336,8 +342,8 @@ evt-mod-group .substMarker {
   font-style: normal;
 }
 
-evt-mod-group .tab-content > .active,
-evt-mod-detail .tab-content > .active {
+evt-mod-group .tab-content>.active,
+evt-mod-detail .tab-content>.active {
   display: inline-block;
 }
 
@@ -365,11 +371,11 @@ evt-page :not(evt-apparatus-entry-detail) .retrace {
 }
 
 evt-page :not(evt-apparatus-entry-detail) .verse-num {
-  color:black !important;
+  color: black !important;
 }
 
 evt-page :not(evt-apparatus-entry-detail) .verse-num:before {
-  border:none !important;
+  border: none !important;
   background: none !important;
 }
 
