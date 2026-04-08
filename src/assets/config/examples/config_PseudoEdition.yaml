@@ -93,12 +93,12 @@ edition:
     # Set this to true or to false to enable/disable download of the TEI/XML ﬁle
     downloadableXMLSource: true
     # Show the named entities lists (true|false) if false then no lists will be shown
-    showEntitiesLists: true
+    showEntitiesLists: false
     # Configure download links
     # Allow the user to download other edition documents, e.g. a PDF version of the edition
     downloadLinks:
       - label: example
-        url: value
+        url: http://example.com
 
   # Customize the list of available named entities to be highlighted and to be shown
   # among entities lists, by changing the default list label (to be shown when no <head>
@@ -140,7 +140,6 @@ edition:
       listSelector: listEvent
       namedEntityType: event
 
-    # CHECK "entries" è un po' vago, "glossary"? Tecnicamente un elemento <entry> non è una named entity
     entries:
       enable: true
       label: Entries
@@ -152,9 +151,6 @@ edition:
       label: Objects
       listSelector: listObject
       namedEntityType: object
-
-  # MISSING
-  # Come si gestisce la lista semplice?
 
   # TEI elements used in the edition text to mark up named entities, and the attribute used for the linking
   entitiesOccurrenceSelectors:
@@ -377,9 +373,9 @@ ui:
   enableNavBar: true
   # If the navigation bar is active (see previous setting), sets its initial status: with true it will
   # be shown when the edition is loaded, with false it will be hidden until the user decides to show it.
-  initNavBarOpened: true
+  initNavBarOpened: false
   # Select if you want to activate (true) or not (false) the thumbnail button in the navigation bar.
-  thumbnailsButton: true
+  thumbnailsButton: false
   # Select if you want to activate (true) or not (false) the VisColl button in the navigation bar.
   # Note that VisColl functionality is still a work in progress, so it is set to "false" by default.
   viscollButton: false
@@ -394,7 +390,7 @@ ui:
   # Select the default theme to be used when loading your edition.
   theme: cmodernc
   # Button to activate the text-image linking
-  syncZonesHighlightButton: true
+  syncZonesHighlightButton: false
   # Default image zoom level
   defaultImageZoomLevel: 0.8
   # Maximum image zoom level
