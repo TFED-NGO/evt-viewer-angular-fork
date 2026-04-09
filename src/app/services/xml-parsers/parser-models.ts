@@ -18,7 +18,7 @@ export function parseChildren(xml: XMLElement, parseFn: ParseFn, excludeEmptyTex
     return complexElements(xml.childNodes, excludeEmptyText).map((child) => parseFn(child as XMLElement));
 }
 export function getNOrDefault(n: string) { return n || ''; }
-export function getNOrDefaultFromElement(el: Element) { return el.getAttribute(N_ATTRIBUTE); }
+export function getNOrDefaultFromElement(el: Element) { return el.getAttribute(N_ATTRIBUTE) ?? ''; }
 export function getDefaultAttr(attr: string) { return attr || ''; }
 
 export function unhandledElement(xml: XMLElement, name: string, parseFn: ParseFn) {

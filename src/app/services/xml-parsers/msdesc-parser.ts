@@ -1009,9 +1009,7 @@ export class MsPartParser extends MsFragParser implements Parser<XMLElement> {
 export class MsDescParser extends MsPartParser implements Parser<XMLElement> {
     private msDescCounter = 0;
     parse(xml: XMLElement): MsDesc {
-        const genericElem = super.parse(xml);
-        const { n } = genericElem.attributes;
-
+        const n = getNOrDefaultFromElement(xml); 
         const msDesc: MsDesc = {
             ...super.parse(xml),
             type: MsDesc,
