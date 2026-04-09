@@ -8,7 +8,7 @@
     </div>
     <div header-right *ngIf="showSyncButton">
         <evt-button [active]="isSyncButtonActive === 'active'" [iconRight]="{icon: 'link', iconSet:'fas'}"
-            (btnClick)="syncTextImage()" aria-role="button" label="Sync text with image"></evt-button>
+            (btnClick)="syncTextImage()" aria-role="button" [label]="'syncTextWithImage' | translate"></evt-button>
     </div>
 
     <div content class="full-height">
@@ -16,7 +16,7 @@
             [options]="{showNavigationControl: true}" [page]="pageNumber$ | async" [pageElement]="currentPage$ | async"
             (pageChange)="updatePage($event)">
         </evt-osd>
-        <p *ngIf="!viewerData">Found no source file</p>
+        <p *ngIf="!viewerData">{{ 'sourceFileNotFound' | translate }}</p>
     </div>
 
     <div secondary-content>

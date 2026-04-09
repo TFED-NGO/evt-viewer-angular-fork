@@ -239,5 +239,7 @@
     "openApparatusTab": "Open Apparatus Tab",
     "openPinBoard": "Open Pin Board"
   },
-  "noNamedEntities": "There are no named entities to show"
+  "noNamedEntities": "There are no named entities to show",
+  "syncTextWithImage": "Sync text with image",
+  "sourceFileNotFound": "Found no source file"
 }
