@@ -258,7 +258,7 @@ export class EVTModelService {
             url: '',
             parsedContent: undefined,
             originalContent: undefined,
-            label: _g.attributes[N_ATTRIBUTE], // TODO: check label
+            label: _g.attributes[N_ATTRIBUTE],
             id: index.toString(),
             facsUrl: '',
             facs: '',
