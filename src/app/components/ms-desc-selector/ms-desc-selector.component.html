@@ -1,6 +1,6 @@
 <ng-container *ngIf="(msDesc$ | async) as items">
 
-    <evt-button *ngIf="items.length === 1; else select" [additionalClasses]="'my-button'" [label]="items[0].label"
+    <evt-button *ngIf="items.length === 1; else select" [additionalClasses]="'my-button'" [label]="'showMsDesc' | translate"
         [active]="!!this.msDescId" (btnClick)="onMsDescBtnClick(items[0])" aria-role="button"></evt-button>
 
     <ng-template #select>

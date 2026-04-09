@@ -238,5 +238,6 @@
   "noNamedEntities": "Non ci sono named entities da mostrare",
   "syncTextWithImage": "Sincronizza testo con immagine",
   "sourceFileNotFound": "File sorgente non trovato",
-  "noMsDescAvailable": "Nessuna MsDesc disponibile"
+  "noMsDescAvailable": "Nessuna MsDesc disponibile",
+  "showMsDesc": "Mostra MsDesc"
 }

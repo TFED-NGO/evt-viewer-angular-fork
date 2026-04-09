@@ -242,5 +242,6 @@
   "noNamedEntities": "There are no named entities to show",
   "syncTextWithImage": "Sync text with image",
   "sourceFileNotFound": "Found no source file",
-  "noMsDescAvailable": "No MsDesc available"
+  "noMsDescAvailable": "No MsDesc available",
+  "showMsDesc": "Show MsDesc"
 }
