@@ -6,7 +6,7 @@ import {
 } from '../../models/evt-models';
 import { getElementsBetweenTreeNode, getXPath, isNestedInElem, xpath } from '../../utils/dom-utils';
 import { getExternalElements, isAnalogue, isSource, replaceMultispaces } from '../../utils/xml-utils';
-import { createParser, getClass, getDefaultN, getID, parseChildren, ParseFn, Parser } from './parser-models';
+import { createParser, getClass, getNOrDefault, getID, parseChildren, ParseFn, Parser } from './parser-models';
 import { AppConfig } from 'src/app/app.config';
 import { AnalogueParser } from './analogue-parser';
 import { QuoteParser } from './quotes-parser';
@@ -120,7 +120,7 @@ export class ParagraphParser extends EmptyParser implements Parser<XMLElement> {
             type: Paragraph,
             content: parseChildren(xml, this.genericParse),
             attributes,
-            n: getDefaultN(attributes.n),
+            n: getNOrDefault(attributes.n),
             source: this.source,
             analogue: this.analogue,
             xPath: getXPath(xml),
@@ -139,7 +139,7 @@ export class CBParser extends EmptyParser implements Parser<XMLElement> {
 
         return {
             id: getID(xml),
-            n: getDefaultN(n),
+            n: getNOrDefault(n),
             type: Cb,
             content: [],
             attributes,
@@ -157,7 +157,7 @@ export class LBParser extends EmptyParser implements Parser<XMLElement> {
 
         return {
             id: getID(xml),
-            n: getDefaultN(n),
+            n: getNOrDefault(n),
             rend,
             facs,
             type: Lb,
@@ -307,7 +307,7 @@ export class VerseParser extends EmptyParser implements Parser<XMLElement> {
             type: Verse,
             content: parseChildren(xml, this.genericParse),
             attributes,
-            n: getDefaultN(attributes.n),
+            n: getNOrDefault(attributes.n),
             source: this.source,
             analogue: this.analogue,
             xPath: getXPath(xml),
@@ -341,8 +341,8 @@ export class VersesGroupParser extends EmptyParser implements Parser<XMLElement>
             class: getClass(xml),
             content: parseChildren(xml, this.genericParse),
             attributes,
-            n: getDefaultN(attributes.n),
-            groupType: getDefaultN(attributes.type),
+            n: getNOrDefault(attributes.n),
+            groupType: getNOrDefault(attributes.type),
             source: this.source,
             analogue: this.analogue,
             xPath: getXPath(xml),
