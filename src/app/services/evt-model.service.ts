@@ -32,7 +32,7 @@ import { BibliographicEntriesParserService } from './xml-parsers/bibliographic-e
 import { ModParserService } from './xml-parsers/mod-parser.service';
 import { EditionSource } from './named-entities.service';
 import { ViewSourceFactory } from '../models/evt-polymorphic-models';
-import { N_ATTRIBUTE, XMLID_ATTRIBUTE } from '../models/constants';
+import { N_ATTRIBUTE } from '../models/constants';
 
 @Injectable({
   providedIn: 'root',
