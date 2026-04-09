@@ -7,6 +7,7 @@ import { parseXml } from '../utils/xml-utils';
 import { PrefatoryMatterParserService } from './xml-parsers/prefatory-matter-parser.service';
 import { EditionInfo, EditionSource } from './named-entities.service';
 import { v4 as uuidv4 } from 'uuid';
+import { TEI_TAG, XMLID_ATTRIBUTE } from '../models/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -33,19 +34,21 @@ export class EditionDataService {
     return this.http.get(url, { responseType: 'text' }).pipe(
       map((source) => parseXml(source)),
       tap(source => {
-        setId(source.lastElementChild as HTMLElement);
-        console.log('edited source', source);
+        const setBodyElementsId = (elements: Element[]) => {
+          for (const element of elements) {
+            if (element.setAttributeNS) {
+              if (element.getAttribute(XMLID_ATTRIBUTE) === null) { // Set evt-uuid() as xml:id only if one isn't already present!
+                element.setAttributeNS("http://www.w3.org/XML/1998/namespace", XMLID_ATTRIBUTE, `evt-${uuidv4()}`);
+              }
+            }
 
-        function setId(element: HTMLElement) {
-          if (element.setAttributeNS) {
-            if (element.getAttribute('xml:id') === null) {
-              element.setAttributeNS("http://www.w3.org/XML/1998/namespace", 'xml:id', `evt-${uuidv4()}`);
-            }
-            for (const child of Array.from(element.children)) {
-              setId(child as HTMLElement);
-            }
+            setBodyElementsId(Array.from(element.children));
           }
         }
+
+        const tei = source.querySelector(TEI_TAG);
+        setBodyElementsId(Array.from(tei.children));
+        console.log('edited source', source);
       }),
       // merge lists if both urls and xi:include are specified
       mergeMap((editionData) => this.loadXIinclude(editionData, url.substring(0, url.lastIndexOf('/') + 1))),
