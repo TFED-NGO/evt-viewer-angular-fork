@@ -12,3 +12,5 @@ export const FROM_ATTRIBUTE = 'from';
 export const TO_ATTRIBUTE = 'to';
 export const ISDEPA_ATTRIBUTE = 'isDepa';
 export const N_ATTRIBUTE = 'n';
+
+export const EVT_PREFIX = 'evt-';

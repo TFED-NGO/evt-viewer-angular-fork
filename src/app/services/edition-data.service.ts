@@ -7,7 +7,7 @@ import { parseXml } from '../utils/xml-utils';
 import { PrefatoryMatterParserService } from './xml-parsers/prefatory-matter-parser.service';
 import { EditionInfo, EditionSource } from './named-entities.service';
 import { v4 as uuidv4 } from 'uuid';
-import { TEI_TAG, XMLID_ATTRIBUTE } from '../models/constants';
+import { EVT_PREFIX, TEI_TAG, XMLID_ATTRIBUTE } from '../models/constants';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,8 @@ export class EditionDataService {
           for (const element of elements) {
             if (element.setAttributeNS) {
               if (element.getAttribute(XMLID_ATTRIBUTE) === null) { // Set evt-uuid() as xml:id only if one isn't already present!
-                element.setAttributeNS("http://www.w3.org/XML/1998/namespace", XMLID_ATTRIBUTE, `evt-${uuidv4()}`);
+                const id = EVT_PREFIX + uuidv4();
+                element.setAttributeNS("http://www.w3.org/XML/1998/namespace", XMLID_ATTRIBUTE, id);
               }
             }
 
