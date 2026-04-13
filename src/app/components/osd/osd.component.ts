@@ -183,49 +183,50 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
     this.subscriptions.push(combineLatest([this.optionsChange, this.tileSources, this.evtModelService.pages$])
       .subscribe(([_, tileSources, pages]) => {
 
+        const sortedUrls = pages.map(p => p.facsUrl ?? p.url);
+        const orderMap = new Map<string, number>();
+        sortedUrls.forEach((url, index) => orderMap.set(url, index));
+        const sortedTileSources = [...tileSources]
+          .filter(x => orderMap.has(x.url))
+          .sort(
+            (a, b) => (orderMap.get(a.url) ?? 0) - (orderMap.get(b.url) ?? 0)
+          );
+
         if (this.viewer) {
           this.viewer.destroy();
           this.viewer = undefined;
         }
         //console.log('init');
 
-        if (!!tileSources) {
-          //TODO: check this, for test only
-          if (tileSources.length === 0) {
+        //TODO: check this, for test only
+        if (sortedTileSources.length === 0) {
 
-            const tiles = pages.map((p) => ({
-              type: 'image',
-              url: p.facsUrl,
-              //  protocol: 'http',
-              //  height: '',
-              // '@id': p.id,
-              //  '@context': p.id,
-              //  width: '',
-              //  profile: [],
-
-
-            } as OsdTileSource));
-
-            //console.log('tiles:', tiles);
-            this.viewer = OpenSeadragon({
-              ...commonOptions,
-              ...this.options,
-              tileSources: tiles,
-            });
+          const tiles = pages.map((p) => ({
+            type: 'image',
+            url: p.facsUrl,
+            //  protocol: 'http',
+            //  height: '',
+            // '@id': p.id,
+            //  '@context': p.id,
+            //  width: '',
+            //  profile: [],
 
 
-          } else {
-            this.viewer = OpenSeadragon({
-              ...commonOptions,
-              ...this.options,
-              tileSources,
-            });
-          }
-        } else {
+          } as OsdTileSource));
 
+          //console.log('tiles:', tiles);
           this.viewer = OpenSeadragon({
             ...commonOptions,
             ...this.options,
+            tileSources: tiles,
+          });
+
+
+        } else {
+          this.viewer = OpenSeadragon({
+            ...commonOptions,
+            ...this.options,
+            tileSources: sortedTileSources,
           });
         }
         this.viewer.goToPage(this.page);

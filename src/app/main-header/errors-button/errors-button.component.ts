@@ -12,15 +12,12 @@ export class ErrorsButtonComponent implements OnInit {
   @ViewChild('content', { static: true }) content!: TemplateRef<any>;
   private witnessModalRef: NgbModalRef = null;
   errors$ = this.errorService.errors$;
+  isLoading$ = this.errorService.isLoading$;
 
   constructor(
     private modalService: ModalService,
     private errorService: ErrorsService,
   ) {
-  }
-
-  isLoading() {
-    return this.errorService.isLoading;
   }
 
   ngOnInit(): void {

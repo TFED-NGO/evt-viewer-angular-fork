@@ -156,7 +156,7 @@
                                     [ids]="readingItem.reading.attributes.resp"></evt-witness-resp-metadata>
                             </span>
 
-                            <ng-container *ngFor="let metadata of readingItem.reading.attributes | keyvalue">
+                            <ng-container *ngFor="let metadata of readingItem.reading.attributes | visibleAttributes">
                                 <span class="d-block pe-2" *ngIf="metadata.key !== 'wit' && metadata.key !== 'resp'">
                                     <evt-reading-metadata [metadata]="metadata"></evt-reading-metadata>
                                 </span>

@@ -8,11 +8,8 @@ export class ErrorsService {
   private _errors$ = new BehaviorSubject<SourceError[]>([]);
   errors$ = this._errors$.asObservable();
 
-  private _isLoading = true;
-
-  get isLoading() {
-    return this._isLoading;
-  }
+  private _isLoading$ = new BehaviorSubject<boolean>(true);
+  isLoading$ = this._isLoading$.asObservable();
 
   constructor() { }
 
@@ -37,11 +34,11 @@ export class ErrorsService {
   }
 
   loadingStart() {
-    this._isLoading = true;
+    this._isLoading$.next(true);
   }
 
   loadingEnd() {
-    this._isLoading = false;
+    this._isLoading$.next(false);
   }
 
   dismissAll() {

@@ -20,7 +20,7 @@ export class FacsimileParser extends EmptyParser implements Parser<XMLElement> {
     attributeParser = createParser(AttributeParser, this.genericParse);
     graphicParser = createParser(GraphicParser, this.genericParse);
     surfaceGrpParser = createParser(SurfaceGrpParser, this.genericParse);
-    surfaceParser = createParser(SurfaceParser,this.genericParse);
+    surfaceParser = createParser(SurfaceParser, this.genericParse);
     public parse(xml: XMLElement): Facsimile {
 
         // const zones = Array.from(xml.querySelectorAll<XMLElement>('zone')).map((z) => this.zoneParser.parse(z));
@@ -63,12 +63,12 @@ export class ZoneParser extends EmptyParser implements Parser<XMLElement> {
 
         if (xml.getAttribute('points')) {
             coords = attributes.points.trim().split(' ')
-                .filter((sp)=> sp.length > 0)
+                .filter((sp) => sp.length > 0)
                 .map((stringPoint) => {
                     const points = stringPoint.split(',');
                     const px = parseInt(points[0], 10);
                     const py = parseInt(points[1], 10)
-                    if (!isNaN(px) && !isNaN(py)){
+                    if (!isNaN(px) && !isNaN(py)) {
                         return {
                             x: px,
                             y: py,
@@ -136,8 +136,7 @@ export class SurfaceParser extends EmptyParser implements Parser<XMLElement> {
     zoneParser = createParser(ZoneParser, this.genericParse);
     public parse(xml: XMLElement): Surface {
         const zones = Array.from(xml.querySelectorAll<XMLElement>('zone')).map((z) => this.zoneParser.parse(z));
-
-        return {
+        const surface: Surface = {
             type: Surface,
             id: getID(xml),
             corresp: xml.getAttribute('corresp')?.replace('#', ''),
@@ -150,6 +149,7 @@ export class SurfaceParser extends EmptyParser implements Parser<XMLElement> {
             content: parseChildren(xml, this.genericParse),
             xPath: getXPath(xml),
         };
+        return surface;
     }
 }
 
