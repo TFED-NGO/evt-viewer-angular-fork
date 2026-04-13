@@ -379,14 +379,17 @@ export class EVTModelService {
     shareReplay(1),
   );
 
-  public readonly imageViewer$ = this.surfaces$.pipe(
-    withLatestFrom(this.currentEdition$),
+  public readonly imageViewer$ = combineLatest([
+    this.surfaces$,
+    this.currentEdition$
+  ]).pipe(
     map(([surfaces, edition]) => {
       const imagesSource = edition.editionSource.imagesSource;
       if (!imagesSource) throw new Error("Image source is required");
 
       return ViewSourceFactory.create(imagesSource).getDataType(surfaces);
     }),
+    shareReplay(1)
   );
 
   public readonly hsLines$ = this.surfaces$.pipe(
@@ -427,35 +430,35 @@ export class EVTModelService {
     shareReplay(1),
   )
 
-  constructor(
-    private analogueParser: AnalogueEntriesParserService,
-    private editionDataService: EditionDataService,
-    private editionStructureParser: StructureXmlParserService,
-    private namedEntitiesParser: NamedEntitiesParserService,
-    private prefatoryMatterParser: PrefatoryMatterParserService,
-    private witnessesParser: WitnessesParserService,
-    private apparatusParser: ApparatusEntriesParserService,
-    private facsimileParser: FacsimileParserService,
-    private characterDeclarationsParser: CharacterDeclarationsParserService,
-    private linesVersesParser: LinesVersesParserService,
-    private msDescParser: MsDescParserService,
-    private sourceParser: SourceEntriesParserService,
-    private bibliographicEntriesParser: BibliographicEntriesParserService,
-    private modParser: ModParserService,
-  ) {
-  }
+constructor(
+  private analogueParser: AnalogueEntriesParserService,
+  private editionDataService: EditionDataService,
+  private editionStructureParser: StructureXmlParserService,
+  private namedEntitiesParser: NamedEntitiesParserService,
+  private prefatoryMatterParser: PrefatoryMatterParserService,
+  private witnessesParser: WitnessesParserService,
+  private apparatusParser: ApparatusEntriesParserService,
+  private facsimileParser: FacsimileParserService,
+  private characterDeclarationsParser: CharacterDeclarationsParserService,
+  private linesVersesParser: LinesVersesParserService,
+  private msDescParser: MsDescParserService,
+  private sourceParser: SourceEntriesParserService,
+  private bibliographicEntriesParser: BibliographicEntriesParserService,
+  private modParser: ModParserService,
+) {
+}
 
-  getPage(pageId: string): Observable<Page> {
-    return this.pages$.pipe(map((pages) => pages.find((page) => page.id === pageId)));
-  }
+getPage(pageId: string): Observable < Page > {
+  return this.pages$.pipe(map((pages) => pages.find((page) => page.id === pageId)));
+}
 
   private flattenWitnesses(witnesses: Witness[]): Witness[] {
-    return witnesses.reduce((acc, witness) => {
-      acc.push(witness);
-      if (witness.witnesses && Array.isArray(witness.witnesses)) {
-        acc.push(...this.flattenWitnesses(witness.witnesses));
-      }
-      return acc;
-    }, []);
-  }
+  return witnesses.reduce((acc, witness) => {
+    acc.push(witness);
+    if (witness.witnesses && Array.isArray(witness.witnesses)) {
+      acc.push(...this.flattenWitnesses(witness.witnesses));
+    }
+    return acc;
+  }, []);
+}
 }
