@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ComponentRef, HostListener, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { AttributesMap } from 'ng-dynamic-component';
-import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { animationFrameScheduler, BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { auditTime, distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 import { EditionLevelType, TextFlow } from '../../app.config';
 import { GenericElement, Paragraph, Verse } from '../../models/evt-models';
@@ -80,7 +80,10 @@ export class ContentViewerComponent implements OnDestroy {
     private cdr: ChangeDetectorRef,
   ) {
     this.lineBeginningSelectedSubs = this.evtHighlineService.lineBeginningSelected$.pipe(
-      auditTime(1),
+      // delay: 0 means next frame with no delay
+      // scheduler: rendering scheduler instead of the default one like for setTimeout
+      auditTime(0, animationFrameScheduler), 
+
       distinctUntilChanged(sameIds)
     ).subscribe(_ => this.cdr.markForCheck());
   }
