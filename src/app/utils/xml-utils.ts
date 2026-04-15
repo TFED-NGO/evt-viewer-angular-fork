@@ -138,3 +138,14 @@ export function createParsedWhiteSpace() {
   const parsed = parse(result);
   return parsed;
 }
+
+export function sameIds(a: any[], b: any[]): boolean {
+  if (a === b) return true;
+  if (!a || !b || a.length !== b.length) return false;
+
+  for (let i = 0; i < a.length; i++) {
+    if (a[i].id !== b[i].id) return false;
+  }
+
+  return true;
+}

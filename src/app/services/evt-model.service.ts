@@ -389,7 +389,6 @@ export class EVTModelService {
 
       return ViewSourceFactory.create(imagesSource).getDataType(surfaces);
     }),
-    shareReplay(1)
   );
 
   public readonly hsLines$ = this.surfaces$.pipe(
