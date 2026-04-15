@@ -1,8 +1,8 @@
-import { Component, ComponentRef, HostListener, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
+import { ChangeDetectorRef, Component, ComponentRef, HostListener, Input, OnDestroy, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { AttributesMap } from 'ng-dynamic-component';
-import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
-import { filter, map, shareReplay } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
+import { auditTime, distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
 import { EditionLevelType, TextFlow } from '../../app.config';
 import { GenericElement, Paragraph, Verse } from '../../models/evt-models';
 import { ComponentRegisterService } from '../../services/component-register.service';
@@ -10,6 +10,7 @@ import { EntitiesSelectService } from '../../services/entities-select.service';
 import { EntitiesSelectItem } from '../entities-select/entities-select.component';
 import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
 import { AdditionComponent } from '../addition/addition.component';
+import { sameIds } from 'src/app/utils/xml-utils';
 
 
 @Component({
@@ -70,11 +71,18 @@ export class ContentViewerComponent implements OnDestroy {
   get selectedLayer() { return this.selLayer; }
   selectedLayerChange = new BehaviorSubject<string>(undefined);
 
+  private lineBeginningSelectedSubs: Subscription;
+
   constructor(
     private componentRegister: ComponentRegisterService,
     private entitiesSelectService: EntitiesSelectService,
     private evtHighlineService: EvtLinesHighlightService,
+    private cdr: ChangeDetectorRef,
   ) {
+    this.lineBeginningSelectedSubs = this.evtHighlineService.lineBeginningSelected$.pipe(
+      auditTime(1),
+      distinctUntilChanged(sameIds)
+    ).subscribe(_ => this.cdr.markForCheck());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -269,5 +277,7 @@ export class ContentViewerComponent implements OnDestroy {
       this.componentRef.destroy();
       this.componentRef = undefined;
     }
+
+    this.lineBeginningSelectedSubs.unsubscribe();
   }
 }
