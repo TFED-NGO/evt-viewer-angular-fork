@@ -96,7 +96,6 @@ export class EvtLinesHighlightService {
         this.assignLbId(insideContent, ignoreFindLbElement);
       }
     }
-
   }
 
   clearHighlightText(): void {

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, ComponentRef, HostListener, Input, OnDest
 
 import { AttributesMap } from 'ng-dynamic-component';
 import { animationFrameScheduler, BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
-import { auditTime, distinctUntilChanged, filter, map, shareReplay } from 'rxjs/operators';
+import { auditTime, filter, map, shareReplay } from 'rxjs/operators';
 import { EditionLevelType, TextFlow } from '../../app.config';
 import { GenericElement, Paragraph, Verse } from '../../models/evt-models';
 import { ComponentRegisterService } from '../../services/component-register.service';
@@ -10,8 +10,6 @@ import { EntitiesSelectService } from '../../services/entities-select.service';
 import { EntitiesSelectItem } from '../entities-select/entities-select.component';
 import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
 import { AdditionComponent } from '../addition/addition.component';
-import { sameIds } from 'src/app/utils/xml-utils';
-
 
 @Component({
   selector: 'evt-content-viewer',
@@ -82,9 +80,7 @@ export class ContentViewerComponent implements OnDestroy {
     this.lineBeginningSelectedSubs = this.evtHighlineService.lineBeginningSelected$.pipe(
       // delay: 0 means next frame with no delay
       // scheduler: rendering scheduler instead of the default one like for setTimeout
-      auditTime(0, animationFrameScheduler), 
-
-      distinctUntilChanged(sameIds)
+      auditTime(0, animationFrameScheduler),
     ).subscribe(_ => this.cdr.markForCheck());
   }
 
@@ -150,7 +146,6 @@ export class ContentViewerComponent implements OnDestroy {
     shareReplay(1),
   );
 
-
   public context$ = combineLatest([
     this.parsedContent,
     this.inputs,
@@ -204,15 +199,11 @@ export class ContentViewerComponent implements OnDestroy {
       const findElement = elementsSelected
         .find((e) => e.corresp === correspId && e.id === lbId);
 
-
       if (findElement) {
         this.evtHighlineService.lineBeginningSelected$.next(
           elementsSelected.filter((e) => e.corresp !== correspId && e.id !== lbId),
         );
-
-
       } else {
-
         this.evtHighlineService.lineBeginningSelected$.next([
           ...elementsSelected,
           {
@@ -256,10 +247,7 @@ export class ContentViewerComponent implements OnDestroy {
         {
           id: facsId, corresp: id, selected: undefined,
         }, ...elementsSelected]);
-
-
     } else {
-
       this.evtHighlineService.lineBeginningSelected$.next([
         {
           id: lbId, corresp: correspId, selected: undefined,

@@ -336,10 +336,10 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
           selected: undefined,
         }));
 
-        this.linesHighlightService.lineBeginningSelected$.next([
-          ...elementsSelected,
-          ...linesOverMapped,
-        ]);
+      this.linesHighlightService.lineBeginningSelected$.next([
+        ...elementsSelected,
+        ...linesOverMapped,
+      ]);
     });
 
     this.mouseClicked$.pipe(
@@ -361,24 +361,18 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
           imagePoint.y < lr.y;
       });
 
-      let elementsSelected =
-        this.linesHighlightService.lineBeginningSelected$
-          .getValue()
-          .filter(e => e.selected);
-
-      linesOver.forEach(lo => {
-        if (elementsSelected.some(es => es.corresp === lo.corresp)) {
-          elementsSelected = elementsSelected.filter(es => es.corresp !== lo.corresp);
-        } else {
-          elementsSelected.push({
-            id: lo.corresp,
-            corresp: lo.corresp,
+      const clicked = linesOver[linesOver.length - 1];
+      if (clicked) {
+        this.linesHighlightService.lineBeginningSelected$.next([
+          {
+            id: clicked.corresp,
+            corresp: clicked.corresp,
             selected: true,
-          });
-        }
-      });
-
-        this.linesHighlightService.lineBeginningSelected$.next(elementsSelected);
+          }
+        ]);
+      } else {
+        this.linesHighlightService.lineBeginningSelected$.next([]);
+      }
     });
 
     this.linesHighlightService.zonesHighlights$.pipe(
