@@ -3,7 +3,7 @@ import { AppConfig, ImagesSource } from '../../app.config';
 import { Anchor, ApparatusEntry, ApparatusEntryExponent, Attribute, Cb, DocumentApparatusEntries, EditionStructure, ElementApparatusEntries, GenericElement, LacunaPair, OriginalEncodingNodeType, Page, Text, XMLElement } from '../../models/evt-models';
 import { createNsResolver, deepSearch, getElementsBetweenTreeNode, isNestedInElem } from '../../utils/dom-utils';
 import { GenericParserService } from './generic-parser.service';
-import { getID, ParseResult } from './parser-models';
+import { getID, getNOrDefaultFromElement, ParseResult } from './parser-models';
 import { getFromAttributeOrDefault, getToAttributeOrDefault } from 'src/app/extensions/apparatus.extensions';
 import { FROM_ATTRIBUTE, TO_ATTRIBUTE } from 'src/app/models/constants';
 import { v4 as uuidv4 } from 'uuid';
@@ -542,7 +542,7 @@ export class StructureXmlParserService {
     if (pb.tagName !== 'pb') {
       return {
         id: getID(pb, 'page'),
-        label: pb.getAttribute('n') || 'page',
+        label: getNOrDefaultFromElement(pb) || 'page',
         facs: (pb.getAttribute('facs') || 'page').split('#').slice(-1)[0],
         originalContent: [pb],
         parsedContent: this.parsePageContent(doc, [pb]),
@@ -558,7 +558,7 @@ export class StructureXmlParserService {
 
     return {
       id: getID(pb, 'page'),
-      label: pb.getAttribute('n') || 'page',
+      label: getNOrDefaultFromElement(pb) || 'page',
       facs: (pb.getAttribute('facs') || 'page').split('#').slice(-1)[0],
       originalContent,
       parsedContent: this.parsePageContent(doc, originalContent),

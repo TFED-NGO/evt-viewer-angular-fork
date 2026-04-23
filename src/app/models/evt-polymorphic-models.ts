@@ -91,7 +91,7 @@ class EditionSource extends ViewerSource {
     getDataType(data: Surface[]): ViewerDataType {
         const imagesFolder = this.imagesSource.imagesFolderUrls.single;
         const xmlImages: XMLImagesValues[] = data.map((s) => {
-            const url = (s.corresp ?? s.graphics[0].url);
+            const url = s.graphics[0].url;
             if (this.imagesSource.kind === 'ExternalXml') {
                 return { url: this.imagesSource.url + imagesFolder + url };
             }

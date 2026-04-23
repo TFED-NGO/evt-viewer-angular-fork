@@ -85,6 +85,8 @@ export class EVTStatusService {
             withLatestFrom(this.evtModelService.pages$),
             map(([n, pages]) => n < 0 ? pages[pages.length - 1] : pages[n]),
         ),
+    ).pipe(
+        distinctUntilChanged((a, b) => a?.id === b?.id)
     );
     
     public currentEditionLevels$ = merge(

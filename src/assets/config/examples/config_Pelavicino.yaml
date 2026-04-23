@@ -59,7 +59,7 @@ edition:
   logoUrl: "data/images/logo/logo.png"
 
   # Default edition level
-  defaultEditionLevel: critical
+  defaultEditionLevel: interpretative
 
   # Choose the edition levels for your edition using boolean values (true|false), note that
   #   enable: enable the desired edition level or not
@@ -98,7 +98,7 @@ edition:
     # Allow the user to download other edition documents, e.g. a PDF version of the edition
     downloadLinks:
       - label: example
-        url: value
+        url: http://example.com
 
   # Customize the list of available named entities to be highlighted and to be shown
   # among entities lists, by changing the default list label (to be shown when no <head>
@@ -140,7 +140,6 @@ edition:
       listSelector: listEvent
       namedEntityType: event
 
-    # CHECK "entries" è un po' vago, "glossary"? Tecnicamente un elemento <entry> non è una named entity
     entries:
       enable: true
       label: Entries
@@ -152,9 +151,6 @@ edition:
       label: Objects
       listSelector: listObject
       namedEntityType: object
-
-  # MISSING
-  # Come si gestisce la lista semplice?
 
   # TEI elements used in the edition text to mark up named entities, and the attribute used for the linking
   entitiesOccurrenceSelectors:
@@ -220,7 +216,7 @@ edition:
     - "type=orthographic"
 
   # Indicate whether to activate or not the button to toggle text from prose flow to verses flow.
-  proseVersesToggler: true
+  proseVersesToggler: false
   # Indicate which flow you want to activate for the text as default.
   defaultTextFlow: prose
   # This indicates the multiplier for visualising verse numbers. For example, a value of 5 means
@@ -288,7 +284,7 @@ edition:
 #######################################
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
-  defaultViewMode: collation
+  defaultViewMode: imageText
 
   # Select which view modes you want to be available in your edition.
   availableViewModes:
@@ -314,7 +310,7 @@ ui:
       iconSet: evt
       id: imageText
       label: Image Text
-      enable: false
+      enable: true
 
     - icon: txtTxt
       iconSet: evt
@@ -394,7 +390,7 @@ ui:
   # Select the default theme to be used when loading your edition.
   theme: classic
   # Button to activate the text-image linking
-  syncZonesHighlightButton: true
+  syncZonesHighlightButton: false
   # Default image zoom level
   defaultImageZoomLevel: 0.8
   # Maximum image zoom level

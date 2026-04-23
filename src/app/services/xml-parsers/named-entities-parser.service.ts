@@ -6,7 +6,7 @@ import {
 import { isNestedInElem } from '../../utils/dom-utils';
 import { Map } from '../../utils/js-utils';
 import { GenericElemParser } from './basic-parsers';
-import { createParser } from './parser-models';
+import { createParser, getID, getNOrDefaultFromElement } from './parser-models';
 import { EditionSource } from '../named-entities.service';
 import { AppConfig } from 'src/app/app.config';
 import { ErrorsService } from '../errors.service';
@@ -138,8 +138,8 @@ export class NamedEntitiesParserService {
     return {
       ref: xml.getAttribute('ref').replace('#', ''),
       el: elementParser.parse(xml),
-      docId: doc ? doc.getAttribute('xml:id') : '', // TODO: get proper document id when missing
-      docLabel: doc ? doc.getAttribute('n') || doc.getAttribute('xml:id') : '', // TODO: get proper document label when attributes missing
+      docId: doc ? getID(doc) : '', // TODO: get proper document id when missing
+      docLabel: doc ?  (getNOrDefaultFromElement(doc) || getID(doc)) : '', // TODO: get proper document label when attributes missing
     };
   }
 }

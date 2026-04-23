@@ -9,7 +9,7 @@ editionTextSourcesConfig:
   # In case your edition includes more files you can have different values for "type" besides main, e.g. you could have
   # "type: witness" or "type: translation" or other values
   - type: main
-    url: assets/data/DOTR/VB-complete-xinclude.xml
+    url: assets/data/VB-DOTR.xml
     enable: true
 
     # A friendly name displayed instead of the url
@@ -52,14 +52,14 @@ edition:
   badge: beta
   # If available, insert the URL of the web home page for the edition: if you specify an external web site there will be a
   # link pointing to it.
-  editionHome: "http://vbd.humnet.unipi.it/beta2/"
+  editionHome: "https://www.collane.unito.it/oa/items/show/201"
 
   # You can add a custom logo which will precede the edition title, to do this just insert the
   # relative path to the logo image
-  logoUrl: "data/images/logo/logo.png"
+  logoUrl: "assets/data/images/logo_white.png"
 
   # Default edition level
-  defaultEditionLevel: critical
+  defaultEditionLevel: diplomatic
 
   # Choose the edition levels for your edition using boolean values (true|false), note that
   #   enable: enable the desired edition level or not
@@ -68,20 +68,20 @@ edition:
     # Diplomatic level
     - id: diplomatic
       # Note that "label" the fallback value, EVT is going to look into the localization files (i18n folder) for the actual text
-      label: diplomatic
+      label: Diplomatic
       # Enable this edition level
       enable: true
       # Make it visible in the selector
       hidden: false
 
     - id: interpretative
-      label: interpretative
+      label: Interpretative
       enable: true
       hidden: false
 
     - id: critical
-      label: critical
-      enable: true
+      label: Critical
+      enable: false
       hidden: false
 
     - id: changesView
@@ -93,12 +93,12 @@ edition:
     # Set this to true or to false to enable/disable download of the TEI/XML ﬁle
     downloadableXMLSource: true
     # Show the named entities lists (true|false) if false then no lists will be shown
-    showEntitiesLists: true
+    showEntitiesLists: false
     # Configure download links
     # Allow the user to download other edition documents, e.g. a PDF version of the edition
     downloadLinks:
       - label: example
-        url: value
+        url: http://example.com
 
   # Customize the list of available named entities to be highlighted and to be shown
   # among entities lists, by changing the default list label (to be shown when no <head>
@@ -140,7 +140,6 @@ edition:
       listSelector: listEvent
       namedEntityType: event
 
-    # CHECK "entries" è un po' vago, "glossary"? Tecnicamente un elemento <entry> non è una named entity
     entries:
       enable: true
       label: Entries
@@ -152,9 +151,6 @@ edition:
       label: Objects
       listSelector: listObject
       namedEntityType: object
-
-  # MISSING
-  # Come si gestisce la lista semplice?
 
   # TEI elements used in the edition text to mark up named entities, and the attribute used for the linking
   entitiesOccurrenceSelectors:
@@ -288,7 +284,7 @@ edition:
 #######################################
 ui:
   # Select which view mode you want to your edition to open on. Note that it must be an active mode!
-  defaultViewMode: collation
+  defaultViewMode: imageText
 
   # Select which view modes you want to be available in your edition.
   availableViewModes:

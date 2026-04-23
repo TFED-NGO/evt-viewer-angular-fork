@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject,    filter,    map, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, filter, map, withLatestFrom } from 'rxjs';
 import { EVTModelService } from './evt-model.service';
 import { EVTStatusService } from './evt-status.service';
 import { Lb, Paragraph, Verse, Word } from '../models/evt-models';
@@ -8,25 +8,25 @@ import { Lb, Paragraph, Verse, Word } from '../models/evt-models';
 export class EvtLinesHighlightService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private parsedContent: any;
-  constructor(private evtModelService: EVTModelService, private evtStatusService: EVTStatusService  ){
-    this.evtStatusService.currentPage$.subscribe((page)=>{
+  constructor(private evtModelService: EVTModelService, private evtStatusService: EVTStatusService) {
+    this.evtStatusService.currentPage$.subscribe((page) => {
       this.clearHighlightText();
       this.lineBeginningSelected$.next([]);
       this.parsedContent = page.parsedContent;
-      if (page){
-        setTimeout(()=>{
-        page.parsedContent?.forEach((pc)=>{
-          if (pc) { this.assignLbId(pc, false); }
-        })
+      if (page) {
+        setTimeout(() => {
+          page.parsedContent?.forEach((pc) => {
+            if (pc) { this.assignLbId(pc, false); }
+          })
         }, 500);
       }
     })
     this.lineBeginningSelected$.pipe(
-      filter(()=> this.syncTextImage$.value),
+      filter(() => this.syncTextImage$.value),
     ).subscribe((lines) => {
       if (lines.length > 0) {
         this.highlightLineText(
-          lines.map((z)=> ({ id: z.corresp, selected: z.selected })),
+          lines.map((z) => ({ id: z.corresp, selected: z.selected })),
         );
       } else {
         this.clearHighlightText();
@@ -45,17 +45,17 @@ export class EvtLinesHighlightService {
 
   zonesHighlights$ = this.lineBeginningSelected$.pipe(
     withLatestFrom(this.currentSurfaces$),
-    map(([lbS, surface]) =>{
+    map(([lbS, surface]) => {
       const linesOver = surface?.zones?.lines.filter((line) => lbS.some((l) => l.id === line.id || l.id === line.corresp)) ?? [];
 
-      return  linesOver.map((lo) => ({
-            id: lo.id,
-            corresp: lo.corresp,
-            // ul: { x: lo.coords[0].x, y: lo.coords[0].y },
-            // lr: { x: lo.coords[2].x, y: lo.coords[2].y },
-            coords: lo.coords,
-            selected: lbS.find((l)=>l.corresp === lo.corresp)?.selected,
-          }));
+      return linesOver.map((lo) => ({
+        id: lo.id,
+        corresp: lo.corresp,
+        // ul: { x: lo.coords[0].x, y: lo.coords[0].y },
+        // lr: { x: lo.coords[2].x, y: lo.coords[2].y },
+        coords: lo.coords,
+        selected: lbS.find((l) => l.corresp === lo.corresp)?.selected,
+      }));
     }),
   );
 
@@ -63,8 +63,8 @@ export class EvtLinesHighlightService {
   private tempCorrespId = '';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private assignLbId(startingContent: any, ignoreFindLbElement: boolean): void{
-    if (startingContent.type.name === Verse.name && startingContent.attributes['facs']){
+  private assignLbId(startingContent: any, ignoreFindLbElement: boolean): void {
+    if (startingContent.type.name === Verse.name && startingContent.attributes['facs']) {
       const facsId = startingContent.attributes['facs'].replace('#', '');
       const id = startingContent.attributes['id'];
 
@@ -83,7 +83,7 @@ export class EvtLinesHighlightService {
       return;
     }
 
-    if (startingContent.type.name === Lb.name && !ignoreFindLbElement){
+    if (startingContent.type.name === Lb.name && !ignoreFindLbElement) {
       this.tempLbId = startingContent.facs?.replace('#', '');
       this.tempCorrespId = startingContent.id?.replace('#', '');
 
@@ -99,8 +99,8 @@ export class EvtLinesHighlightService {
 
   }
 
-  clearHighlightText():void {
-    if (this.parsedContent === undefined){
+  clearHighlightText(): void {
+    if (this.parsedContent === undefined) {
       return;
     }
     for (const pc of this.parsedContent) {
@@ -108,7 +108,7 @@ export class EvtLinesHighlightService {
     }
   }
 
-  highlightLineText(lbIds: Array<{id: string, selected: boolean}>) {
+  highlightLineText(lbIds: Array<{ id: string, selected: boolean }>) {
     if (!lbIds || lbIds.length === 0) {
       return;
     }
@@ -119,25 +119,25 @@ export class EvtLinesHighlightService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private recursiveHighlight( pc: any, lbIds: Array<{id: string, selected: boolean}>): void{
-    if (pc && pc.type.name !== Verse.name  && pc.type.name !== Paragraph.name  && pc.type.name !== Word.name ){
-      const f = lbIds.find( (lbId) => pc.correspId === lbId.id);
-      if (f){
+  private recursiveHighlight(pc: any, lbIds: Array<{ id: string, selected: boolean }>): void {
+    if (pc && pc.type.name !== Verse.name && pc.type.name !== Paragraph.name && pc.type.name !== Word.name) {
+      const f = lbIds.find((lbId) => pc.correspId === lbId.id);
+      if (f) {
         if (f.selected) {
-          pc.class= pc.class + ' highlightverse selected';
+          pc.class = pc.class + ' highlightverse selected';
         } else {
-          pc.class= pc.class + ' highlightverse';
+          pc.class = pc.class + ' highlightverse';
         }
       } else {
         if (pc.class) {
-          pc.class = pc.class.replace(/(highlightverse)(\s)?(selected)?/,'');
+          pc.class = pc.class.replace(/(highlightverse)(\s)?(selected)?/, '');
         }
       }
     }
 
-    if (pc?.content){
+    if (pc?.content) {
       for (const insidePc of pc.content) {
-      this.recursiveHighlight(insidePc, lbIds);
+        this.recursiveHighlight(insidePc, lbIds);
       }
     }
   }
