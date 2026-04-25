@@ -69,7 +69,7 @@ export class ContentViewerComponent implements OnDestroy {
   get selectedLayer() { return this.selLayer; }
   selectedLayerChange = new BehaviorSubject<string>(undefined);
 
-  private lineBeginningSelectedSubs: Subscription;
+  private lineBeginningActivated: Subscription;
 
   constructor(
     private componentRegister: ComponentRegisterService,
@@ -77,11 +77,14 @@ export class ContentViewerComponent implements OnDestroy {
     private evtHighlineService: EvtLinesHighlightService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.lineBeginningSelectedSubs = this.evtHighlineService.lineBeginningSelected$.pipe(
+    this.lineBeginningActivated = combineLatest([
+      this.evtHighlineService.lineBeginningSelected$,
+      this.evtHighlineService.lineBeginningHovered$
+    ]).pipe(
       // delay: 0 means next frame with no delay
       // scheduler: rendering scheduler instead of the default one like for setTimeout
       auditTime(0, animationFrameScheduler),
-    ).subscribe(_ => this.cdr.markForCheck());
+    ).subscribe(() => this.cdr.markForCheck());
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -169,50 +172,36 @@ export class ContentViewerComponent implements OnDestroy {
       highlightColor: this.entitiesSelectService.getHighlightColor(data?.attributes ?? {}, data?.class, ith),
     };
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  @HostListener('click', ['$event']) mouseClick($event: any) {
 
+
+  @HostListener('click', ['$event'])
+  mouseClick($event: any) {
     if (!this._content.content) {
 
-      if (this._content.type.name === AdditionComponent.name) {
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (this._content.type.name === AdditionComponent.name) return;
+
       const lbId = (this._content as any).lbId;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const correspId = (this._content as any).correspId;
 
-      if ((lbId === '' || correspId === '')) {
-        return;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((this._content as any).text === '' || (this._content as any).text === ' ' ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (!lbId || !correspId) return;
+
+      if (
+        (this._content as any).text === '' ||
+        (this._content as any).text === ' ' ||
         (this._content as any).type.name === Verse.name ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (this._content as any).type.name === Paragraph.name
       ) {
         return;
       }
 
-      const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
-      const findElement = elementsSelected
-        .find((e) => e.corresp === correspId && e.id === lbId);
-
-      if (findElement) {
-        this.evtHighlineService.lineBeginningSelected$.next(
-          elementsSelected.filter((e) => e.corresp !== correspId && e.id !== lbId),
-        );
-      } else {
-        this.evtHighlineService.lineBeginningSelected$.next([
-          ...elementsSelected,
-          {
-            id: lbId, corresp: correspId, selected: true,
-          }]);
-      }
+      $event.preventDefault();
+      this.evtHighlineService.lineBeginningSelected$.next({
+        id: lbId,
+        corresp: correspId
+      });
     }
-    $event.preventDefault();
   }
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @HostListener('mouseover', ['$event']) mouseOver($event: any) {
     if (this._content.type.name === AdditionComponent.name) {
@@ -237,30 +226,24 @@ export class ContentViewerComponent implements OnDestroy {
     }
 
     $event.preventDefault();
-    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
-
     if ((this._content as GenericElement).type.name === Verse.name && (this._content as GenericElement).attributes['facs']) {
 
       const facsId = (this._content as GenericElement).attributes['facs'].replace('#', '');
       const id = (this._content as GenericElement).attributes['id'];
-      this.evtHighlineService.lineBeginningSelected$.next([
-        {
-          id: facsId, corresp: id, selected: undefined,
-        }, ...elementsSelected]);
+      this.evtHighlineService.lineBeginningHovered$.next({
+        id: facsId, corresp: id
+      });
     } else {
-      this.evtHighlineService.lineBeginningSelected$.next([
-        {
-          id: lbId, corresp: correspId, selected: undefined,
-        }, ...elementsSelected]);
+      this.evtHighlineService.lineBeginningHovered$.next({
+        id: lbId, corresp: correspId
+      });
     }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @HostListener('mouseleave', ['$event']) mouseLeave($event: any) {
-
     $event.preventDefault();
-    const elementsSelected = this.evtHighlineService.lineBeginningSelected$.getValue().filter((e) => e.selected);
-    this.evtHighlineService.lineBeginningSelected$.next(elementsSelected);
+    this.evtHighlineService.lineBeginningHovered$.next(null);
   }
 
   ngOnDestroy() {
@@ -269,6 +252,6 @@ export class ContentViewerComponent implements OnDestroy {
       this.componentRef = undefined;
     }
 
-    this.lineBeginningSelectedSubs.unsubscribe();
+    this.lineBeginningActivated.unsubscribe();
   }
 }
