@@ -1,6 +1,7 @@
 import { Component, ElementRef, Input, Output, ViewChild } from '@angular/core';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject } from 'rxjs';
 import { delay, distinctUntilChanged, filter, map, shareReplay, tap, withLatestFrom } from 'rxjs/operators';
+import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
 import { AppConfig, EditionLevel, EditionLevelType, TextFlow } from '../../app.config';
 import { EntitiesSelectItem } from '../../components/entities-select/entities-select.component';
 import { Page } from '../../models/evt-models';
@@ -174,6 +175,7 @@ export class TextPanelComponent {
   constructor(
     public evtModelService: EVTModelService,
     public evtStatus: EVTStatusService,
+    public highlightService: EvtLinesHighlightService
   ) {
   }
 
@@ -207,6 +209,10 @@ export class TextPanelComponent {
 
   updateSelectedLayer(layer: string) {
     this.selectedLayer = layer;
+  }
+
+  onMainContentClicked(_: MouseEvent) {
+    this.highlightService.clearHighlight();
   }
 
   private _scrollToPage(pageId: string) {
