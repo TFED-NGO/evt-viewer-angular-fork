@@ -77,8 +77,7 @@ export class ImagePanelComponent implements OnDestroy, AfterViewInit {
   ) { }
 
   ngOnDestroy(): void {
-    this.linesHighlightService.lineBeginningHovered$.next(null);
-    this.linesHighlightService.lineBeginningSelected$.next(null);
+    this.linesHighlightService.clearHighlight();
     this.linesHighlightService.syncTextImage$.next(false);
 
     this.unsubscribeAll$.next();
@@ -117,8 +116,7 @@ export class ImagePanelComponent implements OnDestroy, AfterViewInit {
   syncTextImage() {
     this.isSyncButtonActive = this.isSyncButtonActive === 'active' ? '' : 'active';
     if (this.isSyncButtonActive === '') {
-      this.linesHighlightService.lineBeginningHovered$.next(null);
-      this.linesHighlightService.lineBeginningSelected$.next(null);
+      this.linesHighlightService.clearHighlight();
     }
     this.linesHighlightService.syncTextImage$.next(this.isSyncButtonActive === 'active');
   }

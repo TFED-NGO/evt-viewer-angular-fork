@@ -77,10 +77,7 @@ export class ContentViewerComponent implements OnDestroy {
     private evtHighlineService: EvtLinesHighlightService,
     private cdr: ChangeDetectorRef,
   ) {
-    this.lineBeginningActivated = combineLatest([
-      this.evtHighlineService.lineBeginningSelected$,
-      this.evtHighlineService.lineBeginningHovered$
-    ]).pipe(
+    this.lineBeginningActivated = this.evtHighlineService.highlightState$.pipe(
       // delay: 0 means next frame with no delay
       // scheduler: rendering scheduler instead of the default one like for setTimeout
       auditTime(0, animationFrameScheduler),
@@ -176,6 +173,9 @@ export class ContentViewerComponent implements OnDestroy {
 
   @HostListener('click', ['$event'])
   mouseClick($event: any) {
+    // parent component will clear selection unless propagation is stopped
+    $event.stopPropagation();
+    
     if (!this._content.content) {
 
       if (this._content.type.name === AdditionComponent.name) return;
@@ -195,7 +195,7 @@ export class ContentViewerComponent implements OnDestroy {
       }
 
       $event.preventDefault();
-      this.evtHighlineService.lineBeginningSelected$.next({
+      this.evtHighlineService.setSelected({
         id: lbId,
         corresp: correspId
       });
@@ -230,11 +230,11 @@ export class ContentViewerComponent implements OnDestroy {
 
       const facsId = (this._content as GenericElement).attributes['facs'].replace('#', '');
       const id = (this._content as GenericElement).attributes['id'];
-      this.evtHighlineService.lineBeginningHovered$.next({
+      this.evtHighlineService.setHovered({
         id: facsId, corresp: id
       });
     } else {
-      this.evtHighlineService.lineBeginningHovered$.next({
+      this.evtHighlineService.setHovered({
         id: lbId, corresp: correspId
       });
     }
@@ -243,7 +243,7 @@ export class ContentViewerComponent implements OnDestroy {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   @HostListener('mouseleave', ['$event']) mouseLeave($event: any) {
     $event.preventDefault();
-    this.evtHighlineService.lineBeginningHovered$.next(null);
+    this.evtHighlineService.setHovered(null);
   }
 
   ngOnDestroy() {

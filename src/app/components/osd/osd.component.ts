@@ -7,8 +7,8 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { BehaviorSubject, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, map, startWith, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { distinctUntilChanged, filter, map, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { Page, Point, Surface, ViewerDataType } from '../../models/evt-models';
 import { OsdTileSource, ViewerDataInput } from '../../models/evt-polymorphic-models';
 import { uuid } from '../../utils/js-utils';
@@ -119,8 +119,6 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
   viewerId: string;
   overlay: OpenSeaDragonOverlay;
   annotationsHandle: OsdAnnotationAPI;
-
-  private subscriptions: Subscription[] = [];
 
   tileSources: Observable<OsdTileSource[]>;
 
@@ -323,26 +321,18 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
           });
         }
 
-        const drawZones$ = combineLatest([
-          this.linesHighlightService.lineBeginningHovered$.pipe(startWith(null)),
-          this.linesHighlightService.lineBeginningSelected$.pipe(startWith(null))
-        ]).pipe(
-          withLatestFrom(
-            this.surface$,
-            this.linesHighlightService.syncTextImage$
-          ),
-          filter(([_, surface, isSync]) => !!surface && isSync),
-          map(([[hovered, selected], surface]) => ({
+        const drawZones$ = this.linesHighlightService.highlightState$.pipe(
+          withLatestFrom(this.surface$),
+          filter(([_, surface]) => !!surface),
+          map(([state, surface]) => ({
             surface,
-            hovered,
-            selected
+            hovered: state.hovered,
+            selected: state.selected
           }))
         );
         drawZones$
           .pipe(takeUntil(this.unsubscribeAll$))
           .subscribe(({ surface, hovered, selected }) => {
-            if (!surface) return;
-
             this.currentDrawState = { surface, hovered, selected };
             this.viewer?.forceRedraw();
           });
@@ -362,10 +352,10 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
       );
 
       if (!linesOver.length) {
-        this.linesHighlightService.lineBeginningHovered$.next(null);
+        this.linesHighlightService.setHovered(null);
       } else {
         const lastLine = linesOver[linesOver.length - 1];
-        this.linesHighlightService.lineBeginningHovered$.next({
+        this.linesHighlightService.setHovered({
           id: lastLine.corresp,
           corresp: lastLine.corresp,
         });
@@ -393,23 +383,17 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
 
       const clicked = linesOver[linesOver.length - 1];
       if (clicked) {
-        this.linesHighlightService.lineBeginningSelected$.next({
+        this.linesHighlightService.setSelected({
           id: clicked.corresp,
           corresp: clicked.corresp
         });
       } else {
-        this.linesHighlightService.lineBeginningSelected$.next(null);
+        this.linesHighlightService.clearHighlight();
       }
     });
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
-    try {
-      this.linesHighlightService.clearHighlightText();
-    } catch (e) {
-      console.error(e);
-    }
     this.unsubscribeAll$.next();
     this.unsubscribeAll$.complete();
   }
