@@ -7,14 +7,13 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { BehaviorSubject, combineLatest, Observable, of, Subject, Subscription } from 'rxjs';
-import { distinctUntilChanged, filter, takeUntil, withLatestFrom } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, of, Subject } from 'rxjs';
+import { distinctUntilChanged, filter, map, takeUntil, withLatestFrom } from 'rxjs/operators';
 import { Page, Point, Surface, ViewerDataType } from '../../models/evt-models';
 import { OsdTileSource, ViewerDataInput } from '../../models/evt-polymorphic-models';
 import { uuid } from '../../utils/js-utils';
 import { EvtLinesHighlightService } from 'src/app/services/evt-lines-highlight.service';
 import { EVTModelService } from '../../services/evt-model.service';
-import { sameIds } from 'src/app/utils/xml-utils';
 
 // eslint-disable-next-line no-var
 declare var OpenSeadragon;
@@ -121,19 +120,15 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
   overlay: OpenSeaDragonOverlay;
   annotationsHandle: OsdAnnotationAPI;
 
-  private subscriptions: Subscription[] = [];
-
   tileSources: Observable<OsdTileSource[]>;
 
   @Input() sync: boolean;
 
-  private lineSelected: Array<{
-    id: string; corresp: string;
-    // ul: { x: number; y: number; },
-    // lr: { x: number; y: number; },
-    coords: Point[],
-    selected: boolean | undefined
-  }> = [];
+  private currentDrawState: {
+    surface: Surface;
+    hovered: any;
+    selected: any;
+  } | null = null;
   mouseMoved$ = new Subject<{ x: number; y: number; }>();
   mouseClicked$ = new Subject<{ x: number; y: number; }>();
 
@@ -141,11 +136,10 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
     private http: HttpClient, private linesHighlightService: EvtLinesHighlightService,
     private evtModelService: EVTModelService
   ) {
-    this.subscriptions.push(
-      this.pageChange.pipe(
-        distinctUntilChanged(),
-      ).subscribe((x) => this.viewer?.goToPage(x - 1)),
-    );
+    this.pageChange.pipe(
+      takeUntil(this.unsubscribeAll$),
+      distinctUntilChanged(),
+    ).subscribe((x) => this.viewer?.goToPage(x - 1));
   }
 
   private isPointInsidePolygon(coords: Point[], x: number, y: number): boolean {
@@ -194,121 +188,155 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
       placeholderFillStyle: 'assets/images/empty-image.jpg',
     };
 
-    this.subscriptions.push(
-      combineLatest([
-        this.optionsChange,
-        this.tileSources,
-        this.evtModelService.pages$
-      ])
-        .pipe(takeUntil(this.unsubscribeAll$))
-        .subscribe(([_, tileSources, pages]) => {
+    combineLatest([
+      this.optionsChange,
+      this.tileSources,
+      this.evtModelService.pages$
+    ])
+      .pipe(takeUntil(this.unsubscribeAll$))
+      .subscribe(([_, tileSources, pages]) => {
 
-          const sortedUrls = pages.map(p => p.facsUrl ?? p.url);
-          const orderMap = new Map<string, number>();
-          sortedUrls.forEach((url, index) => orderMap.set(url, index));
+        const sortedUrls = pages.map(p => p.facsUrl ?? p.url);
+        const orderMap = new Map<string, number>();
+        sortedUrls.forEach((url, index) => orderMap.set(url, index));
 
-          const sortedTileSources = [...tileSources]
-            .filter(x => orderMap.has(x.url))
-            .sort((a, b) =>
-              (orderMap.get(a.url) ?? 0) - (orderMap.get(b.url) ?? 0)
-            );
+        const sortedTileSources = [...tileSources]
+          .filter(x => orderMap.has(x.url))
+          .sort((a, b) =>
+            (orderMap.get(a.url) ?? 0) - (orderMap.get(b.url) ?? 0)
+          );
 
-          // destroy previous viewer
-          if (this.viewer) {
-            this.viewer.destroy();
-            this.viewer = undefined;
+        // destroy previous viewer
+        if (this.viewer) {
+          this.viewer.destroy();
+          this.viewer = undefined;
+        }
+
+        const tiles = sortedTileSources.length === 0
+          ? pages.map(p => ({
+            type: 'image',
+            url: p.facsUrl,
+          } as OsdTileSource))
+          : sortedTileSources;
+
+        this.viewer = OpenSeadragon({
+          ...commonOptions,
+          ...this.options,
+          tileSources: tiles,
+        });
+
+        this.viewer.goToPage(this.page);
+
+        this.viewer.addHandler('page', ({ page }) => {
+          this.pageChange.next(page + 1);
+        });
+
+        this.viewer.addHandler('open-failed', () => {
+          const canvasEl: HTMLCanvasElement =
+            this.div?.nativeElement?.querySelector('.openseadragon-canvas canvas');
+
+          if (canvasEl) {
+            const context = canvasEl.getContext('2d');
+            context.clearRect(0, 0, canvasEl.width, canvasEl.height);
           }
+        });
 
-          const tiles = sortedTileSources.length === 0
-            ? pages.map(p => ({
-              type: 'image',
-              url: p.facsUrl,
-            } as OsdTileSource))
-            : sortedTileSources;
+        this.viewer.addHandler('canvas-click', (evt) => {
+          const webPoint = evt.position;
+          const viewportPoint = this.viewer.viewport.pointFromPixel(webPoint);
+          const imagePoint = this.viewer.viewport.viewportToImageCoordinates(viewportPoint);
+          this.mouseClicked$.next({ x: imagePoint.x, y: imagePoint.y });
+        });
 
-          this.viewer = OpenSeadragon({
-            ...commonOptions,
-            ...this.options,
-            tileSources: tiles,
+        this.viewer.addHandler('open', () => {
+          const tracker = new OpenSeadragon.MouseTracker({
+            element: this.viewer.container,
+            moveHandler: (event) => {
+              const webPoint = event.position;
+              const viewportPoint = this.viewer.viewport.pointFromPixel(webPoint);
+              const imagePoint = this.viewer.viewport.viewportToImageCoordinates(viewportPoint);
+              this.mouseMoved$.next({ x: imagePoint.x, y: imagePoint.y });
+            },
           });
 
-          this.viewer.goToPage(this.page);
+          tracker.setTracking(true);
+        });
 
-          this.viewer.addHandler('page', ({ page }) => {
-            this.pageChange.next(page + 1);
-          });
+        if (!this.overlay) {
+          this.overlay = this.viewer.canvasOverlay({
+            onRedraw: () => {
+              if (!this.currentDrawState) return;
 
-          this.viewer.addHandler('open-failed', () => {
-            const canvasEl: HTMLCanvasElement =
-              this.div?.nativeElement?.querySelector('.openseadragon-canvas canvas');
+              const { surface, hovered, selected } = this.currentDrawState;
+              const linesToDraw = [];
 
-            if (canvasEl) {
-              const context = canvasEl.getContext('2d');
-              context.clearRect(0, 0, canvasEl.width, canvasEl.height);
-            }
-          });
+              // Value from selected stream
+              if (selected) {
+                const zoneLine = surface.zones.lines.find(
+                  x => x.id === selected.id || x.corresp === selected.corresp
+                );
+                if (zoneLine) linesToDraw.push({ ...zoneLine, selected: true });
+              }
 
-          this.viewer.addHandler('canvas-click', (evt) => {
-            const webPoint = evt.position;
-            const viewportPoint = this.viewer.viewport.pointFromPixel(webPoint);
-            const imagePoint = this.viewer.viewport.viewportToImageCoordinates(viewportPoint);
-            this.mouseClicked$.next({ x: imagePoint.x, y: imagePoint.y });
-          });
+              // Value from hovered stream
+              if (hovered) {
+                const line = surface.zones.lines.find(
+                  x => x.id === hovered.id || x.corresp === hovered.corresp
+                );
 
-          this.viewer.addHandler('open', () => {
-            const tracker = new OpenSeadragon.MouseTracker({
-              element: this.viewer.container,
-              moveHandler: (event) => {
-                const webPoint = event.position;
-                const viewportPoint = this.viewer.viewport.pointFromPixel(webPoint);
-                const imagePoint = this.viewer.viewport.viewportToImageCoordinates(viewportPoint);
-                this.mouseMoved$.next({ x: imagePoint.x, y: imagePoint.y });
-              },
-            });
+                const isNotSelectedLine = selected && line && (line.id === selected.id || line.corresp === selected.corresp);
+                if (line && !isNotSelectedLine) {
+                  linesToDraw.push({ ...line, selected: false });
+                }
+              }
 
-            tracker.setTracking(true);
-          });
-
-          // overlay (depends on surface)
-          combineLatest([this.surface$])
-            .pipe(takeUntil(this.unsubscribeAll$))
-            .subscribe(([surface]) => {
-              if (!surface) return;
-
+              const ctx = this.overlay.context2d();
               const originalImageWidth = +surface.graphics[0].width.replace('px', '');
               const originalImageHeight = +surface.graphics[0].height.replace('px', '');
               const aspectRatio = originalImageHeight / originalImageWidth;
 
-              this.overlay = this.viewer.canvasOverlay({
-                onRedraw: () => {
-                  for (const lineSelected of this.lineSelected) {
-                    const ctx = this.overlay.context2d();
-                    ctx.beginPath();
+              for (const l of linesToDraw) {
+                ctx.beginPath();
 
-                    ctx.moveTo(
-                      lineSelected.coords[0].x / originalImageWidth,
-                      (lineSelected.coords[0].y / originalImageHeight) * aspectRatio
-                    );
+                ctx.moveTo(
+                  l.coords[0].x / originalImageWidth,
+                  (l.coords[0].y / originalImageHeight) * aspectRatio
+                );
 
-                    for (let i = 1; i < lineSelected.coords.length; i++) {
-                      ctx.lineTo(
-                        lineSelected.coords[i].x / originalImageWidth,
-                        (lineSelected.coords[i].y / originalImageHeight) * aspectRatio
-                      );
-                    }
+                for (let i = 1; i < l.coords.length; i++) {
+                  ctx.lineTo(
+                    l.coords[i].x / originalImageWidth,
+                    (l.coords[i].y / originalImageHeight) * aspectRatio
+                  );
+                }
 
-                    ctx.closePath();
-                    ctx.fillStyle = lineSelected.selected ? '#aaaa19' : '#d36019';
-                    ctx.globalAlpha = 0.2;
-                    ctx.strokeStyle = 'black';
-                    ctx.fill();
-                  }
-                },
-                clearBeforeRedraw: true,
-              });
-            });
-        })
-    );
+                ctx.closePath();
+                ctx.fillStyle = l.selected ? '#aaaa19' : '#d36019';
+                ctx.globalAlpha = 0.2;
+                ctx.strokeStyle = 'black';
+                ctx.fill();
+              }
+            },
+            clearBeforeRedraw: true,
+          });
+        }
+
+        const drawZones$ = this.linesHighlightService.highlightState$.pipe(
+          withLatestFrom(this.surface$),
+          filter(([_, surface]) => !!surface),
+          map(([state, surface]) => ({
+            surface,
+            hovered: state.hovered,
+            selected: state.selected
+          }))
+        );
+        drawZones$
+          .pipe(takeUntil(this.unsubscribeAll$))
+          .subscribe(({ surface, hovered, selected }) => {
+            this.currentDrawState = { surface, hovered, selected };
+            this.viewer?.forceRedraw();
+          });
+      })
 
     this.mouseMoved$.pipe(
       withLatestFrom(
@@ -323,23 +351,15 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
         this.isPointInsidePolygon(line.coords, imagePoint.x, imagePoint.y)
       );
 
-      const elementsSelected =
-        this.linesHighlightService.lineBeginningSelected$
-          .getValue()
-          .filter(e => e.selected);
-
-      const linesOverMapped = linesOver
-        .filter(lo => !elementsSelected.some(es => es.corresp === lo.corresp))
-        .map(lo => ({
-          id: lo.corresp,
-          corresp: lo.corresp,
-          selected: undefined,
-        }));
-
-        this.linesHighlightService.lineBeginningSelected$.next([
-          ...elementsSelected,
-          ...linesOverMapped,
-        ]);
+      if (!linesOver.length) {
+        this.linesHighlightService.setHovered(null);
+      } else {
+        const lastLine = linesOver[linesOver.length - 1];
+        this.linesHighlightService.setHovered({
+          id: lastLine.corresp,
+          corresp: lastLine.corresp,
+        });
+      }
     });
 
     this.mouseClicked$.pipe(
@@ -361,53 +381,19 @@ export class OsdComponent implements AfterViewInit, OnDestroy {
           imagePoint.y < lr.y;
       });
 
-      let elementsSelected =
-        this.linesHighlightService.lineBeginningSelected$
-          .getValue()
-          .filter(e => e.selected);
-
-      linesOver.forEach(lo => {
-        if (elementsSelected.some(es => es.corresp === lo.corresp)) {
-          elementsSelected = elementsSelected.filter(es => es.corresp !== lo.corresp);
-        } else {
-          elementsSelected.push({
-            id: lo.corresp,
-            corresp: lo.corresp,
-            selected: true,
-          });
-        }
-      });
-
-        this.linesHighlightService.lineBeginningSelected$.next(elementsSelected);
-    });
-
-    this.linesHighlightService.zonesHighlights$.pipe(
-      distinctUntilChanged(sameIds),
-      withLatestFrom(this.linesHighlightService.syncTextImage$),
-      filter(([_zones, sync]) => sync),
-      takeUntil(this.unsubscribeAll$),
-    ).subscribe(([zones]) => {
-      this.lineSelected = zones ?? [];
-
-      if (zones?.length > 0) {
-        this.linesHighlightService.highlightLineText(
-          zones.map(z => ({ id: z.corresp, selected: z.selected }))
-        );
+      const clicked = linesOver[linesOver.length - 1];
+      if (clicked) {
+        this.linesHighlightService.setSelected({
+          id: clicked.corresp,
+          corresp: clicked.corresp
+        });
       } else {
-        this.linesHighlightService.clearHighlightText();
+        this.linesHighlightService.clearHighlight();
       }
-
-      this.viewer?.forceRedraw();
     });
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.forEach((s) => s.unsubscribe());
-    try {
-      this.linesHighlightService.clearHighlightText();
-    } catch (e) {
-      console.error(e);
-    }
     this.unsubscribeAll$.next();
     this.unsubscribeAll$.complete();
   }
