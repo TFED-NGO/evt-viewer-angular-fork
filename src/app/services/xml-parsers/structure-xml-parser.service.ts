@@ -148,12 +148,16 @@ export class StructureXmlParserService {
       if (!lacunasEnd.length) break;
 
       const startWit = lacunaStart.getAttribute('wit');
-      const lacunaEnd = lacunasEnd.find(lacunaEnd => {
-        const endWit = lacunaEnd.getAttribute('wit');
-        return startWit === endWit;
-      });
+      const index = lacunasEnd.findIndex(e => e.getAttribute('wit') === startWit);
+      if (index === -1) continue;
 
-      lacunasEnd.splice(0, 1);
+      const lacunaEnd = lacunasEnd[index];
+      if (!lacunaEnd) {
+        this.errorService.logError(`Missing lacunaEnd for wit ${startWit}`);
+        continue;
+      }
+
+      lacunasEnd.splice(index, 1);
 
       const startFrom = Attribute.createFromOrDefault(lacunaStart);
       const startAnchor = source.querySelector(`[*|id='${startFrom.valueWithoutRef}']`) as HTMLElement;
@@ -588,10 +592,10 @@ export class StructureXmlParserService {
     for (const child of children) {
       this.processCbRecursive(child, child.content as GenericElement[]);
     }
-    
+
     if (!children?.length) return false;
     if (!children.some(x => x.type.name === Cb.name)) return;
-    
+
     const firstRealIndex = children.findIndex(c => !this.isIgnorableNode(c));
     if (children[firstRealIndex]?.type.name !== Cb.name) {
       throw new Error("First real element must be <cb/>");
@@ -638,7 +642,7 @@ export class StructureXmlParserService {
     // TODO: check if exists <graphic> element connected to page and return its url
     // TODO: handle multiple version of page
     const image = id.split('.')[0];
-    
+
     //Nel file_config imagesFolderUrls deve terminare già con uno /
     switch (imagesSource.kind) {
       case 'IiifManifest':
