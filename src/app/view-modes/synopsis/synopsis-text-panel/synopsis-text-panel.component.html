@@ -43,7 +43,8 @@
         </evt-button>
         <evt-button *ngIf="enableHideDeletionsToggler"
             [iconLeft]="hideDeletionsTogglerIcon"
-            [label]="deletionsText | translate "
+            [label]="'showsDeletions' | translate "
+            [active]="showDeletions"
             additionalClasses="ms-1"
             (btnClick)="toggleHideDeletions()">
         </evt-button> -->

@@ -35,7 +35,7 @@ export class LbComponent {
           case 'interpretative':
             return this.textFlow === 'verses' ? false : hasLines;
           case 'critical':
-            return this.textFlow === 'prose';
+            return this.textFlow !== 'prose';
         }
       }),
     );

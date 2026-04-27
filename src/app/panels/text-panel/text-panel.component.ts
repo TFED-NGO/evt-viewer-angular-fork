@@ -157,8 +157,6 @@ export class TextPanelComponent {
     return this._dl;
   }
 
-  public deletionsText: 'hidesDeletions' | 'showsDeletions' = 'showsDeletions';
-
   public get hideDeletionsTogglerIcon(): EvtIconInfo {
     return { icon: (this.showDeletions) ? 'eye' : 'eye-slash', iconSet: 'fas' };
   }
@@ -204,7 +202,6 @@ export class TextPanelComponent {
 
   toggleHideDeletions() {
     this.showDeletions = !this.showDeletions;
-    this.deletionsText = (this.showDeletions) ? 'showsDeletions' : 'hidesDeletions'
   }
 
   updateSelectedLayer(layer: string) {
