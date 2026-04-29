@@ -27,9 +27,9 @@ export class StructureXmlParserService {
   private appParser = AppParser.create();
   private frontOrigContentAttr = 'document_front';
   private readonly frontTagName = 'front';
+  private readonly backTagName = 'back';
   private readonly structureSeparators = AppConfig.evtSettings.edition.structureSeparators;
   private readonly bodyTagName = 'body';
-  //private readonly backTagName = 'back';
 
   allApps: XMLElement[] = [];
   groupedByWitLacunas = new Map<string, LacunaPair[]>();
@@ -47,7 +47,7 @@ export class StructureXmlParserService {
 
     const front: XMLElement = source.querySelector(this.frontTagName);
     const body: XMLElement = source.querySelector(this.bodyTagName);
-    this.back = source.querySelector('back');
+    this.back = source.querySelector(this.backTagName);
 
     const selector = this.structureSeparators.join(',');
     const pbs = Array.from(source.querySelectorAll(selector));//.filter((p) => !p.getAttribute('ed'));
@@ -80,7 +80,7 @@ export class StructureXmlParserService {
       }
     }
 
-    const backElements = source.getElementsByTagName('back');
+    const backElements = source.getElementsByTagName(this.backTagName);
     if (backElements.length === 0) return editionStructure;
 
     this.loadLacunas(backElements, source);
