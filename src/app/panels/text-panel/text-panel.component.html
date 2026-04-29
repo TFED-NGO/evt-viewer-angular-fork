@@ -4,7 +4,7 @@
             ariaLabel="{{ 'ariaLabels.openInfoTab' | translate }}"
             aria-role="button"
             label="Info"
-            [iconLeft]="{icon: 'info-circle'}"
+            [iconLeft]="{icon: 'info-circle', additionalClasses: 'me-1'}"
             additionalClasses="btn-primary me-1"
             (btnClick)="toggleSecondaryContent('INFO')"
             [active]="secondaryContent === 'INFO'"></evt-button>
