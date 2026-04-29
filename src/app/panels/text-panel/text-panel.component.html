@@ -54,7 +54,8 @@
             ariaLabel="{{ 'ariaLabels.hideDeletionsFromText' | translate }}"
             aria-role="button"
             [iconLeft]="hideDeletionsTogglerIcon"
-            [label]="deletionsText | translate "
+            [label]="'showsDeletions' | translate "
+            [active]="showDeletions"
             additionalClasses="ms-1"
             (btnClick)="toggleHideDeletions()">
         </evt-button>
