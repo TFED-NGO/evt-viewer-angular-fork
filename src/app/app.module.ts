@@ -3,6 +3,7 @@ import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-exp
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -14,6 +15,7 @@ import { DynamicAttributesModule, DynamicModule } from 'ng-dynamic-component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiComponentsModule } from './ui-components/ui-components.module';
 
+import { normalizeGhPagesUrl } from './initializers/gh-pages-url.initializer';
 import { AppRoutingModule } from './app-routing.module';
 import { EditionDefaultRedirectComponent } from './edition-default-redirect/edition-default-redirect.component';
 import { EditionHomeComponent } from './edition-home/edition-home.component';
@@ -305,6 +307,12 @@ const DynamicComponents = [
   providers: [
     AnnotatorService,
     AppConfig,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: normalizeGhPagesUrl,
+      deps: [Router],
+      multi: true,
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
