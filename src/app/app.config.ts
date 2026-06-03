@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { firstValueFrom, forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
@@ -27,8 +27,19 @@ export class AppConfig {
     load() {
         return firstValueFrom(
             this.http.get<SiteConfig>(this.siteConfigUrl).pipe(
-                map((siteConfig) => {
+                switchMap((siteConfig) => {
                     this.editionContext.setSiteConfig(siteConfig);
+                    const entry = this.editionContext.getEditionEntry(siteConfig.defaultEdition)
+                        ?? this.editionContext.enabledEditions[0];
+                    if (!entry) {
+                        return of(undefined);
+                    }
+                    const fileConfigUrl = this.editionContext.getFileConfigUrl(entry.configBase);
+                    return from(this.loadEditionBundle(fileConfigUrl)).pipe(
+                        map(() => {
+                            this.editionContext.setActiveEdition(entry);
+                        }),
+                    );
                 }),
             ),
         );

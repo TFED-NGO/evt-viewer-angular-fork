@@ -43,14 +43,14 @@ export class NavBarComponent {
     tap((i) => this.currentPageIndexStatic = i),
   );
 
-  thumbnailsButton = AppConfig.evtSettings.ui.thumbnailsButton;
+  thumbnailsButton = AppConfig.evtSettings?.ui?.thumbnailsButton ?? false;
   toggleThumbnailsPanel$ = new Subject<boolean | void>();
   thumbnailsPanelOpened$ = this.toggleThumbnailsPanel$.pipe(
     scan((currentState: boolean, val: boolean | undefined) => val === undefined ? !currentState : val, false),
     startWith(false),
   );
 
-  viscollButton = AppConfig.evtSettings.ui.viscollButton;
+  viscollButton = AppConfig.evtSettings?.ui?.viscollButton ?? false;
   toggleViscollPanel$ = new Subject<boolean | void>();
   viscollPanelOpened$ = this.toggleViscollPanel$.pipe(
     scan((currentState: boolean, val: boolean | undefined) => val === undefined ? !currentState : val, false),

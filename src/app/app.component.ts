@@ -40,6 +40,8 @@ export class AppComponent implements OnDestroy {
     private editionContext: EditionContextService,
 
   ) {
+    this.showHeader = !this.isHomeUrl(this.router.url);
+
     this.editionContext.editionChange$.subscribe(() => {
       this.hasNavBar = AppConfig.evtSettings?.ui?.enableNavBar ?? false;
       if (!this.hasNavBar) {

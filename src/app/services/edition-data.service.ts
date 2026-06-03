@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { concat, EMPTY, forkJoin, Observable, of } from 'rxjs';
+import { catchError, first, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { AppConfig } from '../app.config';
 import { OriginalEncodingNodeType } from '../models/evt-models';
 import { parseXml } from '../utils/xml-utils';
@@ -24,16 +24,28 @@ export class EditionDataService {
 
   private loadAndParseEditionData(): Observable<OriginalEncodingNodeType> {
     const editionUrls = AppConfig.evtSettings?.files?.editionUrls || [];
-    const editionUrl = editionUrls[0];
 
-    if (!editionUrl) {
+    if (editionUrls.length === 0) {
       return this.handleLoadingError();
     }
 
+    return concat(
+      ...editionUrls.map((url) => this.fetchEditionFromUrl(url).pipe(
+        catchError(() => EMPTY),
+      )),
+    ).pipe(
+      first(),
+      catchError(() => this.handleLoadingError()),
+    );
+  }
+
+  private fetchEditionFromUrl(editionUrl: string): Observable<OriginalEncodingNodeType> {
     return this.http.get(editionUrl, { responseType: 'text' }).pipe(
       map((source) => parseXml(source)),
-      mergeMap((editionData) => this.loadXIinclude(editionData, editionUrl.substring(0, editionUrl.lastIndexOf('/') + 1))),
-      catchError(() => this.handleLoadingError()),
+      mergeMap((editionData) => this.loadXIinclude(
+        editionData,
+        editionUrl.substring(0, editionUrl.lastIndexOf('/') + 1),
+      )),
     );
   }
 

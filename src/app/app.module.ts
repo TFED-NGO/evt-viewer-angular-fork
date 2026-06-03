@@ -327,6 +327,7 @@ export class AppModule implements DoBootstrap {
   }
 
   ngDoBootstrap(appRef: ApplicationRef): void {
+    appRef.bootstrap(AppComponent);
     DynamicComponents.forEach((c) => appRef.bootstrap(c));
   }
 }

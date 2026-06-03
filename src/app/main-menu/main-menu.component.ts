@@ -23,13 +23,16 @@ import { ModalService } from '../ui-components/modal/modal.service';
 })
 export class MainMenuComponent {
   @Output() itemClicked = new EventEmitter<string>();
-  public dynamicItems: MainMenuItem[] = this.getDynamicItems();
-  public uiConfig = AppConfig.evtSettings.ui;
-  public fileConfig = AppConfig.evtSettings.files;
-  public editionConfig = AppConfig.evtSettings.edition;
+  public dynamicItems: MainMenuItem[] = [];
+
+  get uiConfig() { return AppConfig.evtSettings?.ui; }
+  get fileConfig() { return AppConfig.evtSettings?.files; }
+  get editionConfig() { return AppConfig.evtSettings?.edition; }
 
   private isOpened = true;
-  private availableLangs = AppConfig.evtSettings.ui.availableLanguages.filter((l) => l.enable);
+  private get availableLangs() {
+    return AppConfig.evtSettings?.ui?.availableLanguages?.filter((l) => l.enable) ?? [];
+  }
 
   constructor(
     public themes: ThemesService,
@@ -37,6 +40,7 @@ export class MainMenuComponent {
     private modalService: ModalService,
     private evtModelService: EVTModelService,
   ) {
+    this.dynamicItems = this.getDynamicItems();
   }
 
   closeMenu() {
@@ -88,7 +92,7 @@ export class MainMenuComponent {
           additionalClasses: 'icon',
         },
         label: 'downloadXML',
-        enabled$: of(AppConfig.evtSettings.edition.downloadableXMLSource),
+        enabled$: of(AppConfig.evtSettings?.edition?.downloadableXMLSource ?? false),
         callback: () => this.downloadXML(),
       },
     ];
