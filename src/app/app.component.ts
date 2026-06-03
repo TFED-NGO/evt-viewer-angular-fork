@@ -1,9 +1,9 @@
 import { Component, ElementRef, HostBinding, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { AppConfig } from './app.config';
 import { EditionContextService } from './services/edition-context.service';
 import { ThemesService } from './services/themes.service';
@@ -41,6 +41,7 @@ export class AppComponent implements OnDestroy {
 
   ) {
     this.showHeader = !this.isHomeUrl(this.router.url);
+    this.spinner.hide();
 
     this.editionContext.editionChange$.subscribe(() => {
       this.hasNavBar = AppConfig.evtSettings?.ui?.enableNavBar ?? false;
@@ -58,24 +59,20 @@ export class AppComponent implements OnDestroy {
         this.hasNavBar = true;
       }
     });
-    this.router.events.pipe(
-      filter((e): e is RouterEvent => e instanceof RouterEvent),
-    ).subscribe((event) => {
+    this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const url = event.urlAfterRedirects || event.url;
         this.showHeader = !this.isHomeUrl(url);
-      }
-      switch (true) {
-        case event instanceof NavigationStart:
+        this.spinner.hide();
+      } else if (event instanceof NavigationStart) {
+        if (!this.isHomeUrl(event.url)) {
           this.spinner.show();
-          break;
-        case event instanceof NavigationEnd:
-        case event instanceof NavigationCancel:
-        case event instanceof NavigationError:
-          this.spinner.hide();
-          break;
-        default:
-          break;
+        }
+      } else if (
+        event instanceof NavigationCancel
+        || event instanceof NavigationError
+      ) {
+        this.spinner.hide();
       }
     });
     this.editionContext.editionChange$.subscribe(() => {
@@ -88,7 +85,9 @@ export class AppComponent implements OnDestroy {
     return path === '' || path === '/';
   }
 
-  @HostBinding('attr.data-theme') get dataTheme() { return this.themes.getCurrentTheme().value; }
+  @HostBinding('attr.data-theme') get dataTheme() {
+    return this.themes.getCurrentTheme()?.value ?? 'neutral';
+  }
 
   toggleToolbar() {
     this.navbarOpened$.next(!this.navbarOpened$.getValue());

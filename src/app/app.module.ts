@@ -2,7 +2,7 @@ import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { ScrollingModule as ExperimentalScrollingModule } from '@angular/cdk-experimental/scrolling';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, ApplicationRef, DoBootstrap, NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -15,6 +15,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiComponentsModule } from './ui-components/ui-components.module';
 
 import { AppRoutingModule } from './app-routing.module';
+import { EditionDefaultRedirectComponent } from './edition-default-redirect/edition-default-redirect.component';
 import { EditionHomeComponent } from './edition-home/edition-home.component';
 import { EditionShellComponent } from './edition-shell/edition-shell.component';
 import { AppTranslationModule } from './app-translation.module';
@@ -217,6 +218,7 @@ const DynamicComponents = [
     AnnotatorDirective,
     AppComponent,
     EditionHomeComponent,
+    EditionDefaultRedirectComponent,
     EditionShellComponent,
     BiblioEntryComponent,
     BibliographyInfoComponent,
@@ -308,7 +310,6 @@ const DynamicComponents = [
       useFactory: initializeApp,
       deps: [AppConfig], multi: true,
     },
-    AppConfig,
     GenericParserService,
     IdbService,
     ThemesService,
@@ -318,16 +319,10 @@ const DynamicComponents = [
     AppComponent,
   ],
 })
-export class AppModule implements DoBootstrap {
+export class AppModule {
   constructor(
     library: FaIconLibrary,
   ) {
     library.addIconPacks(fas);
-
-  }
-
-  ngDoBootstrap(appRef: ApplicationRef): void {
-    appRef.bootstrap(AppComponent);
-    DynamicComponents.forEach((c) => appRef.bootstrap(c));
   }
 }

@@ -173,6 +173,9 @@ export class EVTStatusService {
         private editionContext: EditionContextService,
     ) {
         this.currentStatus$.subscribe((currentStatus) => {
+            if (this.isOnHomeRoute()) {
+                return;
+            }
             const slug = this.editionContext.activeSlug;
             if (!slug || !currentStatus.viewMode) {
                 return;
@@ -186,19 +189,14 @@ export class EVTStatusService {
             }
         });
 
-        let editionLoadCount = 0;
         this.editionContext.editionChange$.subscribe(() => {
-            editionLoadCount += 1;
+            if (this.isOnHomeRoute()) {
+                return;
+            }
             const { viewModeId } = this.parseEditionRoute(this.router.url);
             const vmFromUrl = viewModeId
                 ? this.availableViewModes.find((v) => v.id === viewModeId)
                 : undefined;
-
-            if (editionLoadCount === 1) {
-                this.updateViewMode$.next(vmFromUrl ?? this.defaultViewMode);
-                return;
-            }
-
             this.updateViewMode$.next(vmFromUrl ?? this.defaultViewMode);
         });
 
@@ -206,6 +204,11 @@ export class EVTStatusService {
             filter((id) => !!id),
             switchMap((id) => timer(5000).pipe(map(() => id))),
         ).subscribe(() => this.currentNamedEntityId$.next(undefined));
+    }
+
+    private isOnHomeRoute(): boolean {
+        const path = this.router.url.split('?')[0].replace(/\/$/, '') || '/';
+        return path === '' || path === '/';
     }
 
     private parseEditionRoute(url: string): { editionSlug?: string; viewModeId?: string } {

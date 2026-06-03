@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { EditionHomeComponent } from './edition-home/edition-home.component';
 import { EditionShellComponent } from './edition-shell/edition-shell.component';
-import { EditionDefaultViewGuard } from './guards/edition-default-view.guard';
+import { EditionDefaultRedirectComponent } from './edition-default-redirect/edition-default-redirect.component';
 import { EditionSlugGuard } from './guards/edition-slug.guard';
 import { EditionResolver } from './resolvers/edition.resolver';
 import { CollationComponent } from './view-modes/collation/collation.component';
@@ -35,7 +35,7 @@ const appRoutes: Routes = [
     canActivate: [EditionSlugGuard],
     resolve: { edition: EditionResolver },
     children: [
-      { path: '', pathMatch: 'full', canActivate: [EditionDefaultViewGuard] },
+      { path: '', pathMatch: 'full', component: EditionDefaultRedirectComponent },
       ...viewModeRoutes,
     ],
   },

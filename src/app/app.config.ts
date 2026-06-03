@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, forkJoin, from, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { Attributes, EditorialConventionLayout } from './models/evt-models';
@@ -40,6 +40,10 @@ export class AppConfig {
                             this.editionContext.setActiveEdition(entry);
                         }),
                     );
+                }),
+                catchError((err) => {
+                    console.error('Failed to load application configuration', err);
+                    return of(undefined);
                 }),
             ),
         );
