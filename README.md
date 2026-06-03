@@ -46,6 +46,100 @@ It is also possible to configure the style of editorial phenomena (e.g. addition
 For more information please refer to the [Configuration section](https://github.com/evt-project/evt-viewer-angular/wiki/Configuration) on the Wiki.
 
 
+### 2.3 - Multi-edition site (this fork)
+
+This fork hosts **several digital editions in one Angular app**. Each text has its own folder under `src/assets/editions/<slug>/` and appears on the home page and at a URL such as:
+
+    /my-text/readingText
+
+The site registry is `src/assets/config/site_config.json`. That file is **generated automatically** from the edition folders (do not edit it by hand except for a quick local test—re-run the generator before you commit).
+
+#### Adding a new text to the collection
+
+1. **Create a folder** for the edition (the folder name becomes the URL slug):
+
+        src/assets/editions/my-text/
+
+   Use lowercase letters, numbers, and hyphens only (e.g. `ls-xii`, `alcuin-life`).
+
+2. **Add required configuration files** inside that folder:
+
+   | File | Purpose |
+   |------|---------|
+   | `file_config.json` | Points to TEI XML, images, and the other config files |
+   | `edition_config.json` | Edition title, levels, entities, view defaults ([wiki](https://github.com/evt-project/evt-viewer-angular/wiki/Edition-Configuration)) |
+   | `ui_config.json` | View modes, language, theme ([wiki](https://github.com/evt-project/evt-viewer-angular/wiki/Ui-Configuration)) |
+   | `editorial_conventions_config.json` | Editorial markup display (copy from another edition and adjust, or from `src/assets/config/editorial_conventions_config.json`) |
+   | `edition.meta.json` | Optional: label, sort order, default view, home-page default (see below) |
+
+3. **Add your TEI data** (recommended layout):
+
+        src/assets/editions/my-text/data/edition.xml
+
+   In `file_config.json`, list one or more URLs in `editionUrls`. The first URL that loads successfully is used. You can point to a file under `assets/…` or to a remote URL (useful if the XML is published elsewhere):
+
+    ```json
+    {
+      "editionUrls": [
+        "assets/editions/my-text/data/edition.xml"
+      ],
+      "configurationUrls": {
+        "edition": "assets/editions/my-text/edition_config.json",
+        "ui": "assets/editions/my-text/ui_config.json",
+        "editorialConventions": "assets/editions/my-text/editorial_conventions_config.json"
+      }
+    }
+    ```
+
+   Copy `file_config.json`, `edition_config.json`, and `ui_config.json` from an existing edition such as `ls-xii` or `pelavicino` and change paths and settings. See [File configuration](https://github.com/evt-project/evt-viewer-angular/wiki/File-Configuration) for image paths and IIIF options.
+
+4. **Optional: `edition.meta.json`** controls how the edition appears in the site list and routing:
+
+    ```json
+    {
+      "label": "My Edition (display name on the home page)",
+      "defaultViewMode": "readingText",
+      "enabled": true,
+      "isDefault": false,
+      "sortOrder": 10
+    }
+    ```
+
+   | Field | Meaning |
+   |-------|---------|
+   | `label` | Title on the home page (if omitted, `editionTitle` from `edition_config.json` is used) |
+   | `defaultViewMode` | View when opening `/<slug>/` (e.g. `readingText`, `imageText`) |
+   | `enabled` | `false` hides the edition from the home page |
+   | `isDefault` | `true` makes this the edition loaded at `/` redirect target (only one should be `true`) |
+   | `sortOrder` | Lower numbers appear first on the home page |
+
+5. **Regenerate the site registry**:
+
+        npm run generate:site-config
+
+   This rewrites `src/assets/config/site_config.json` from all folders that contain a `file_config.json`.
+
+6. **Run locally and check**:
+
+        npm run start
+
+   - Home: `http://localhost:4205/`
+   - Your edition: `http://localhost:4205/my-text/readingText`
+   - Reload that URL to confirm it stays on the same page.
+
+7. **Deploy to GitHub Pages** (if applicable): push to `master`. The workflow runs `generate:site-config` and `build:gh-pages` automatically. The public site base path is `/evt-viewer-angular-fork/` (see `angular.json`, `gh-pages` configuration).
+
+#### Reference editions in this repository
+
+| Slug | Description |
+|------|-------------|
+| `ls-xii` | Lives of Saints 12 (default edition) |
+| `pelavicino` | Sample: Codice Pelavicino |
+| `saba` | Sample: Progetto Saba1919 |
+
+More detail for contributors working only under `assets/editions/` is in [`src/assets/editions/README.md`](src/assets/editions/README.md).
+
+
 3 - Development framework installation and use
 --------------------------------
 
