@@ -1,10 +1,11 @@
 import { Component, ElementRef, HostBinding, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Router, RouterEvent } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { AppConfig } from './app.config';
+import { EditionContextService } from './services/edition-context.service';
 import { ThemesService } from './services/themes.service';
 import { ShortcutsService } from './shortcuts/shortcuts.service';
 import { EvtIconInfo } from './ui-components/icon/icon.component';
@@ -18,8 +19,11 @@ import { EVTStatusService } from './services/evt-status.service';
 export class AppComponent implements OnDestroy {
   @ViewChild('mainSpinner') mainSpinner: ElementRef;
   private subscriptions: Subscription[] = [];
-  public hasNavBar = AppConfig.evtSettings.ui.enableNavBar;
-  public navbarOpened$ = new BehaviorSubject(this.hasNavBar && AppConfig.evtSettings.ui.initNavBarOpened);
+  public showHeader = true;
+  public hasNavBar = AppConfig.evtSettings?.ui?.enableNavBar ?? false;
+  public navbarOpened$ = new BehaviorSubject(
+    this.hasNavBar && (AppConfig.evtSettings?.ui?.initNavBarOpened ?? false),
+  );
 
 
   public navbarTogglerIcon$: Observable<EvtIconInfo> = this.navbarOpened$.pipe(
@@ -33,8 +37,15 @@ export class AppComponent implements OnDestroy {
     private themes: ThemesService,
     private titleService: Title,
     private evtStatusService: EVTStatusService,
+    private editionContext: EditionContextService,
 
   ) {
+    this.editionContext.editionChange$.subscribe(() => {
+      this.hasNavBar = AppConfig.evtSettings?.ui?.enableNavBar ?? false;
+      if (!this.hasNavBar) {
+        this.navbarOpened$.next(false);
+      }
+    });
 
     this.evtStatusService.currentViewMode$.pipe().subscribe((view) => {
       if (view!==undefined && (view.id === 'imageImage' ||view.id === 'imageOnly') ) {
@@ -45,7 +56,13 @@ export class AppComponent implements OnDestroy {
         this.hasNavBar = true;
       }
     });
-    this.router.events.subscribe((event) => {
+    this.router.events.pipe(
+      filter((e): e is RouterEvent => e instanceof RouterEvent),
+    ).subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        const url = event.urlAfterRedirects || event.url;
+        this.showHeader = !this.isHomeUrl(url);
+      }
       switch (true) {
         case event instanceof NavigationStart:
           this.spinner.show();
@@ -59,7 +76,14 @@ export class AppComponent implements OnDestroy {
           break;
       }
     });
-    this.titleService.setTitle(AppConfig.evtSettings.edition.editionTitle || 'EVT');
+    this.editionContext.editionChange$.subscribe(() => {
+      this.titleService.setTitle(AppConfig.evtSettings?.edition?.editionTitle || 'EVT');
+    });
+  }
+
+  private isHomeUrl(url: string): boolean {
+    const path = url.split('?')[0].replace(/\/$/, '') || '/';
+    return path === '' || path === '/';
   }
 
   @HostBinding('attr.data-theme') get dataTheme() { return this.themes.getCurrentTheme().value; }

@@ -1,31 +1,38 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, publishReplay, refCount, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, shareReplay, switchMap, tap } from 'rxjs/operators';
 import { AppConfig } from '../app.config';
 import { OriginalEncodingNodeType } from '../models/evt-models';
 import { parseXml } from '../utils/xml-utils';
+import { EditionContextService } from './edition-context.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EditionDataService {
-  private editionUrls = AppConfig.evtSettings.files.editionUrls || [];
-  public parsedEditionSource$: Observable<OriginalEncodingNodeType> = this.loadAndParseEditionData();
+  public parsedEditionSource$: Observable<OriginalEncodingNodeType> = this.editionContext.editionChange$.pipe(
+    switchMap(() => this.loadAndParseEditionData()),
+    shareReplay(1),
+  );
 
   constructor(
     private http: HttpClient,
+    private editionContext: EditionContextService,
   ) {
   }
 
-  private loadAndParseEditionData() {
-    const editionUrl = this.editionUrls[0];
+  private loadAndParseEditionData(): Observable<OriginalEncodingNodeType> {
+    const editionUrls = AppConfig.evtSettings?.files?.editionUrls || [];
+    const editionUrl = editionUrls[0];
+
+    if (!editionUrl) {
+      return this.handleLoadingError();
+    }
 
     return this.http.get(editionUrl, { responseType: 'text' }).pipe(
       map((source) => parseXml(source)),
       mergeMap((editionData) => this.loadXIinclude(editionData, editionUrl.substring(0, editionUrl.lastIndexOf('/') + 1))),
-      publishReplay(1),
-      refCount(),
       catchError(() => this.handleLoadingError()),
     );
   }
@@ -67,10 +74,11 @@ export class EditionDataService {
     return of(doc);
   }
 
-  private handleLoadingError() {
+  private handleLoadingError(): Observable<OriginalEncodingNodeType> {
     // TODO: TEMP
     const errorEl: HTMLElement = document.createElement('div');
-    if (!this.editionUrls || this.editionUrls.length === 0) {
+    const editionUrls = AppConfig.evtSettings?.files?.editionUrls;
+    if (!editionUrls || editionUrls.length === 0) {
       errorEl.textContent = 'Missing configuration for edition files. Data cannot be loaded.';
     } else {
       errorEl.textContent = 'There was an error in loading edition files.';

@@ -6,6 +6,10 @@
 .temp-panel {
     height: 100%;
     @include calc("height", "100% - #{$base-header-height}");
+
+    &.edition-home-active {
+        height: 100%;
+    }
 }
 
 .has-navbar {

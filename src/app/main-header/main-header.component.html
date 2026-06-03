@@ -1,14 +1,21 @@
 <nav class="navbar justify-content-between temp-header">
-    <a class="navbar-brand">
+    <a class="navbar-brand" routerLink="/">
         <img [src]="logoUrl" height="30" class="d-inline-block align-top me-2" alt="">
-        <span (click)="openEditionHome()" class="edition-font" [class.pointer]="editionHome">{{ (title$ | async) | translate }}</span>
+        <span (click)="openEditionHome()" class="edition-font" [class.pointer]="editionHome || activeEditionSlug">{{ (title$ | async) | translate }}</span>
         <a *ngIf="editionHome" [href]="editionHome" target="_blank"
             class="ms-2 edition-home-link">
             <evt-icon [iconInfo]="{icon: 'external-link-alt', iconSet: 'fas' }"></evt-icon>
         </a>
         <span class="ms-2 badge badge-pill badge-info inverted font-weight-normal edition-badge" *ngIf="editionConfig?.badge">{{editionConfig?.badge}}</span>
     </a>
-    <div>
+    <div class="d-flex align-items-center">
+        <select *ngIf="editions.length > 1" class="form-select form-select-sm edition-select me-2"
+            [ngModel]="activeEditionSlug"
+            (ngModelChange)="onEditionSelect($event)">
+            <option *ngFor="let edition of editions; trackBy: trackEditions" [ngValue]="edition.slug">
+                {{ edition.label }}
+            </option>
+        </select>
         <evt-button additionalClasses="btn-no-border viewMode-btn" 
             *ngFor="let viewMode of viewModes; trackBy: trackViewModes;" 
             [title]="viewMode.label" [active]="viewMode.id === (currentViewMode$ | async)?.id" [inverted]="true"

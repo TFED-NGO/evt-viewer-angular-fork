@@ -14,8 +14,9 @@ import { DynamicAttributesModule, DynamicModule } from 'ng-dynamic-component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { UiComponentsModule } from './ui-components/ui-components.module';
 
-import { RouterModule, Routes } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
+import { EditionHomeComponent } from './edition-home/edition-home.component';
+import { EditionShellComponent } from './edition-shell/edition-shell.component';
 import { AppTranslationModule } from './app-translation.module';
 import { AppComponent } from './app.component';
 
@@ -147,9 +148,6 @@ import { WitnessPanelComponent } from './panels/witness-panel/witness-panel.comp
 import { XmlBeautifyPipe } from './pipes/xml-beautify.pipe';
 import { XMLParsers } from './services/xml-parsers/xml-parsers';
 
-const routes: Routes = [
-];
-
 export function initializeApp(appConfig: AppConfig) {
   return () => appConfig.load();
 }
@@ -218,6 +216,8 @@ const DynamicComponents = [
     AnaloguesComponent,
     AnnotatorDirective,
     AppComponent,
+    EditionHomeComponent,
+    EditionShellComponent,
     BiblioEntryComponent,
     BibliographyInfoComponent,
     BibliographicStyleSelectorComponent,
@@ -297,7 +297,6 @@ const DynamicComponents = [
     NgbPopoverModule,
     NgxSliderModule,
     NgxSpinnerModule,
-    RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' }),
     ScrollingModule,
     UiComponentsModule,
   ],

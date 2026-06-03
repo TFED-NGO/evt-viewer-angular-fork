@@ -1,29 +1,42 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EntitiesSelectItemGroup } from './components/entities-select/entities-select.component';
 import { AnalogueClass, SourceClass, ViewMode, ViewModeId } from './models/evt-models';
 import { Attributes, EditorialConventionLayout } from './models/evt-models';
+import { SiteConfig } from './models/site-config';
+import { EditionContextService } from './services/edition-context.service';
 import { updateCSS } from './utils/dom-utils';
 
 @Injectable()
 export class AppConfig {
     static evtSettings: EVTConfig;
+    private readonly siteConfigUrl = 'assets/config/site_config.json';
     private readonly uiConfigUrl = 'assets/config/ui_config.json';
-    private readonly fileConfigUrl = 'assets/config/file_config.json';
     private readonly editionConfigUrl = 'assets/config/edition_config.json';
     private readonly editorialConventionsConfigUrl = 'assets/config/editorial_conventions_config.json';
 
     constructor(
         public translate: TranslateService,
         private http: HttpClient,
+        private editionContext: EditionContextService,
     ) { }
 
     load() {
-        return new Promise<void>((resolve) => {
-            this.http.get<FileConfig>(this.fileConfigUrl).pipe(
+        return firstValueFrom(
+            this.http.get<SiteConfig>(this.siteConfigUrl).pipe(
+                map((siteConfig) => {
+                    this.editionContext.setSiteConfig(siteConfig);
+                }),
+            ),
+        );
+    }
+
+    loadEditionBundle(fileConfigUrl: string): Promise<EVTConfig> {
+        return firstValueFrom(
+            this.http.get<FileConfig>(fileConfigUrl).pipe(
                 switchMap((files: FileConfig) => forkJoin([
                     this.http.get<UiConfig>(files.configurationUrls?.ui ?? this.uiConfigUrl),
                     this.http.get<EditionConfig>(files.configurationUrls?.edition ?? this.editionConfigUrl),
@@ -31,29 +44,32 @@ export class AppConfig {
                         files.configurationUrls?.editorialConventions ?? this.editorialConventionsConfigUrl),
                 ]).pipe(
                     map(([ui, edition, editorialConventions]) => {
-                        console.log(ui, edition, files);
                         this.updateStyleFromConfig(edition, ui);
-                        // Handle default values => TODO: Decide how to handle defaults!!
-                        if (ui.defaultLocalization) {
-                            if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
-                                this.translate.use(ui.defaultLocalization);
-                            } else {
-                                const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
-                                if (firstAvailableLang) {
-                                    this.translate.use(firstAvailableLang.code);
-                                }
-                            }
-                        }
+                        this.applyLocalization(ui);
 
                         return { ui, edition, files, editorialConventions };
                     }),
                 )),
-            ).subscribe((evtConfig) => {
-                AppConfig.evtSettings = evtConfig;
-                console.log('evtConfig', evtConfig);
-                resolve();
-            });
-        });
+            ).pipe(
+                map((evtConfig) => {
+                    AppConfig.evtSettings = evtConfig;
+                    return evtConfig;
+                }),
+            ),
+        );
+    }
+
+    private applyLocalization(ui: UiConfig) {
+        if (ui.defaultLocalization) {
+            if (ui.availableLanguages.find((l) => l.code === ui.defaultLocalization && l.enable)) {
+                this.translate.use(ui.defaultLocalization);
+            } else {
+                const firstAvailableLang = ui.availableLanguages.find((l) => l.enable);
+                if (firstAvailableLang) {
+                    this.translate.use(firstAvailableLang.code);
+                }
+            }
+        }
     }
 
     /**

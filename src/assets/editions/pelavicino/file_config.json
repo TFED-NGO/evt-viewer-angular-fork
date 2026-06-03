@@ -1,0 +1,24 @@
+{
+  "editionUrls": [
+    "assets/data/pelavicino.xml"
+  ],
+  "editionImagesSource": {
+    "manifest": {
+      "value": "https://www.e-codices.unifr.ch/metadata/iiif/csg-0730/manifest.json",
+      "enable": false
+    },
+    "graphics": {
+      "value": "url",
+      "enable": false
+    }
+  },
+  "imagesFolderUrls": {
+    "single": "assets/data/images/single/",
+    "double": "assets/data/images/double/"
+  },
+  "configurationUrls": {
+    "edition": "assets/editions/pelavicino/edition_config.json",
+    "ui": "assets/editions/pelavicino/ui_config.json",
+    "editorialConventions": "assets/editions/pelavicino/editorial_conventions_config.json"
+  }
+}

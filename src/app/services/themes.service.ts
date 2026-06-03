@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppConfig } from '../app.config';
+import { EditionContextService } from './edition-context.service';
 
 @Injectable({
     providedIn: 'root',
@@ -8,7 +9,7 @@ export class ThemesService {
     themes: ColorTheme[];
     currentTheme: ColorTheme;
 
-    constructor() {
+    constructor(private editionContext: EditionContextService) {
         this.themes = [
             {
                 value: 'neutral',
@@ -23,7 +24,13 @@ export class ThemesService {
                 label: 'themeClassic',
             },
         ];
-        this.selectTheme(this.themes.find((t) => t.value === AppConfig.evtSettings.ui.theme) ?? this.themes[0]);
+        this.applyThemeFromConfig();
+        this.editionContext.editionChange$.subscribe(() => this.applyThemeFromConfig());
+    }
+
+    private applyThemeFromConfig() {
+        const themeValue = AppConfig.evtSettings?.ui?.theme;
+        this.selectTheme(this.themes.find((t) => t.value === themeValue) ?? this.themes[0]);
     }
 
     selectTheme(theme: ColorTheme) {

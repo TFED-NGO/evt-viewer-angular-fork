@@ -1,0 +1,9603 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<?xml-model href="http://www.tei-c.org/release/xml/tei/custom/schema/relaxng/tei_all.rng" type="application/xml" schematypens="http://purl.oclc.org/dsdl/schematron"?>
+<TEI
+	xmlns="http://www.tei-c.org/ns/1.0">
+	<teiHeader xml:lang="en">
+		<!-- bibliographic, technical, cataloguing information, etc. NOT the main text, but essential for a valid TEI document -->
+		<fileDesc>
+			<!-- a general heading -->
+			<titleStmt>
+				<title>De Ratione Animae</title>
+				<title>The Aelfric Scriptorium Project - Lives of Saints 12</title>
+				<!-- this is the title of the digital document, not the original text -->
+				<principal>Dr. Theodore H. Leinbaugh</principal>
+				<principal>Hunter Corb</principal>
+				<sponsor>Transatlantic Forum for Education and Diplomacy</sponsor>
+				<funder>Transatlantic Forum for Education and Diplomacy</funder>
+				<funder>Joan Gillings</funder>
+				<respStmt>
+					<!-- the responsibility statement allows specification of jobs and those who did them -->
+					<resp>Project Director</resp>
+					<name>Dr. Theodore H. Leinbaugh</name>
+				</respStmt>
+				<respStmt>
+					<resp>Project Manager</resp>
+					<name>Hunter Corb</name>
+					<!-- Other instructors go here -->
+				</respStmt>
+				<respStmt>
+					<resp>Encoding in TEI-conformant markup:</resp>
+					<name>Hunter Corb</name>
+					<name>Sarah Bulger</name>
+					<name>Eve Svoboda</name>
+					<name>Emma Hauck</name>
+					<name>Justin Evangelisto</name>
+					<name>Jackson Meade</name>
+				</respStmt>
+				<respStmt>
+					<resp>Manuscription description:</resp>
+					<name>Dr. Theodore H. Leinbaugh</name>
+					<name>Hunter Corb</name>
+				</respStmt>
+				<respStmt>
+					<resp>Manuscript transcription:</resp>
+					<name>Dr. Theodore H. Leinbaugh</name>
+					<name>Sarah Bulger</name>
+					<name>Eve Svoboda</name>
+					<name>Aidan Canner</name>
+				</respStmt>
+				<respStmt>
+					<resp>General overview and critical apparatus:</resp>
+					<name>Dr. Theodore H. Leinbaugh</name>
+				</respStmt>
+				<respStmt>
+					<resp>Old English Glossary compiled by:</resp>
+					<name>Theodore H. Leinbaugh</name>
+					<name>Hunter Corb</name>
+					<name>Jacob Beerli</name>
+				</respStmt>
+				<respStmt>
+					<resp>CI/CD, Publication, and Software Development:</resp>
+					<name>Jackson Meade</name>
+				</respStmt>
+			</titleStmt>
+			<editionStmt>
+				<edition>Previous Editions</edition>
+				<!-- include all previous editions of De Ratione Animae -->
+			</editionStmt>
+			<extent>?? [megabytes]</extent>
+			<publicationStmt>
+				<!-- this tells you who is publishing the digital version -->
+				<authority>The Aelfric Scriptorium Project (TASP)</authority>
+				<publisher>Transatlantic Forum for Education and Diplomacy</publisher>
+				<date>2023</date>
+				<availability status="restricted">
+					<licence target="http://creativecommons.org/licenses/by-sa/3.0/">Distributed under a Creative Commons Attribution-ShareAlike 3.0 Unported license</licence>
+					<p>Contact The Aelfric Project team members for more information.</p>
+				</availability>
+			</publicationStmt>
+			<sourceDesc>
+				<!-- this tells you about the origial that is being encoded here -->
+				<msDesc>
+					<!-- this is vital for MSS markup; it contains the information usually found in catalogue entries and edition front matter -->
+					<msIdentifier>
+						<!-- This is  the information required to identify the manuscript being described -->
+						<settlement></settlement>
+						<repository></repository>
+						<idno></idno>
+					</msIdentifier>
+					<head>
+						<!-- basic statement about the MSS goes here -->
+					</head>
+					<msContents>
+						<summary>
+							<!-- what is in the MS in terms of texts and sections -->
+						</summary>
+						<textLang mainLang="la">Predominantly in Latin.</textLang>
+					</msContents>
+					<physDesc>
+						<!-- elements of the physical description of the MS -->
+						<objectDesc>
+							<supportDesc>
+								<support>
+									<!-- description of support (Note this may contain many elements) -->
+									<p></p>
+								</support>
+								<extent>
+									<!-- description of size -->
+								</extent>
+								<condition>
+									<p>
+										<!-- description of damage, etc -->
+									</p>
+								</condition>
+							</supportDesc>
+							<layoutDesc>
+								<layout>
+									<!-- how text is laid out on the page, including information about any ruling, pricking -->
+								</layout>
+							</layoutDesc>
+						</objectDesc>
+						<handDesc>
+							<ab>
+								<!--a description of the writing in the manuscript -->
+							</ab>
+						</handDesc>
+						<decoDesc>
+							<p>
+								<!-- description of the decoration in the MS -->
+							</p>
+						</decoDesc>
+					</physDesc>
+					<history>
+						<!-- this tells you the origin and provenance of the MS -->
+						<summary></summary>
+						<origin></origin>
+						<provenance></provenance>
+					</history>
+					<additional>
+						<listBibl>
+							<bibl></bibl>
+						</listBibl>
+					</additional>
+				</msDesc>
+			</sourceDesc>
+		</fileDesc>
+		<encodingDesc>
+			<!-- This contains information about the editorial and encoding practices -->
+			<projectDesc>
+				<p>
+					<!-- goals of the project -->
+				</p>
+			</projectDesc>
+			<editorialDecl>
+				<p>In an effort to preserve all spelling variants in a world without standardized spelling, we have rendered all words
+         as they appear in the MS.</p>
+				<!-- include all other editorial declarations and decisions here -->
+			</editorialDecl>
+			<charDecl>
+    <char xml:id="p_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="P CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">p&#x00AF;</mapping>
+    </char>
+    <char xml:id="t_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="T CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">t&#x00AF;</mapping>
+    </char>
+    <char xml:id="b_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="B CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">b&#x00AF;</mapping>
+    </char>
+    <char xml:id="q_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="Q CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">q&#x00AF;</mapping>
+    </char>
+    <char xml:id="v_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="V CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">v&#x00AF;</mapping>
+    </char>
+    <char xml:id="m_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="M CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">m&#x00AF;</mapping>
+    </char>
+    <char xml:id="n_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="N CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">n&#x00AF;</mapping>
+    </char>
+    <char xml:id="s_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="S CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">s&#x00AF;</mapping>
+    </char>
+    <char xml:id="d_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="D CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">d&#x00AF;</mapping>
+    </char>
+    <char xml:id="r_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="R CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">r&#x00AF;</mapping>
+    </char>
+    <char xml:id="c_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="C CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">c&#x00AF;</mapping>
+    </char>
+    <char xml:id="l_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="L CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">l&#x00AF;</mapping>
+    </char>
+    <char xml:id="h_macron">
+        <unicodeProp name="Canonical_Combining_Class" value="230"/>
+        <localProp name="name"
+            value="H CHARACTER WITH A MACRON OVER IT"/>
+        <mapping type="standard">h&#x00AF;</mapping>
+    </char>
+		</encodingDesc>
+		<revisionDesc>
+			<list>
+				<item>
+					<date when="2026-02-20"></date>
+				</item>
+			</list>
+		</revisionDesc>
+	</teiHeader>
+	<text>
+		<body>
+		<pb n="86r" facs="86r.jpg" />
+			<!--facs="" />-->
+			<div type="sermon">
+				<head style="text-align: left; font-variant: smallcaps">Incipit epta albini ad Eulaliam uirginem</head>
+				<!-- FROM JACKSON MEADE: I closed this header tag, which was just floating. Is this the proper place for it? -->
+				<ab>
+					<lb n="1" />
+					<choice>
+						<orig>
+							<hi style="font-variant: smallcaps" rend="2lines">K</hi>arissime 
+
+						</orig>
+						<reg>Karissimae</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>
+							<foreign xml:lang="grc">xpi</foreign>
+						</orig>
+						<reg>Christi</reg>
+					</choice>
+caritate sorori
+
+					<choice>
+						<orig>eulaliē
+						</orig>
+						<reg>eulaliae</reg>
+					</choice>
+virgini albinus in
+
+					<choice>
+						<orig>dnō
+						</orig>
+						<reg>domino</reg>
+					</choice>
+salutem.
+
+					<lb n="2" />
+					<choice>
+						<orig>Scē
+						</orig>
+						<reg>Sanctae</reg>
+					</choice>
+sollicitudini
+
+					<choice>
+						<orig>vrē
+						</orig>
+						<reg>vestrae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+laudabili in
+
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+studio placuit
+
+					<choice>
+						<orig>de<g ref="#p_macron"/>cari 
+
+						</orig>
+						<reg>deprecari</reg>
+					</choice>
+de ra-
+
+					<lb n="3" />
+tione
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+aliquid
+
+					<choice>
+						<orig>nrām 
+
+						</orig>
+						<reg>nostram</reg>
+					</choice>
+scribere
+
+					<choice>
+						<orig>devotione.</orig>
+						<reg>devotionem.</reg>
+					</choice>
+					<choice>
+						<orig>Prop<g ref="#t_macron"/>
+						</orig>
+						<reg>Propter</reg>
+					</choice>
+					<choice>
+						<orig>quasdā
+						</orig>
+						<reg>quasdam</reg>
+					</choice>
+inquisitiones
+
+					<lb n="4" />
+ut ais, anno transacto inter vos ventilatas; quod
+
+					<choice>
+						<orig>liben<g ref="#t_macron"/>
+						</orig>
+						<reg>libenter</reg>
+					</choice>
+					<choice>
+						<orig>fecissē
+						</orig>
+						<reg>fecissem</reg>
+					</choice>
+si me tanto flagrari
+
+					<lb n="5" />
+ingenio
+
+					<choice>
+						<orig>nossē, 
+
+						</orig>
+						<reg>nossem,</reg>
+					</choice>
+ut
+
+					<choice>
+						<orig>tā
+						</orig>
+						<reg>tam</reg>
+					</choice>
+arduas rationes digne exponere
+
+					<choice>
+						<orig>confiderē. 
+
+						</orig>
+						<reg>confiderem.</reg>
+					</choice>
+Sed ex parte in-
+
+					<lb n="6" />
+dignum
+
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+videtur dicere
+
+					<choice>
+						<orig>meipsū
+						</orig>
+						<reg>meipsum</reg>
+					</choice>
+me nescire. Quid
+
+					<choice>
+						<orig>sū
+						</orig>
+						<reg>sum</reg>
+					</choice>
+ego nisi anima
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+caro?
+
+					<lb n="7" />
+Caro quid sit
+
+					<choice>
+						<orig>omni<g ref="#b_macron"/>
+						</orig>
+						<reg>omnibus</reg>
+					</choice>
+					<choice>
+						<orig>notū
+						</orig>
+						<reg>notum</reg>
+					</choice>
+est,
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+sciunt homines
+
+					<choice>
+						<orig>ēē; 
+
+						</orig>
+						<reg>esse;</reg>
+					</choice>
+					<choice>
+						<orig>Animē
+						</orig>
+						<reg>Animae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+					<choice>
+						<orig>rationē
+						</orig>
+						<reg>rationem</reg>
+					</choice>
+vix
+
+					<choice>
+						<orig>paucoꝜ</orig>
+						<reg>paucorum</reg>
+					</choice>
+					<lb n="8" />
+est
+
+					<choice>
+						<orig>pleni<g ref="#t_macron"/>
+						</orig>
+						<reg>pleniter</reg>
+					</choice>
+nosse. Nec aliquid magis homini in hac mortalitate vivente necessa-
+
+					<lb n="9" />
+rium est nosse;
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>animā. 
+
+						</orig>
+						<reg>animam.</reg>
+					</choice>
+					<choice>
+						<orig>Quantū
+						</orig>
+						<reg>Quantum</reg>
+					</choice>
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>quis<g ref="#q_macron"/>
+						</orig>
+						<reg>quisque</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+agnoscit, in tantum
+
+					<lb n="10" />
+diligit. Qui minus agnoscit,
+
+					<choice>
+						<orig>mi<g ref="#n_macron"/>
+						</orig>
+						<reg>minus</reg>
+					</choice>
+diligit. Ergo naturale est omni homini
+
+					<lb n="11" />
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+amare. si naturale
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+homini
+
+					<choice>
+						<orig>bonū
+						</orig>
+						<reg>bonum</reg>
+					</choice>
+amare. Naturale est
+
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+amare
+
+					<lb n="12" />
+quia
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+summum bonum est, sine quo bono nil boni
+
+					<choice>
+						<orig>quisquā
+						</orig>
+						<reg>quisquam</reg>
+					</choice>
+habere poterit.
+
+					<lb n="13" />
+Ille est indeficiens bonum, plena pulchritudo, totius felicitatis abundantia.
+
+					<pb n="52v"/>
+					<lb n="14" />
+Amor vero
+
+					<choice>
+						<orig>huī
+						</orig>
+						<reg>huius</reg>
+					</choice>
+boni
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+nisi in anima esse poterit. Et hoc
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+excellens
+
+					<choice>
+						<orig>bonū
+						</orig>
+						<reg>bonum</reg>
+					</choice>
+					<lb n="15" />
+est, illud amare
+
+					<choice>
+						<orig>bonū, 
+
+						</orig>
+						<reg>bonum,</reg>
+					</choice>
+in quo solo
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+a quo
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quem</reg>
+					</choice>
+quicquid boni est in ulla
+
+					<lb n="16" />
+creatura
+
+					<choice>
+						<orig>bonū
+						</orig>
+						<reg>bonum</reg>
+					</choice>
+est. Et
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+sola anima nobilis est si
+
+					<choice>
+						<orig>illū
+						</orig>
+						<reg>illum</reg>
+					</choice>
+amat a quo
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+quod
+
+					<lb n="17" />
+est, qui
+
+					<choice>
+						<orig>illā
+						</orig>
+						<reg>illam</reg>
+					</choice>
+					<choice>
+						<orig>talē
+						</orig>
+						<reg>talem</reg>
+					</choice>
+creavit, ut in se sui ipsius
+
+					<choice>
+						<orig>imaginē
+						</orig>
+						<reg>imaginem</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>similitudinē
+						</orig>
+						<reg>similitudinem</reg>
+					</choice>
+					<choice>
+						<orig>haber&amp;</orig>
+						<reg>haberet</reg>
+					</choice>
+					<lb n="18" />
+					<choice>
+						<orig>in<g ref="#p_macron"/>ssā, 
+
+						</orig>
+						<reg>inpressam,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+digna
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>ess&amp;</orig>
+						<reg>esset</reg>
+					</choice>
+habitatione;
+
+					<choice>
+						<orig>sc<g ref="#d_macron"/>m 
+
+						</orig>
+						<reg>secundum</reg>
+					</choice>
+					<choice>
+						<orig>modū
+						</orig>
+						<reg>modum</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quem</reg>
+					</choice>
+					<choice>
+						<orig>quelib&amp;</orig>
+						<reg>quaelibet</reg>
+					</choice>
+creatura in se
+
+					<lb n="19" />
+					<choice>
+						<orig>creatorē
+						</orig>
+						<reg>creatorem</reg>
+					</choice>
+habere possit; sic ordinata ut id quod sibi
+
+					<choice>
+						<orig>excellentī
+						</orig>
+						<reg>excellentius</reg>
+					</choice>
+est, id est
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<lb n="20" />
+tota
+
+					<choice>
+						<orig>amar&amp;</orig>
+						<reg>amaret</reg>
+					</choice>
+intentione. Et id quod sibi
+
+					<choice>
+						<orig>inferī
+						</orig>
+						<reg>inferius</reg>
+					</choice>
+est, id est
+
+					<choice>
+						<orig>carnē, 
+
+						</orig>
+						<reg>carnem,</reg>
+					</choice>
+toto
+
+					<choice>
+						<orig>reger&amp;</orig>
+						<reg>regeret</reg>
+					</choice>
+					<lb n="21" />
+studio. Proinde
+
+					<choice>
+						<orig>igi<g ref="#t_macron"/>
+						</orig>
+						<reg>igitur</reg>
+					</choice>
+quia melior pars est hominis anima,
+
+					<choice>
+						<orig>dec&amp;</orig>
+						<reg>decet</reg>
+					</choice>
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+dominam
+
+					<lb n="22" />
+esse, Et quasi de sede regalis culminis
+
+					<choice>
+						<orig>im<g ref="#p_macron"/>are, 
+
+						</orig>
+						<reg>imperare,</reg>
+					</choice>
+quid
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>quē, 
+
+						</orig>
+						<reg>quae,</reg>
+					</choice>
+vel quando, vel ubi,
+
+					<lb n="23" />
+vel quomodo faciat membra,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+considerare
+
+					<choice>
+						<orig>diligen<g ref="#t_macron"/>
+						</orig>
+						<reg>diligenter</reg>
+					</choice>
+quid cui membro
+
+					<choice>
+						<orig>im<g ref="#p_macron"/>&amp; 
+
+						</orig>
+						<reg>imperet</reg>
+					</choice>
+					<lb n="24" />
+					<choice>
+						<orig>faciendū, 
+
+						</orig>
+						<reg>faciendum,</reg>
+					</choice>
+quid
+
+					<choice>
+						<orig>cui<g ref="#q_macron"/>
+						</orig>
+						<reg>cuique</reg>
+					</choice>
+consentiat in desiderio
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<choice>
+						<orig>naturē. 
+
+						</orig>
+						<reg>naturae.</reg>
+					</choice>
+Et
+
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+omnia ratio-
+
+					<lb n="25" />
+nabili mentis intuitu
+
+					<choice>
+						<orig>oport&amp;</orig>
+						<reg>oportet</reg>
+					</choice>
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+discernere ne quid indecens fiat in officio
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<lb n="26" />
+carnis alicubi. Triplex
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+ut philosophi volunt natura. Est in ea
+
+					<lb n="27" />
+					<choice>
+						<orig>quedā
+						</orig>
+						<reg>quaedam</reg>
+					</choice>
+pars concupiscibilis, alia rationabilis tercia irascibilis. Duas
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+habent
+
+					<lb n="28" />
+					<choice>
+						<orig>harū
+						</orig>
+						<reg>harum</reg>
+					</choice>
+partes
+
+					<choice>
+						<orig>nobiscū
+						</orig>
+						<reg>nobiscum</reg>
+					</choice>
+					<choice>
+						<orig>bestiē
+						</orig>
+						<reg>bestiae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+animalia communes, id est
+
+					<choice>
+						<orig>concupiscentiā
+						</orig>
+						<reg>concupiscentiam</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>irā. 
+
+						</orig>
+						<reg>iram.</reg>
+					</choice>
+					<lb n="29" />
+Homo solus inter mortales ratione
+
+					<choice>
+						<orig>vig&amp;,</orig>
+						<reg>viget,</reg>
+					</choice>
+consilio
+
+					<choice>
+						<orig>val&amp;,</orig>
+						<reg>valet,</reg>
+					</choice>
+intellegentia ante
+
+					<lb n="30" />
+cellit. Sed his
+
+					<choice>
+						<orig>duo<g ref="#b_macron"/>, 
+
+						</orig>
+						<reg>duobus,</reg>
+					</choice>
+id est conpiscentia
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ira, ratio
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+mentis
+
+					<choice>
+						<orig><g ref="#p_macron"/>pria 
+
+						</orig>
+						<reg>propria</reg>
+					</choice>
+est
+
+					<lb n="31" />
+					<choice>
+						<orig>im<g ref="#p_macron"/>are 
+
+						</orig>
+						<reg>imperare</reg>
+					</choice>
+					<choice>
+						<orig>deb&amp;.</orig>
+						<reg>debet.</reg>
+					</choice>
+					<choice>
+						<orig>Cuī
+						</orig>
+						<reg>Cuius</reg>
+					</choice>
+excellentiores virtutes quattuor
+
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+					<choice>
+						<orig>manifestū
+						</orig>
+						<reg>manifestum</reg>
+					</choice>
+est; id est
+
+					<lb n="32" />
+prudentia qua agenda vel non agenda discernit. Et iustitia qua
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+colitur
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<lb n="33" />
+amatur,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+recte vivitur inter consocias animas. Temperantia
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+concupi
+
+					<lb n="34" />
+					<choice>
+						<orig>scentiā
+						</orig>
+						<reg>scentiam</reg>
+					</choice>
+vel
+
+					<choice>
+						<orig>irā
+						</orig>
+						<reg>iram</reg>
+					</choice>
+gubernat, ne definitos honestatis terminos
+
+					<choice>
+						<orig>transgredian<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>transgrediantur.</reg>
+					</choice>
+					<lb n="35" />
+Fortitudo qua adversa
+
+					<choice>
+						<orig>huī
+						</orig>
+						<reg>huius</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig>cū<g ref="#q_macron"/>
+						</orig>
+						<reg>cumque</reg>
+					</choice>
+contingant constanti animo tolerat.
+
+					<lb n="36" />
+Et
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+quattuor si caritate
+
+					<choice>
+						<orig><g ref="#p_macron"/>fecta 
+
+						</orig>
+						<reg>perfecta</reg>
+					</choice>
+fiunt in anima, efficiunt
+
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>ximā; 
+
+						</orig>
+						<reg>proximam;</reg>
+					</choice>
+					<lb n="37" />
+quia nichil aliud est
+
+					<choice>
+						<orig>optimū
+						</orig>
+						<reg>optimum</reg>
+					</choice>
+hominis, cui
+
+					<choice>
+						<orig>hērere 
+
+						</orig>
+						<reg>haerere</reg>
+					</choice>
+beatissimum sit nisi
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<lb n="38" />
+cui
+
+					<choice>
+						<orig>herere</orig>
+						<reg>haerere</reg>
+					</choice>
+certe
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+					<choice>
+						<orig>vale<g ref="#m_macron"/>, 
+
+						</orig>
+						<reg>valemus,</reg>
+					</choice>
+nisi dilectione. Proinde hae quattuour virtutes,
+
+					<lb n="39" />
+uno caritatis diademate ornantur.
+
+					<choice>
+						<orig>Quē
+						</orig>
+						<reg>Quae</reg>
+					</choice>
+est vera sapientia nisi
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+intelligere
+
+					<lb n="40" />
+					<choice>
+						<orig>amandū? 
+
+						</orig>
+						<reg>amandum?</reg>
+					</choice>
+					<choice>
+						<orig>Quē
+						</orig>
+						<reg>Quae</reg>
+					</choice>
+iustitia, nisi
+
+					<choice>
+						<orig>eū
+						</orig>
+						<reg>eum</reg>
+					</choice>
+colere a quo est,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+quicquid
+
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+boni ab eo
+
+					<choice>
+						<orig>hab?</orig>
+						<reg>habet?</reg>
+					</choice>
+					<lb n="41" />
+Quid
+
+					<choice>
+						<orig>tē<g ref="#p_macron"/>antia 
+
+						</orig>
+						<reg>temperantia</reg>
+					</choice>
+nisi
+
+					<choice>
+						<orig>integrū
+						</orig>
+						<reg>integrum</reg>
+					</choice>
+se
+
+					<choice>
+						<orig><g ref="#p_macron"/>beat 
+
+						</orig>
+						<reg>praebeat</reg>
+					</choice>
+in
+
+					<choice>
+						<orig><g ref="#p_macron"/>fectione 
+
+						</orig>
+						<reg>perfectione</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+ei
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quem</reg>
+					</choice>
+amat? Quid fortitudo
+
+					<lb n="42" />
+nisi
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>pro</reg>
+					</choice>
+amore
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+fortiter omnia tolerare adversa? Si enim
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+est
+
+					<choice>
+						<orig>sūmū
+						</orig>
+						<reg>summum</reg>
+					</choice>
+hominis
+
+					<lb n="43" />
+bonum quod negari non potest, sequitur
+
+					<choice>
+						<orig>q<g ref="#m_macron"/>
+						</orig>
+						<reg>quoniam</reg>
+					</choice>
+					<choice>
+						<orig>sūmū
+						</orig>
+						<reg>summum</reg>
+					</choice>
+					<choice>
+						<orig>bonū
+						</orig>
+						<reg>bonum</reg>
+					</choice>
+					<choice>
+						<orig>app&amp;ere</orig>
+						<reg>appetere</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+bene vivere;
+
+					<lb n="44" />
+ut nihil sit aliud bene vivere,
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+toto corde, tota anima, tota mente dili-
+
+					<lb n="45" />
+gere
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+a quo existit. Ita
+
+					<choice>
+						<orig>tandē
+						</orig>
+						<reg>tandem</reg>
+					</choice>
+ordinate vivit
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>seipsū
+						</orig>
+						<reg>seipsum</reg>
+					</choice>
+					<choice>
+						<orig>considerat,</orig>
+						<reg>considererat,</reg>
+					</choice>
+quid sit
+
+					<lb n="46" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+quo
+
+					<choice>
+						<orig>festin&amp;,</orig>
+						<reg>festinet,</reg>
+					</choice>
+si
+
+					<choice>
+						<orig>affec<g ref="#t_macron"/>
+						</orig>
+						<reg>affectus</reg>
+					</choice>
+animi vel carnales motus
+
+					<choice>
+						<orig><g ref="#p_macron"/>vida 
+
+						</orig>
+						<reg>provida</reg>
+					</choice>
+gubernat ratione.
+
+					<lb n="47" />
+Si
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+vel concupiscentia vel ira
+
+					<choice>
+						<orig>rationē
+						</orig>
+						<reg>rationem</reg>
+					</choice>
+vincit,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+dominatur
+
+					<choice>
+						<orig>quelib&amp;</orig>
+						<reg>quaelibet</reg>
+					</choice>
+					<choice>
+						<orig>illor</orig>
+						<reg>illorum</reg>
+					</choice>
+					<lb n="48" />
+in anima, ordo
+
+					<choice>
+						<orig><g ref="#p_macron"/>versus 
+
+						</orig>
+						<reg>perversus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>cipitabit 
+
+						</orig>
+						<reg>praecipitabit</reg>
+					</choice>
+consentientem in peius,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>ten&amp;</orig>
+						<reg>tenet</reg>
+					</choice>
+solium
+
+					<pb n="53r"/>
+					<lb n="49" />
+rationis Ira si immoderata erit, vel concupiscentia ineffrenata. Ex his
+
+					<choice>
+						<orig>tri<g ref="#b_macron"/>
+						</orig>
+						<reg>tribus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#q_macron"/>si 
+
+						</orig>
+						<reg>quasi</reg>
+					</choice>
+					<lb n="50" />
+					<choice>
+						<orig>radici<g ref="#b_macron"/>
+						</orig>
+						<reg>radicibus</reg>
+					</choice>
+si
+
+					<choice>
+						<orig>corrupte</orig>
+						<reg>corruptae</reg>
+					</choice>
+erunt omnes
+
+					<choice>
+						<orig>pene</orig>
+						<reg>paene</reg>
+					</choice>
+					<choice>
+						<orig>pulalant</orig>
+						<reg>pullalant</reg>
+					</choice>
+pestes. Concupiscentia data
+
+					<lb n="51" />
+est homini ad concupiscenda
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+sunt utilia
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+sibi ad
+
+					<choice>
+						<orig>salutē
+						</orig>
+						<reg>salutem</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>ficiant 
+
+						</orig>
+						<reg>proficiant</reg>
+					</choice>
+					<lb n="52" />
+					<choice>
+						<orig>sempiternā. 
+
+						</orig>
+						<reg>sempiternam.</reg>
+					</choice>
+Si
+
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+					<choice>
+						<orig>corrūpitur 
+
+						</orig>
+						<reg>corrumpitur</reg>
+					</choice>
+nascitur ex ea gastrimargia fornicatio
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<lb n="53" />
+philargiria. Ira data
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+ad vitia cohibenda, ne impiis, id est peccatis, homo
+
+					<lb n="54" />
+serviat dominis. Quia iuxta
+
+					<choice>
+						<orig>d<g ref="#n_macron"/>i 
+
+						</orig>
+						<reg>domini</reg>
+					</choice>
+					<choice>
+						<orig>vocē, 
+
+						</orig>
+						<reg>vocem,</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+facit
+
+					<choice>
+						<orig>peccatū
+						</orig>
+						<reg>peccatum</reg>
+					</choice>
+servus
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+peccati. Ex qua
+
+					<lb n="55" />
+corrupta,
+
+					<choice>
+						<orig><g ref="#p_macron"/>cedit 
+
+						</orig>
+						<reg>procedit</reg>
+					</choice>
+tristitia
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+acidia. Ratio data
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+ut
+
+					<choice>
+						<orig>dixi<g ref="#m_macron"/>
+						</orig>
+						<reg>diximus</reg>
+					</choice>
+					<choice>
+						<orig>omnē
+						</orig>
+						<reg>omnem</reg>
+					</choice>
+hominis
+
+					<lb n="56" />
+					<choice>
+						<orig>vitā
+						</orig>
+						<reg>vitam</reg>
+					</choice>
+regere,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+gubernare. Ex qua si
+
+					<choice>
+						<orig>corrūpi<g ref="#t_macron"/>
+						</orig>
+						<reg>corrumpitur</reg>
+					</choice>
+					<choice>
+						<orig>ori<g ref="#t_macron"/>
+						</orig>
+						<reg>oritur</reg>
+					</choice>
+					<choice>
+						<orig>su<g ref="#p_macron"/>bia 
+
+						</orig>
+						<reg>superbia</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+cenodoxia:
+
+					<lb n="57" />
+ex his quasi
+
+					<choice>
+						<orig>arbori<g ref="#b_macron"/>
+						</orig>
+						<reg>arboribus</reg>
+					</choice>
+plurimi
+
+					<choice>
+						<orig>vitiorū
+						</orig>
+						<reg>vitiorum</reg>
+					</choice>
+ramusculi in
+
+					<choice>
+						<orig><g ref="#p_macron"/>niciē
+						</orig>
+						<reg>perniciem</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+succrescunt.
+
+					<lb n="58" />
+De
+
+					<choice>
+						<orig>qui<g ref="#b_macron"/>
+						</orig>
+						<reg>quibus</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>huī
+						</orig>
+						<reg>huius</reg>
+					</choice>
+					<choice>
+						<orig>epistolē
+						</orig>
+						<reg>epistolae</reg>
+					</choice>
+angustia disputare
+
+					<choice>
+						<orig>longū
+						</orig>
+						<reg>longum</reg>
+					</choice>
+est,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+nimis
+
+					<choice>
+						<orig>necessariū. 
+
+						</orig>
+						<reg>necessarium.</reg>
+					</choice>
+					<lb n="59" />
+Est
+
+					<choice>
+						<orig>quo<g ref="#q_macron"/>
+						</orig>
+						<reg>quoque</reg>
+					</choice>
+anima imagine
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+similitudine sui conditoris in principalis sui
+
+					<lb n="60" />
+parte
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+mens
+
+					<choice>
+						<orig>dici<g ref="#t_macron"/>
+						</orig>
+						<reg>dicitur</reg>
+					</choice>
+					<choice>
+						<orig>excellen<g ref="#t_macron"/>
+						</orig>
+						<reg>excellenter</reg>
+					</choice>
+nobilitata;
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+imago
+
+					<choice>
+						<orig>tandē
+						</orig>
+						<reg>tandem</reg>
+					</choice>
+in ea clara
+
+					<lb n="61" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+pulchra
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+si toto
+
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+conditori desiderio iuncta est.
+
+					<choice>
+						<orig>Quāvis 
+
+						</orig>
+						<reg>Quamvis</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+vilis
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+de
+
+					<lb n="62" />
+formis a
+
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+recedens efficiatur, tamen si ratione
+
+					<choice>
+						<orig>vig&amp;</orig>
+						<reg>viget</reg>
+					</choice>
+vel intellectu sentit
+
+					<lb n="63" />
+					<choice>
+						<orig>man&amp;</orig>
+						<reg>manet</reg>
+					</choice>
+in ea
+
+					<choice>
+						<orig>quedā
+						</orig>
+						<reg>quedam</reg>
+					</choice>
+					<choice>
+						<orig>naturē
+						</orig>
+						<reg>naturae</reg>
+					</choice>
+dignitas
+
+					<choice>
+						<orig>suē. 
+
+						</orig>
+						<reg>suae.</reg>
+					</choice>
+Unde de tali anima a sui conditoris
+
+					<lb n="64" />
+recedente dilectione divina dicit scriptura.
+
+					<choice>
+						<orig>Quāquā
+						</orig>
+						<reg>Quamquam</reg>
+					</choice>
+					<!-- transcript says 'quam quam' but 'quamquam' is also a word in Latin and I think'quamquam' makes more sense here based on immediate context -->
+in imagine
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>ābul&amp; 
+
+						</orig>
+						<reg>ambulet</reg>
+					</choice>
+					<lb n="65" />
+homo. tamen vane conturbatur, thesaurizat
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ignorat cui congregat ea.
+
+					<lb n="66" />
+Nec hane
+
+					<choice>
+						<orig>vanitatē
+						</orig>
+						<reg>vanitatem</reg>
+					</choice>
+auferre posse ostendit ab ea
+
+					<choice>
+						<orig>imaginē
+						</orig>
+						<reg>imaginem</reg>
+					</choice>
+					<choice>
+						<orig>dī, 
+
+						</orig>
+						<reg>dei,</reg>
+					</choice>
+					<choice>
+						<orig>quāquam 
+
+						</orig>
+						<reg>quamquam</reg>
+					</choice>
+					<lb n="67" />
+					<choice>
+						<orig>scilic&amp;</orig>
+						<reg>scilicet</reg>
+					</choice>
+magna sit natura anima humana, tamen vitiari potest
+
+					<lb n="68" />
+quia
+
+					<choice>
+						<orig>sūma 
+
+						</orig>
+						<reg>summa</reg>
+					</choice>
+non est. Tamen quia
+
+					<choice>
+						<orig>sūme 
+
+						</orig>
+						<reg>summae</reg>
+					</choice>
+					<choice>
+						<orig>nature</orig>
+						<reg>naturae</reg>
+					</choice>
+imago est id
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>divinē
+						</orig>
+						<reg>divinae</reg>
+					</choice>
+					<lb n="69" />
+magna
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+natura
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+nobilis, nobilis a conditore creata sed ignobilis vitio
+
+					<lb n="70" />
+					<choice>
+						<orig><g ref="#p_macron"/>prio 
+
+						</orig>
+						<reg>proprio</reg>
+					</choice>
+facta, id
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+a
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+declinat servitio, sua volens uti potestati
+
+					<lb n="71" />
+quod
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>primū
+						</orig>
+						<reg>primum</reg>
+					</choice>
+					<choice>
+						<orig>malū
+						</orig>
+						<reg>malum</reg>
+					</choice>
+omni rationali
+
+					<choice>
+						<orig>creaturē. 
+
+						</orig>
+						<reg>creaturae.</reg>
+					</choice>
+Ita
+
+					<choice>
+						<orig>tandē
+						</orig>
+						<reg>tandem</reg>
+					</choice>
+ordinate vivit
+
+					<lb n="72" />
+anima si
+
+					<choice>
+						<orig>eū
+						</orig>
+						<reg>eum</reg>
+					</choice>
+diligit qui supra se est, id est
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>, 
+
+						</orig>
+						<reg>deum,</reg>
+					</choice>
+et
+
+					<choice>
+						<orig>pruden<g ref="#t_macron"/>
+						</orig>
+						<reg>prudenter</reg>
+					</choice>
+ea regat
+
+					<lb n="73" />
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+regere
+
+					<choice>
+						<orig>deb&amp;,</orig>
+						<reg>debet,</reg>
+					</choice>
+id
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+carnales sensus. Ergo quattuor
+
+					<choice>
+						<orig>quidē
+						</orig>
+						<reg>quidem</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+dili-
+
+					<lb n="74" />
+genda sunt, id est,
+
+					<choice>
+						<orig>eū
+						</orig>
+						<reg>eum</reg>
+					</choice>
+qui supra se
+
+					<choice>
+						<orig>ē, 
+
+						</orig>
+						<reg>est,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+id quod iuxta se
+
+					<choice>
+						<orig>ē, 
+
+						</orig>
+						<reg>est,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+id quod ipsa est,
+
+					<lb n="75" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+id quod sub se est. De
+
+					<choice>
+						<orig>dua<g ref="#b_macron"/>
+						</orig>
+						<reg>duabus</reg>
+					</choice>
+					<choice>
+						<orig>horū
+						</orig>
+						<reg>horum</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>cetū
+						</orig>
+						<reg>praeceptum</reg>
+					</choice>
+in sacris legitur litteris,
+
+					<lb n="76" />
+id est de dilectione
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>ximi. 
+
+						</orig>
+						<reg>proximi.</reg>
+					</choice>
+De sua vero dilectione
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+carnis
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+non
+
+					<lb n="77" />
+sunt
+
+					<choice>
+						<orig><g ref="#p_macron"/>cepta 
+
+						</orig>
+						<reg>praecepta</reg>
+					</choice>
+statuta, quia
+
+					<choice>
+						<orig>duo<g ref="#b_macron"/>
+						</orig>
+						<reg>duobus</reg>
+					</choice>
+					<choice>
+						<orig>priori<g ref="#b_macron"/>
+						</orig>
+						<reg>prioribus</reg>
+					</choice>
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+duo
+
+					<choice>
+						<orig>inēē
+						</orig>
+						<reg>inesse</reg>
+					</choice>
+dinoscuntur.
+
+					<lb n="78" />
+Quia
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+vel
+
+					<choice>
+						<orig><g ref="#p_macron"/>ximū
+						</orig>
+						<reg>proximum</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>fecte 
+
+						</orig>
+						<reg>perfecte</reg>
+					</choice>
+diligit, se
+
+					<choice>
+						<orig>ipsū
+						</orig>
+						<reg>ipsum</reg>
+					</choice>
+neglegere non poterit.
+
+					<lb n="79" />
+Quia
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<choice>
+						<orig>sūma 
+
+						</orig>
+						<reg>summa</reg>
+					</choice>
+beatitudo
+
+					<choice>
+						<orig>eū
+						</orig>
+						<reg>eum</reg>
+					</choice>
+diligere a quo est. Et socias
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+beati-
+
+					<lb n="80" />
+tudinis diligere animas,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+illis
+
+					<choice>
+						<orig><g ref="#p_macron"/>desse 
+
+						</orig>
+						<reg>prodesse</reg>
+					</choice>
+vel carnis officio, vel mentis
+
+					<lb n="81" />
+beneficio ut bona illis
+
+					<choice>
+						<orig>opt&amp;,</orig>
+						<reg>optet,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>quantū
+						</orig>
+						<reg>quantum</reg>
+					</choice>
+valeat faciat.
+
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+igitur
+
+					<lb n="82" />
+anima in sua natura ut
+
+					<choice>
+						<orig>dixi<g ref="#m_macron"/>
+						</orig>
+						<reg>diximus</reg>
+					</choice>
+					<choice>
+						<orig>imaginē
+						</orig>
+						<reg>imaginem</reg>
+					</choice>
+					<choice>
+						<orig>scē
+						</orig>
+						<reg>sanctae</reg>
+					</choice>
+trinitatis, in eo quod in
+
+					<lb n="83" />
+					<choice>
+						<orig>tellegentiā, 
+
+						</orig>
+						<reg>tellegentiam,</reg>
+					</choice>
+					<choice>
+						<orig>voluntatē, 
+
+						</orig>
+						<reg>voluntatem,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>memoriā
+						</orig>
+						<reg>memoriam</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;.</orig>
+						<reg>habet.</reg>
+					</choice>
+Una est
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+anima
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+mens
+
+					<pb n="53v"/>
+					<lb n="84" />
+dicitur, una vita,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+una substantia,
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+tria
+
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+in se; sed
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+tria non
+
+					<lb n="85" />
+sunt tres
+
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+sed una vita, nec tres mentes, sed una mens. Consequenter
+
+					<choice>
+						<orig>uti<g ref="#q_macron"/>
+						</orig>
+						<reg>utique</reg>
+					</choice>
+					<lb n="86" />
+nec tres
+
+					<choice>
+						<orig>substantiē
+						</orig>
+						<reg>substantiae</reg>
+					</choice>
+sunt, sed una substantia. Quod vero anima, vel mens, vel
+
+					<lb n="87" />
+vita, vel substantia
+
+					<choice>
+						<orig>dici<g ref="#t_macron"/>, 
+
+						</orig>
+						<reg>dicitur,</reg>
+					</choice>
+ad
+
+					<choice>
+						<orig>seipsū
+						</orig>
+						<reg>seipsum</reg>
+					</choice>
+					<choice>
+						<orig>dici<g ref="#t_macron"/>: 
+
+						</orig>
+						<reg>dicitur:</reg>
+					</choice>
+Quod vera memoria vel intellegen-
+
+					<lb n="88" />
+tia vel voluntas dicitur, ad aliquid relative dicitur. Proinde
+
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+tria
+
+					<lb n="89" />
+eo sunt unum, quo una vita, una mens, una est substantia,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+quicquid aliud
+
+					<lb n="90" />
+ad se ipsa singula dicuntur,
+
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+simul
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+					<choice>
+						<orig>plurali<g ref="#t_macron"/>, 
+
+						</orig>
+						<reg>pluraliter,</reg>
+					</choice>
+sed
+
+					<choice>
+						<orig>singulari<g ref="#t_macron"/>
+						</orig>
+						<reg>singulariter</reg>
+					</choice>
+dicuntur;
+
+					<lb n="91" />
+Eo vero tria, quo ad se
+
+					<choice>
+						<orig>invicē
+						</orig>
+						<reg>invicem</reg>
+					</choice>
+referuntur.
+
+					<choice>
+						<orig>Nā
+						</orig>
+						<reg>Nam</reg>
+					</choice>
+memoria
+
+					<choice>
+						<orig>alicuī
+						</orig>
+						<reg>alicuius</reg>
+					</choice>
+est memoria,
+
+					<lb n="92" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+intellegentia
+
+					<choice>
+						<orig>alicuī
+						</orig>
+						<reg>alicuius</reg>
+					</choice>
+est intellegentia,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+voluntas
+
+					<choice>
+						<orig>alicuī
+						</orig>
+						<reg>alicuius</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+voluntas,
+
+					<choice>
+						<orig>&amp;-</orig>
+						<reg>et-</reg>
+					</choice>
+					<lb n="93" />
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+ad se
+
+					<choice>
+						<orig>invicē
+						</orig>
+						<reg>invicem</reg>
+					</choice>
+referuntur. Sed in his
+
+					<choice>
+						<orig>tri<g ref="#b_macron"/>
+						</orig>
+						<reg>tribus</reg>
+					</choice>
+unitas
+
+					<choice>
+						<orig>quedā
+						</orig>
+						<reg>quaedam</reg>
+					</choice>
+					<choice>
+						<orig>ē, 
+
+						</orig>
+						<reg>est,</reg>
+					</choice>
+Intelligo me in-
+
+					<lb n="94" />
+telligere velle
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+meminisse,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+volo me intelligere
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+meminisse et velle,
+
+					<choice>
+						<orig>&amp;-</orig>
+						<reg>et-</reg>
+					</choice>
+					<lb n="95" />
+memini me intelligere
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+velle
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+meminisse,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+sic in singulis singula
+
+					<choice>
+						<orig>capiun<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>capiuntur.</reg>
+					</choice>
+					<lb n="96" />
+Sed de his alias; nunc
+
+					<choice>
+						<orig>autē
+						</orig>
+						<reg>autem</reg>
+					</choice>
+					<choice>
+						<orig>considere<g ref="#m_macron"/>
+						</orig>
+						<reg>consideremus</reg>
+					</choice>
+					<choice>
+						<orig>mirā
+						</orig>
+						<reg>miram</reg>
+					</choice>
+					<choice>
+						<orig>velocitatē
+						</orig>
+						<reg>velocitatem</reg>
+					</choice>
+					<choice>
+						<orig>anime</orig>
+						<reg>animae</reg>
+					</choice>
+in formandis
+
+					<lb n="97" />
+					<choice>
+						<orig>re<g ref="#b_macron"/>. 
+
+						</orig>
+						<reg>rebus.</reg>
+					</choice>
+					<choice>
+						<orig>que</orig>
+						<corr>qu
+
+							<add>as</add>
+						</corr>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>cipit 
+
+						</orig>
+						<reg>percipit</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+carnales sensus, a
+
+					<choice>
+						<orig>qui<g ref="#b_macron"/>
+						</orig>
+						<reg>quibus</reg>
+					</choice>
+quasi
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>quosdā
+						</orig>
+						<reg>quosdam</reg>
+					</choice>
+nuntios, quicquid
+
+					<lb n="98" />
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+					<choice>
+						<orig>sensibiliū
+						</orig>
+						<reg>sensibilium</reg>
+					</choice>
+					<choice>
+						<orig>cognitarū
+						</orig>
+						<reg>cognitarum</reg>
+					</choice>
+vel
+
+					<choice>
+						<orig>incognitarū
+						</orig>
+						<reg>incognitarum</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>cipit; 
+
+						</orig>
+						<reg>percipit;</reg>
+					</choice>
+mox in se ipsa
+
+					<choice>
+						<orig>earū
+						</orig>
+						<reg>earum</reg>
+					</choice>
+in-
+
+					<lb n="99" />
+effabili celeritate format figuras,
+
+					<choice>
+						<orig>informatasq:</orig>
+						<corr>formatasq:</corr>
+						<reg>formatasque:</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>sue</orig>
+						<reg>suae</reg>
+					</choice>
+thesauro
+
+					<choice>
+						<orig>memorie</orig>
+						<reg>memoriae</reg>
+					</choice>
+					<lb n="100" />
+recondit. Sicut
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>romā
+						</orig>
+						<reg>romam</reg>
+					</choice>
+vidit,
+
+					<choice>
+						<orig>romā
+						</orig>
+						<reg>romam</reg>
+					</choice>
+					<choice>
+						<orig>enī
+						</orig>
+						<corr></corr>
+						<reg>enim</reg>
+					</choice>
+fingit in animo suo,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+format
+
+					<lb n="101" />
+qualis sit,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+nomen audierit vel rememorat
+
+					<choice>
+						<orig>rome,</orig>
+						<reg>romae,</reg>
+					</choice>
+					<choice>
+						<orig>statī
+						</orig>
+						<reg>statim</reg>
+					</choice>
+recurrit
+
+					<lb n="102" />
+animus
+
+					<choice>
+						<orig>illī
+						</orig>
+						<reg>illius</reg>
+					</choice>
+ad
+
+					<choice>
+						<orig>memoriā
+						</orig>
+						<reg>memoriam</reg>
+					</choice>
+ubi
+
+					<choice>
+						<orig>conditā
+						</orig>
+						<reg>conditam</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+					<choice>
+						<orig>formā
+						</orig>
+						<reg>formam</reg>
+					</choice>
+					<choice>
+						<orig>illī, 
+
+						</orig>
+						<reg>illius,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ibi recognoscit
+
+					<lb n="103" />
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+ubi recondidit
+
+					<choice>
+						<orig>illā. 
+
+						</orig>
+						<reg>illam.</reg>
+					</choice>
+Et adhuc mirabilius est quod
+
+					<choice>
+						<orig>incognitarū
+						</orig>
+						<reg>incognitarum</reg>
+					</choice>
+rerum
+
+					<lb n="104" />
+si
+
+					<choice>
+						<orig>lec<g ref="#t_macron"/>e 
+
+						</orig>
+						<reg>lectae</reg>
+					</choice>
+vel
+
+					<choice>
+						<orig>audite</orig>
+						<reg>auditae</reg>
+					</choice>
+erunt in
+
+					<choice>
+						<orig>inarib</orig>
+						<corr>ina
+
+							<add>u</add>rib 
+
+						</corr>
+						<reg>inauribus</reg>
+					</choice>
+					<choice>
+						<orig>anime,</orig>
+						<reg>animae,</reg>
+					</choice>
+					<choice>
+						<orig>statī
+						</orig>
+						<reg>statim</reg>
+					</choice>
+format
+
+					<choice>
+						<orig>figurā
+						</orig>
+						<reg>figuram</reg>
+					</choice>
+ignote rei.
+
+					<lb n="105" />
+Sicut forte
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+					<choice>
+						<orig>quisquā
+						</orig>
+						<reg>quisquam</reg>
+					</choice>
+					<choice>
+						<orig>re<g ref="#r_macron"/>m 
+
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+in anima sua
+
+					<choice>
+						<orig>formatā
+						</orig>
+						<reg>formatam</reg>
+					</choice>
+qualissit,
+
+					<lb n="106" />
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+vis longe aliter sit,
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+sibi anima fingit
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+videtur.
+
+					<choice>
+						<orig>Simili<g ref="#t_macron"/>
+						</orig>
+						<reg>Similiter</reg>
+					</choice>
+					<lb n="107" />
+de homine, sicut forte de
+
+					<choice>
+						<orig>habrahā, 
+
+						</orig>
+						<reg>habraham,</reg>
+					</choice>
+fingit
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+homo in anima sua qualis
+
+					<lb n="108" />
+					<choice>
+						<orig>ēēt 
+
+						</orig>
+						<reg>esset</reg>
+					</choice>
+					<choice>
+						<orig>abrahā, 
+
+						</orig>
+						<reg>abraham,</reg>
+					</choice>
+ex eo quod alios homines vidit, sic sibi fingit membra
+
+					<lb n="109" />
+omnia sicut in aliis vel in seipso cognoscit: Muros,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+domos,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+plateas,
+
+					<lb n="110" />
+non fingit in eo, sicut in
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+facit. Quicquid in aliis civitatibus
+
+					<lb n="111" />
+vidit sibi cognitis, hoc fingit in
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+posse: ex notis
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>specie<g ref="#b_macron"/>
+						</orig>
+						<reg>speciebus</reg>
+					</choice>
+					<lb n="112" />
+fingit ignota, nec
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+in civitate
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+fingit hominis membra
+
+					<lb n="113" />
+sed
+
+					<choice>
+						<orig>ēdificia 
+
+						</orig>
+						<reg>aedificia</reg>
+					</choice>
+					<choice>
+						<orig>civitata<g ref="#b_macron"/>
+						</orig>
+						<corr>civitati<g ref="#b_macron"/>
+						</corr>
+						<reg>civitatibus</reg>
+					</choice>
+					<choice>
+						<orig>cons&amp;a.</orig>
+						<reg>consueta.</reg>
+					</choice>
+Sic de omni re facit animus hominis,
+
+					<lb n="114" />
+ex cognitis fingit incognita, habens has omnes species in se,
+
+					<choice>
+						<orig>quāmvis 
+
+						</orig>
+						<reg>quamvis</reg>
+					</choice>
+					<lb n="115" />
+eo punc<g ref="#t_macron"/>o
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+vult de
+
+					<choice>
+						<orig>quolib&amp;</orig>
+						<corr>qualib&amp;</corr>
+						<reg>qualibet</reg>
+					</choice>
+una cogitare
+
+					<choice>
+						<orig>cogit&amp;;</orig>
+						<reg>cogitet;</reg>
+					</choice>
+non quod anima exeat
+
+					<lb n="116" />
+de sede sua ad
+
+					<choice>
+						<orig>cognoscendū
+						</orig>
+						<reg>cognoscendum</reg>
+					</choice>
+aliquid, sed in_seipsa
+
+					<choice>
+						<orig>man&amp;,</orig>
+						<reg>manet,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+in seipsa
+
+					<lb n="117" />
+					<choice>
+						<orig>illā
+						</orig>
+						<reg>illam</reg>
+					</choice>
+					<choice>
+						<orig>formā
+						</orig>
+						<reg>formam</reg>
+					</choice>
+recognoscit,
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+					<choice>
+						<orig>pridē
+						</orig>
+						<reg>pridem</reg>
+					</choice>
+mira velocitate formavit. Inde
+
+					<lb n="118" />
+est quod anima si
+
+					<choice>
+						<orig>quidlib&amp;</orig>
+						<reg>quidlibet</reg>
+					</choice>
+repente obliviscitur,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+iterum rememorat;
+
+					<pb n="54r"/>
+					<lb n="119" />
+Non
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+tunc
+
+					<choice>
+						<orig>tēporis 
+
+						</orig>
+						<reg>temporis</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+obliciscitur aliquid,
+
+					<choice>
+						<orig>inveni&amp;</orig>
+						<reg>inveniet</reg>
+					</choice>
+					<choice>
+						<orig>loculū
+						</orig>
+						<reg>loculum</reg>
+					</choice>
+in
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+id
+
+					<choice>
+						<orig>q<g ref="#d_macron"/>
+						</orig>
+						<reg>quod</reg>
+					</choice>
+					<choice>
+						<orig>querit</orig>
+						<reg>quaerit</reg>
+					</choice>
+					<lb n="120" />
+					<choice>
+						<orig>reconditū
+						</orig>
+						<reg>reconditum</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;,</orig>
+						<reg>habet,</reg>
+					</choice>
+					<choice>
+						<orig>q<g ref="#d_macron"/>
+						</orig>
+						<reg>quod</reg>
+					</choice>
+					<choice>
+						<orig>iterū
+						</orig>
+						<reg>iterum</reg>
+					</choice>
+rememorat sive curando, sive
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+curando. Ex qua
+
+					<lb n="121" />
+velocitate
+
+					<choice>
+						<orig>anime</orig>
+						<reg>animae</reg>
+					</choice>
+quo in se sic omnia fingit audita, aut visa, aut sensa,
+
+					<lb n="122" />
+aut odorata, aut gustata,
+
+					<choice>
+						<orig>iterūq 
+
+						</orig>
+						<reg>iterumque</reg>
+					</choice>
+inventa recogniscit, mira
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+potenta
+
+					<lb n="123" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>nature</orig>
+						<reg>naturae</reg>
+					</choice>
+efficacia
+
+					<choice>
+						<orig>utcūq 
+
+						</orig>
+						<reg>utcumque</reg>
+					</choice>
+cognosci poterit.
+
+					<choice>
+						<orig>Dū
+						</orig>
+						<reg>Dum</reg>
+					</choice>
+de
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+cogito
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+eo
+
+					<lb n="124" />
+momento de roma
+
+					<choice>
+						<orig>possū
+						</orig>
+						<reg>possum</reg>
+					</choice>
+cogitare; vel
+
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+de
+
+					<choice>
+						<orig>qualib&amp;</orig>
+						<reg>qualibet</reg>
+					</choice>
+una re cogito non
+
+					<lb n="125" />
+					<choice>
+						<orig>possū
+						</orig>
+						<reg>possum</reg>
+					</choice>
+eo momento de
+
+					<choice>
+						<orig>plurib</orig>
+						<reg>pluribus</reg>
+					</choice>
+cogitare sed hoc
+
+					<choice>
+						<orig>unū
+						</orig>
+						<reg>unum</reg>
+					</choice>
+mihi tunc
+
+					<choice>
+						<orig><g ref="#p_macron"/>sens 
+
+						</orig>
+						<reg>praesens</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+in-
+
+					<lb n="126" />
+anima quod tunc cogito, donec vel citius vel
+
+					<choice>
+						<orig>tardī
+						</orig>
+						<reg>tardius</reg>
+					</choice>
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+cogitatio recedat,
+
+					<lb n="127" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+alia
+
+					<choice>
+						<orig>su<g ref="#p_macron"/>veniat. 
+
+						</orig>
+						<reg>superveniat.</reg>
+					</choice>
+					<choice>
+						<orig>Nā
+						</orig>
+						<reg>Nam</reg>
+					</choice>
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+omnipotentis
+
+					<choice>
+						<orig>naturē
+						</orig>
+						<reg>naturae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ineffabili cognitione
+
+					<lb n="128" />
+omnia simul sunt
+
+					<choice>
+						<orig><g ref="#p_macron"/>sentia 
+
+						</orig>
+						<reg>praesentia</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>nūquā
+						</orig>
+						<reg>numquam</reg>
+					</choice>
+recedentia,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+hoc
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+quod dicitur
+
+					<lb n="129" />
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<choice>
+						<orig>ubi<g ref="#q_macron"/>
+						</orig>
+						<reg>ubique</reg>
+					</choice>
+totus est, quia omnia
+
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+sunt vel
+
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+fuerunt vel
+
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+futura sunt,
+
+					<lb n="130" />
+simul omnia
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+semel, sed
+
+					<choice>
+						<orig>sem<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sentia 
+
+						</orig>
+						<reg>praesentia</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;.</orig>
+						<reg>habet.</reg>
+					</choice>
+Nec
+
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+aliquis potest satis
+
+					<lb n="131" />
+ammirari quod sensus ille vivus
+
+					<choice>
+						<orig>at<g ref="#q_macron"/>
+						</orig>
+						<reg>atque</reg>
+					</choice>
+celestis qui mens vel
+
+					<choice>
+						<orig>ani<g ref="#m_macron"/>
+						</orig>
+						<reg>animus</reg>
+					</choice>
+nuncupatur,
+
+					<lb n="132" />
+					<choice>
+						<orig>tante</orig>
+						<reg>tantae</reg>
+					</choice>
+nobilitatis
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+ut ne
+
+					<choice>
+						<orig>tū
+						</orig>
+						<reg>tum</reg>
+					</choice>
+					<choice>
+						<orig>quidē
+						</orig>
+						<reg>quidem</reg>
+					</choice>
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+sopitus est conquiescat,
+
+					<choice>
+						<orig>tantē
+						</orig>
+						<reg>tantae</reg>
+					</choice>
+celeritatis
+
+					<lb n="133" />
+ut uno
+
+					<choice>
+						<orig>tēporis 
+
+						</orig>
+						<reg>temporis</reg>
+					</choice>
+puncto
+
+					<choice>
+						<orig>celū
+						</orig>
+						<reg>celum</reg>
+					</choice>
+					<choice>
+						<orig>collustr&amp;</orig>
+						<reg>collustret</reg>
+					</choice>
+si velit, maria
+
+					<choice>
+						<orig><g ref="#p_macron"/>vol&amp;, 
+
+						</orig>
+						<reg>pervolet,</reg>
+					</choice>
+terras
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+urbes
+
+					<lb n="134" />
+					<choice>
+						<orig><g ref="#p_macron"/>agr&amp;. 
+
+						</orig>
+						<reg>peragret.</reg>
+					</choice>
+Omnia
+
+					<choice>
+						<orig>deni<g ref="#q_macron"/>
+						</orig>
+						<reg>denique</reg>
+					</choice>
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+libuerit
+
+					<choice>
+						<orig>quāvis 
+
+						</orig>
+						<reg>quamvis</reg>
+					</choice>
+longe
+
+					<choice>
+						<orig>late<g ref="#q_macron"/>
+						</orig>
+						<reg>lateque</reg>
+					</choice>
+submota sint, in con-
+
+					<lb n="135" />
+spectu sibi ipse cogitando constituat. Et
+
+					<choice>
+						<orig>mira<g ref="#t_macron"/>
+						</orig>
+						<reg>miratur</reg>
+					</choice>
+aliquis si divina mens univer-
+
+					<lb n="136" />
+sas mundi partes simul
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>se<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sentes 
+
+						</orig>
+						<reg>praesentes</reg>
+					</choice>
+habeat,
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+omnia regit,
+
+					<choice>
+						<orig>ubi<g ref="#q_macron"/>
+						</orig>
+						<reg>ubique</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sens, 
+
+						</orig>
+						<reg>praesens,</reg>
+					</choice>
+					<lb n="137" />
+					<choice>
+						<orig>ubi<g ref="#q_macron"/>
+						</orig>
+						<reg>ubique</reg>
+					</choice>
+tota,
+
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+tanta sit vis ac potestas mentis
+
+					<choice>
+						<orig>humanē
+						</orig>
+						<reg>humanae</reg>
+					</choice>
+intra mortale corpus
+
+					<lb n="138" />
+					<choice>
+						<orig>inclusē, 
+
+						</orig>
+						<reg>inclusae,</reg>
+					</choice>
+ut ne septis
+
+					<choice>
+						<orig>quidē
+						</orig>
+						<reg>quidem</reg>
+					</choice>
+gravis
+
+					<choice>
+						<orig>huī
+						</orig>
+						<reg>huius</reg>
+					</choice>
+ac pigri corporis
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+inligata est
+
+					<choice>
+						<orig>coher-</orig>
+						<corr>coer-</corr>
+					</choice>
+					<lb n="139" />
+ceri ullo modo possit;
+
+					<choice>
+						<orig><g ref="#q_macron"/>mi<g ref="#n_macron"/>
+						</orig>
+						<reg>quominus</reg>
+					</choice>
+					<choice>
+						<orig>liberā
+						</orig>
+						<reg>liberam</reg>
+					</choice>
+cogitandi
+
+					<choice>
+						<orig>facultatē
+						</orig>
+						<reg>facultatem</reg>
+					</choice>
+					<choice>
+						<orig>qui&amp;is</orig>
+						<reg>quietis</reg>
+					</choice>
+impatiens
+
+					<lb n="140" />
+habeat.
+
+					<choice>
+						<orig>Sciendū
+						</orig>
+						<reg>Sciendum</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+certissime
+
+					<choice>
+						<orig>animā
+						</orig>
+						<reg>animam</reg>
+					</choice>
+si in ea nobilitate
+
+					<choice>
+						<orig><g ref="#p_macron"/>mansiss&amp; 
+
+						</orig>
+						<reg>permansisset</reg>
+					</choice>
+qua con-
+
+					<lb n="141" />
+dita est a creatore, omnimodis
+
+					<choice>
+						<orig>inmortalē
+						</orig>
+						<reg>inmortalem</reg>
+					</choice>
+					<choice>
+						<orig>ēē, 
+
+						</orig>
+						<reg>esse,</reg>
+					</choice>
+sicut
+
+					<choice>
+						<orig>scōrū
+						</orig>
+						<reg>sanctorum</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+sunt.
+
+					<lb n="142" />
+Sed
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+libero arbitrio
+
+					<choice>
+						<orig>spū
+						</orig>
+						<reg>spiritu</reg>
+					</choice>
+instigante maligno depravata est
+
+					<choice>
+						<orig>partī
+						</orig>
+						<reg>partim</reg>
+					</choice>
+					<lb n="143" />
+mortalis ex inmortali facta
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+sed non tota. Sicut corporis vita anima
+
+					<lb n="144" />
+est, ita animae vita
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<choice>
+						<orig>ē. 
+
+						</orig>
+						<reg>est.</reg>
+					</choice>
+					<choice>
+						<orig>Dū
+						</orig>
+						<reg>Dum</reg>
+					</choice>
+anima deserit corpus, moritur corpus.
+
+					<choice>
+						<orig>Mortuū
+						</orig>
+						<reg>Mortuum</reg>
+					</choice>
+					<lb n="145" />
+recte dicitur, quia insensibile est: Est tamen
+
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+corruptio
+
+					<choice>
+						<orig>queda<g ref="#m_macron"/>
+						</orig>
+						<reg>quaedam</reg>
+					</choice>
+					<lb n="146" />
+ex carnis natura,
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+vis
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+vivificetur abanima.
+
+					<choice>
+						<orig>Animē
+						</orig>
+						<reg>Animae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+mors est,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<lb n="147" />
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+deserit dono
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<choice>
+						<orig>grē
+						</orig>
+						<reg>gratiae</reg>
+					</choice>
+ob
+
+					<choice>
+						<orig>magnitudinē
+						</orig>
+						<reg>magnitudinem</reg>
+					</choice>
+					<choice>
+						<orig>scelerū
+						</orig>
+						<reg>scelerum</reg>
+					</choice>
+moritur meliore sui parte.
+
+					<lb n="148" />
+					<choice>
+						<orig>Dua<g ref="#b_macron"/>
+						</orig>
+						<reg>Duabus</reg>
+					</choice>
+vero
+
+					<choice>
+						<orig>dignitati<g ref="#b_macron"/>
+						</orig>
+						<reg>dignitatibus</reg>
+					</choice>
+a creatore anima in sua natura glorificata est, idest
+
+					<lb n="149" />
+					<choice>
+						<orig>&amp;ernitate</orig>
+						<reg>eternitate</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+beatitudine. Beatitudo
+
+					<choice>
+						<orig>scilic&amp;</orig>
+						<reg>scilicet</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+est,
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+habere inse.
+
+					<lb n="150" />
+Quomodo habere,
+
+					<choice>
+						<orig>idē
+						</orig>
+						<reg>idest</reg>
+					</choice>
+					<choice>
+						<orig>iustā
+						</orig>
+						<reg>iustam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+quia
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+iustus est,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>misericordē
+						</orig>
+						<reg>misericordem</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+quia
+
+					<lb n="151" />
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+misericors est,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>bonā
+						</orig>
+						<reg>bonam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+quia
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+bonus est,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>scām 
+
+						</orig>
+						<reg>sanctam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+quia
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<choice>
+						<orig>s<g ref="#c_macron"/>s 
+
+						</orig>
+						<reg>sanctus</reg>
+					</choice>
+est,
+
+					<lb n="152" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>caritatē
+						</orig>
+						<reg>caritatem</reg>
+					</choice>
+habere quia
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+caritas est. Qui plurimum
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+inse
+
+					<choice>
+						<orig>hab&amp;,-</orig>
+						<reg>habet,-</reg>
+					</choice>
+					<lb n="153" />
+					<choice>
+						<orig>maiorē
+						</orig>
+						<reg>maiorem</reg>
+					</choice>
+inse similitudinem
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+imaginem.
+
+					<choice>
+						<orig>Quicū<g ref="#q_macron"/>
+						</orig>
+						<reg>Quicumque</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+inanima
+
+					<pb n="54v"/>
+					<lb n="154" />
+non
+
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+alia his similia
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig>ap<g ref="#l_macron"/>s 
+
+						</orig>
+						<reg>apostulus</reg>
+					</choice>
+					<choice>
+						<orig>fruc<g ref="#t_macron"/>
+						</orig>
+						<reg>fructus</reg>
+					</choice>
+nominavit
+
+					<choice>
+						<orig>sp<g ref="#s_macron"/>, 
+
+						</orig>
+						<reg>spiritus,</reg>
+					</choice>
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+habitatione
+
+					<lb n="155" />
+					<choice>
+						<orig>indig<g ref="#n_macron"/>
+						</orig>
+						<reg>indignus</reg>
+					</choice>
+					<choice>
+						<orig>effici&amp;ur.</orig>
+						<reg>efficietur.</reg>
+					</choice>
+Et erit semivivus sicut latrones
+
+					<choice>
+						<orig>hominē
+						</orig>
+						<reg>hominem</reg>
+					</choice>
+					<choice>
+						<orig>descendentē
+						</orig>
+						<reg>descendentem</reg>
+					</choice>
+					<lb n="156" />
+ab
+
+					<choice>
+						<orig>hierusalē
+						</orig>
+						<reg>hierusalem</reg>
+					</choice>
+inhiericho
+
+					<choice>
+						<orig>spoliave<g ref="#r_macron"/>
+						</orig>
+						<reg>spoliaverunt</reg>
+					</choice>
+					<choice>
+						<orig>vulnerave<g ref="#r_macron"/>
+						</orig>
+						<reg>vulneraverunt</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>semivivū
+						</orig>
+						<reg>semivivum</reg>
+					</choice>
+reliquerunt.
+
+					<lb n="157" />
+Semiviva erit anima si
+
+					<choice>
+						<orig><g ref="#p_macron"/>p<g ref="#t_macron"/>
+						</orig>
+						<reg>propter</reg>
+					</choice>
+vitia
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+iniquitates
+
+					<choice>
+						<orig>beatudinē
+						</orig>
+						<reg>beatudinem</reg>
+					</choice>
+visionis
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<lb n="158" />
+habitationis
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>diderit. 
+
+						</orig>
+						<reg>perdiderit.</reg>
+					</choice>
+					<choice>
+						<orig>Adquā
+						</orig>
+						<reg>Adquam</reg>
+					</choice>
+creata est
+
+					<choice>
+						<orig>ēternitatē
+						</orig>
+						<reg>aeternitatem</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>dere 
+
+						</orig>
+						<reg>perdere</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+potest,
+
+					<lb n="159" />
+					<choice>
+						<orig>mutabi<g ref="#t_macron"/>
+						</orig>
+						<reg>mutabitur</reg>
+					</choice>
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>p<g ref="#t_macron"/>
+						</orig>
+						<reg>propter</reg>
+					</choice>
+peccata sua beatitudo in
+
+					<choice>
+						<orig>miseriā. 
+
+						</orig>
+						<reg>miseriam.</reg>
+					</choice>
+Et hoc erit si concu-
+
+					<lb n="160" />
+piscentia vel ira plus
+
+					<choice>
+						<orig>dominabi<g ref="#t_macron"/>
+						</orig>
+						<reg>dominabitur</reg>
+					</choice>
+in homine
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+ratio, in qua sola
+
+					<choice>
+						<orig>pre-</orig>
+						<reg>prae-</reg>
+					</choice>
+					<lb n="161" />
+					<choice>
+						<orig>cell&amp;</orig>
+						<reg>cellet</reg>
+					</choice>
+					<choice>
+						<orig>animanti<g ref="#b_macron"/>. 
+
+						</orig>
+						<reg>animantibus.</reg>
+					</choice>
+Ideo de tali
+
+					<choice>
+						<orig>dictū
+						</orig>
+						<reg>dictum</reg>
+					</choice>
+est in psalmo. Et homo
+
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+in honore
+
+					<lb n="162" />
+					<choice>
+						<orig>ess&amp;</orig>
+						<reg>esset</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+intellexit,
+
+					<choice>
+						<orig>compara<g ref="#t_macron"/>
+						</orig>
+						<reg>comparatus</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>iu<g ref="#m_macron"/>tis 
+
+						</orig>
+						<reg>iumentis</reg>
+					</choice>
+					<choice>
+						<orig>insipienti<g ref="#b_macron"/>
+						</orig>
+						<reg>insipientibus</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+similis
+
+					<choice>
+						<orig>fac<g ref="#t_macron"/>
+						</orig>
+						<reg>factus</reg>
+					</choice>
+est illis.
+
+					<lb n="163" />
+Sicut
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+loquela
+
+					<choice>
+						<orig><g ref="#p_macron"/>cell&amp; 
+
+						</orig>
+						<reg>percellet</reg>
+					</choice>
+in carne ceteris
+
+					<choice>
+						<orig>animanti<g ref="#b_macron"/>
+						</orig>
+						<reg>animantibus</reg>
+					</choice>
+ita
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+in anima ratione
+
+					<lb n="164" />
+sola nobilior
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+eis;
+
+					<choice>
+						<orig>Quē
+						</orig>
+						<reg>Quae</reg>
+					</choice>
+omnes carnales concupiscentias
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+animi motus,
+
+					<lb n="165" />
+quasi domina
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+regina desublimi
+
+					<choice>
+						<orig>ēquitatis 
+
+						</orig>
+						<reg>aequitatis</reg>
+					</choice>
+sede regere
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>tēperare 
+
+						</orig>
+						<reg>temperare</reg>
+					</choice>
+					<choice>
+						<orig>deb&amp;:</orig>
+						<reg>debet:</reg>
+					</choice>
+					<lb n="166" />
+Hoc modo anima
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+finiri potest iuxta
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>pri&amp;atē
+						</orig>
+						<reg>proprietatem</reg>
+					</choice>
+					<choice>
+						<orig>naturē. 
+
+						</orig>
+						<reg>naturae.</reg>
+					</choice>
+Anima
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>sp<g ref="#s_macron"/>
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+					<lb n="167" />
+intellectualis, rationalis,
+
+					<choice>
+						<orig>sē<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+in motu,
+
+					<choice>
+						<orig>sē<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+vivens,
+
+					<choice>
+						<orig>bonē
+						</orig>
+						<reg>bonae</reg>
+					</choice>
+					<choice>
+						<orig>malē<g ref="#q_macron"/>
+						</orig>
+						<reg>malaeque</reg>
+					</choice>
+voluntatis
+
+					<lb n="168" />
+capax.
+
+					<choice>
+						<orig>Secundū
+						</orig>
+						<reg>Secundum</reg>
+					</choice>
+					<choice>
+						<orig>benignitatē
+						</orig>
+						<reg>benignitatem</reg>
+					</choice>
+creatoris libero arbitrio nobilitatus sua
+
+					<lb n="169" />
+voluntate
+
+					<choice>
+						<orig>vitia<g ref="#t_macron"/>
+						</orig>
+						<reg>vitiatus</reg>
+					</choice>
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>grā
+						</orig>
+						<reg>gratia</reg>
+					</choice>
+					<choice>
+						<orig>libera<g ref="#t_macron"/>
+						</orig>
+						<reg>liberatus</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>qui<g ref="#b_macron"/>
+						</orig>
+						<reg>quibus</reg>
+					</choice>
+ipse
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+voluit,
+
+					<choice>
+						<orig>Adregendū
+						</orig>
+						<reg>Adregendum</reg>
+					</choice>
+					<lb n="170" />
+					<choice>
+						<orig>mo<g ref="#t_macron"/>
+						</orig>
+						<reg>motus</reg>
+					</choice>
+carnis
+
+					<choice>
+						<orig>crea<g ref="#t_macron"/>
+						</orig>
+						<reg>creatus</reg>
+					</choice>
+invisibilis, incorporalis, sine pondere sine colore,
+
+					<lb n="171" />
+					<choice>
+						<orig>circūscrip<g ref="#t_macron"/>
+						</orig>
+						<reg>circumspcriptus</reg>
+					</choice>
+in singulis
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+carnis membris totus, in quo est imago con-
+
+					<lb n="172" />
+ditoris
+
+					<choice>
+						<orig>spiritali<g ref="#t_macron"/>
+						</orig>
+						<reg>spiritaliter</reg>
+					</choice>
+primitiva creatione
+
+					<choice>
+						<orig>im<g ref="#p_macron"/>ssa 
+
+						</orig>
+						<reg>impressa</reg>
+					</choice>
+sicut
+
+					<choice>
+						<orig>su<g ref="#p_macron"/>ī
+						</orig>
+						<reg>superius</reg>
+					</choice>
+ostendimus.
+
+					<lb n="173" />
+					<choice>
+						<orig>Quāvis 
+
+						</orig>
+						<reg>Quamvis</reg>
+					</choice>
+sit misera
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+a conditore in se
+
+					<choice>
+						<orig>ipsā
+						</orig>
+						<corr>ipsum</corr>
+					</choice>
+					<choice>
+						<orig>delabi<g ref="#t_macron"/>, 
+
+						</orig>
+						<reg>delabitur,</reg>
+					</choice>
+tamen
+
+					<choice>
+						<orig>ēternitatē
+						</orig>
+						<reg>aeternitatem</reg>
+					</choice>
+					<lb n="174" />
+					<choice>
+						<orig>imaginē<g ref="#q_macron"/>
+						</orig>
+						<reg>imaginemque</reg>
+					</choice>
+dignitatis
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>dere 
+
+						</orig>
+						<reg>perdere</reg>
+					</choice>
+non poterit, non habens in se
+
+					<choice>
+						<orig>potestatē
+						</orig>
+						<reg>potestatem</reg>
+					</choice>
+					<lb n="175" />
+					<choice>
+						<orig>exendi</orig>
+						<corr>exe
+
+							<add>u</add>ndi 
+
+						</corr>
+						<reg>exeundi</reg>
+					</choice>
+de carne
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+redeundi
+
+					<choice>
+						<orig>iterū
+						</orig>
+						<reg>iterum</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>eā, 
+
+						</orig>
+						<reg>eam,</reg>
+					</choice>
+sed
+
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+arbitrio
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+fecit
+
+					<choice>
+						<orig>eam</orig>
+						<corr>eum</corr>
+					</choice>
+					<lb n="176" />
+					<choice>
+						<orig>carni<g ref="#q_macron"/>
+						</orig>
+						<reg>carnique</reg>
+					</choice>
+immisit.
+
+					<choice>
+						<orig>Exi&amp;</orig>
+						<reg>Exiet</reg>
+					</choice>
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>quāvis 
+
+						</orig>
+						<reg>quamvis</reg>
+					</choice>
+nolens
+
+					<choice>
+						<orig><g ref="#p_macron"/>sentandus 
+
+						</orig>
+						<reg>praesentandus</reg>
+					</choice>
+iudicio
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>dō<g ref="#q_macron"/>
+						</orig>
+						<reg>deoque</reg>
+					</choice>
+					<lb n="177" />
+iudicante
+
+					<choice>
+						<orig>locū
+						</orig>
+						<reg>locum</reg>
+					</choice>
+intrabit suis meritis
+
+					<choice>
+						<orig>condignū
+						</orig>
+						<reg>condignum</reg>
+					</choice>
+spectare ultimi diei
+
+					<lb n="178" />
+					<choice>
+						<orig>iudiciū
+						</orig>
+						<reg>iudicium</reg>
+					</choice>
+ut accipiat
+
+					<choice>
+						<orig>carni</orig>
+						<corr>carnē
+						</corr>
+						<reg>carnem</reg>
+					</choice>
+in qua in hoc
+
+					<choice>
+						<orig>se<g ref="#l_macron"/>o 
+
+						</orig>
+						<reg>saeculo</reg>
+					</choice>
+vivebat. Qui
+
+					<choice>
+						<orig>sp<g ref="#s_macron"/>
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+modo curis
+
+					<lb n="179" />
+angitur, modo corporis
+
+					<choice>
+						<orig>dolori<g ref="#b_macron"/>
+						</orig>
+						<reg>doloribus</reg>
+					</choice>
+					<choice>
+						<orig>condol&amp;</orig>
+						<reg>condolet</reg>
+					</choice>
+modo
+
+					<choice>
+						<orig>lētitia 
+
+						</orig>
+						<reg>laetitia</reg>
+					</choice>
+hilarescit,
+
+					<lb n="180" />
+modo cognita recogitat, modo incognita scire
+
+					<choice>
+						<orig>quērit. 
+
+						</orig>
+						<reg>quaerit.</reg>
+					</choice>
+Alia vult, alia
+
+					<lb n="181" />
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+vult, in
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+amor
+
+					<choice>
+						<orig>naturali<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>naturaliter.</reg>
+					</choice>
+Qui amor intellectu discernendus est
+
+					<lb n="182" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ratione ab inlicitis
+
+					<choice>
+						<orig>delectationi<g ref="#b_macron"/>
+						</orig>
+						<reg>delectationibus</reg>
+					</choice>
+cohibendus ut ea
+
+					<choice>
+						<orig>am&amp;</orig>
+						<reg>amet</reg>
+					</choice>
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+amanda
+
+					<lb n="183" />
+sunt,
+
+					<choice>
+						<orig>at<g ref="#q_macron"/>
+						</orig>
+						<reg>atque</reg>
+					</choice>
+					<choice>
+						<orig>se<g ref="#c_macron"/>m 
+
+						</orig>
+						<reg>secundum</reg>
+					</choice>
+					<choice>
+						<orig>officiū
+						</orig>
+						<reg>officium</reg>
+					</choice>
+					<choice>
+						<orig>o<g ref="#p_macron"/>is 
+
+						</orig>
+						<reg>operis</reg>
+					</choice>
+sui variis
+
+					<choice>
+						<orig>nuncupa<g ref="#t_macron"/>
+						</orig>
+						<reg>nuncupatur</reg>
+					</choice>
+nominibus. Anima
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<lb n="184" />
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+vivificat,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+					<choice>
+						<orig>contēpla<g ref="#t_macron"/>
+						</orig>
+						<reg>contemplatur</reg>
+					</choice>
+					<choice>
+						<orig>s<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+					<choice>
+						<orig>ē, 
+
+						</orig>
+						<reg>est,</reg>
+					</choice>
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+sentit sensus
+
+					<choice>
+						<orig>ē, 
+
+						</orig>
+						<reg>est,</reg>
+					</choice>
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+sapit animus est,
+
+					<lb n="185" />
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+intelligit sensus est,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+discernit ratio est,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+consentit voluntas est,
+
+					<lb n="186" />
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+recordatur memoria
+
+					<choice>
+						<orig>ē. 
+
+						</orig>
+						<reg>est.</reg>
+					</choice>
+Non
+
+					<choice>
+						<orig>ta<g ref="#m_macron"/>
+						</orig>
+						<reg>tamen</reg>
+					</choice>
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+ita
+
+					<choice>
+						<orig>dividentur</orig>
+						<corr>dividuntur</corr>
+					</choice>
+insubstantia
+
+					<lb n="187" />
+sicut
+
+					<choice>
+						<orig>nomini<g ref="#b_macron"/>
+						</orig>
+						<reg>nominibus</reg>
+					</choice>
+quia
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+omnia una est anima. Inter
+
+					<choice>
+						<orig>s<g ref="#p_macron"/>m 
+
+						</orig>
+						<reg>spiritum</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+animam
+
+					<lb n="188" />
+					<choice>
+						<orig>eīmodi 
+
+						</orig>
+						<reg>eiusmodi</reg>
+					</choice>
+
+potest differentia
+
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+quo domnis anima
+
+					<choice>
+						<orig>s<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+est, non tamen omnis
+
+					<pb n="55r"/>
+					<lb n="189" />
+					<choice>
+						<orig>s<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+anima. Sed
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>bea<g ref="#t_macron"/>
+						</orig>
+						<reg>beatus</reg>
+					</choice>
+paulus
+
+					<choice>
+						<orig>ap<g ref="#l_macron"/>s 
+
+						</orig>
+						<reg>apostulus</reg>
+					</choice>
+mirabiliter discernit
+
+					<choice>
+						<orig>in<g ref="#t_macron"/>
+						</orig>
+						<reg>inter</reg>
+					</choice>
+					<choice>
+						<orig>spiritū
+						</orig>
+						<reg>spiritum</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>mentē
+						</orig>
+						<reg>mentem</reg>
+					</choice>
+					<lb n="190" />
+dicens.
+
+					<choice>
+						<orig>Psallā
+						</orig>
+						<reg>Psallam</reg>
+					</choice>
+					<choice>
+						<orig>spū
+						</orig>
+						<reg>spiritu</reg>
+					</choice>
+					<choice>
+						<orig>psallā
+						</orig>
+						<reg>psallam</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+mente.
+
+					<choice>
+						<orig>Spū
+						</orig>
+						<reg>Spiritu</reg>
+					</choice>
+psallit
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+obscuras significationes
+
+					<lb n="191" />
+mentis efficacia intelligit.
+
+					<choice>
+						<orig>Nā
+						</orig>
+						<reg>Nam</reg>
+					</choice>
+					<choice>
+						<orig>s<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+nabuchodonosor regis
+
+					<choice>
+						<orig>informa<g ref="#t_macron"/>
+						</orig>
+						<reg>informatus</reg>
+					</choice>
+erat ut
+
+					<lb n="192" />
+					<choice>
+						<orig>vider&amp;</orig>
+						<reg>videret</reg>
+					</choice>
+futura sed
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+erat mens inluminata ut
+
+					<choice>
+						<orig>intelliger&amp;</orig>
+						<reg>intelligeret</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+videbat.
+
+					<lb n="193" />
+Accessit
+
+					<choice>
+						<orig><g ref="#p_macron"/>ph&amp;a 
+
+						</orig>
+						<reg>propheta</reg>
+					</choice>
+divino inluminatus
+
+					<choice>
+						<orig>spū
+						</orig>
+						<reg>spiritu</reg>
+					</choice>
+qui
+
+					<choice>
+						<orig>utrum<g ref="#q_macron"/>
+						</orig>
+						<reg>utrumque</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+intellexit
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+rex videbat
+
+					<lb n="194" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+exposuit quid significarent. Hoc
+
+					<choice>
+						<orig>ita<g ref="#q_macron"/>
+						</orig>
+						<reg>itaque</reg>
+					</choice>
+					<choice>
+						<orig>abs<g ref="#q_macron"/>
+						</orig>
+						<reg>absque</reg>
+					</choice>
+dubitatione sciendum est, quod
+
+					<lb n="195" />
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+pulchritudo
+
+					<choice>
+						<orig>vir<g ref="#t_macron"/>
+						</orig>
+						<reg>virtus</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+deformitas
+
+					<choice>
+						<orig>vitiū. 
+
+						</orig>
+						<reg>vitium.</reg>
+					</choice>
+Si
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+vel
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+vel seipsam
+
+					<lb n="196" />
+vel spiritale aliquid considerare gestit, avertit se a
+
+					<choice>
+						<orig>sensi<g ref="#b_macron"/>
+						</orig>
+						<reg>sensibus</reg>
+					</choice>
+carnis ne fiant
+
+					<lb n="197" />
+ei inpedimento spiritalia rimanti.
+
+					<choice>
+						<orig>Sepe</orig>
+						<reg>Saepe</reg>
+					</choice>
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+					<choice>
+						<orig>intantū
+						</orig>
+						<reg>intantum</reg>
+					</choice>
+affectata erit
+
+					<choice>
+						<orig>qualib&amp;</orig>
+						<reg>qualibet</reg>
+					</choice>
+					<lb n="198" />
+cogitatione ut
+
+					<choice>
+						<orig>quāvis 
+
+						</orig>
+						<reg>quamvis</reg>
+					</choice>
+					<choice>
+						<orig>a<g ref="#p_macron"/>tos 
+
+						</orig>
+						<reg>apertos</reg>
+					</choice>
+habeat oculos
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sto 
+
+						</orig>
+						<reg>praesto</reg>
+					</choice>
+sunt
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+vidit,
+
+					<choice>
+						<orig>necsonantē
+						</orig>
+						<reg>necsonantem</reg>
+					</choice>
+					<lb n="199" />
+					<choice>
+						<orig>vocē
+						</orig>
+						<reg>vocem</reg>
+					</choice>
+intelligit, nec
+
+					<choice>
+						<orig>tangentē
+						</orig>
+						<corr>tangens</corr>
+					</choice>
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+sentit. Regit
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>quin<g ref="#q_macron"/>
+						</orig>
+						<reg>quinque</reg>
+					</choice>
+sensus
+
+					<lb n="200" />
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig>horū
+						</orig>
+						<reg>horum</reg>
+					</choice>
+nichil est.
+
+					<choice>
+						<orig>Dū
+						</orig>
+						<reg>Dum</reg>
+					</choice>
+de ea
+
+					<choice>
+						<orig>cogita<g ref="#m_macron"/>
+						</orig>
+						<reg>cogitamus</reg>
+					</choice>
+nichil
+
+					<choice>
+						<orig>corporeū
+						</orig>
+						<reg>corporeum</reg>
+					</choice>
+cogitare debemus.
+
+					<lb n="201" />
+Sicut
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+omnem
+
+					<choice>
+						<orig>creaturā, 
+
+						</orig>
+						<reg>creaturam,</reg>
+					</choice>
+sic anima omnem
+
+					<choice>
+						<orig>corporeā
+						</orig>
+						<reg>corpoream</reg>
+					</choice>
+					<choice>
+						<orig>creaturā
+						</orig>
+						<reg>creaturam</reg>
+					</choice>
+					<choice>
+						<orig>naturē
+						</orig>
+						<reg>naturae</reg>
+					</choice>
+					<lb n="202" />
+dignitate
+
+					<choice>
+						<orig><g ref="#p_macron"/>cellit 
+
+						</orig>
+						<reg>praecellit</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>lucē
+						</orig>
+						<reg>lucem</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>aerē
+						</orig>
+						<reg>aerem</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+sunt excellentiora mundi
+
+					<lb n="203" />
+corpora,
+
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+					<choice>
+						<orig>āministrat 
+
+						</orig>
+						<reg>administrat</reg>
+					</choice>
+					<choice>
+						<orig>suū. 
+
+						</orig>
+						<reg>suum.</reg>
+					</choice>
+					<choice>
+						<orig>Omniū
+						</orig>
+						<reg>Omnium</reg>
+					</choice>
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+species lux
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+adnuntiat,
+
+					<lb n="204" />
+quas ipsa in se acceptas specificat,
+
+					<choice>
+						<orig>specificatas<g ref="#q_macron"/>
+						</orig>
+						<reg>specificatasque</reg>
+					</choice>
+recondit. Et
+
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+adflic-
+
+					<lb n="205" />
+tiones
+
+					<choice>
+						<orig>aliquē
+						</orig>
+						<reg>aliquae</reg>
+					</choice>
+corpori eveniant offenditur anima,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+					<choice>
+						<orig>tem<g ref="#p_macron"/>amentum 
+
+						</orig>
+						<reg>temperamentum</reg>
+					</choice>
+					<lb n="206" />
+faciendi quod vult deerit,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>hec</orig>
+						<reg>haec</reg>
+					</choice>
+offensio dolor vocatur. Si
+
+					<choice>
+						<orig>autē
+						</orig>
+						<reg>autem</reg>
+					</choice>
+in-
+
+					<lb n="207" />
+					<choice>
+						<orig>tantū
+						</orig>
+						<reg>tantum</reg>
+					</choice>
+fraudabitur
+
+					<choice>
+						<orig>membrorū
+						</orig>
+						<reg>membrorum</reg>
+					</choice>
+ministratione ut
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+habeat quid
+
+					<choice>
+						<orig>o<g ref="#p_macron"/>e<g ref="#t_macron"/>
+						</orig>
+						<reg>operetur</reg>
+					</choice>
+					<lb n="208" />
+in eis, recedit quasi indignata habitationi
+
+					<choice>
+						<orig>suē. 
+
+						</orig>
+						<reg>suae.</reg>
+					</choice>
+Quid sit anima, nil
+
+					<lb n="209" />
+					<choice>
+						<orig>melī
+						</orig>
+						<reg>melius</reg>
+					</choice>
+occurrit dicere
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+					<choice>
+						<orig>sp<g ref="#s_macron"/>
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+					<choice>
+						<orig>vitē. 
+
+						</orig>
+						<reg>vitae.</reg>
+					</choice>
+Sed non
+
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>pecori<g ref="#b_macron"/>
+						</orig>
+						<reg>pecoribus</reg>
+					</choice>
+est
+
+					<lb n="210" />
+sine rationali mente, sed nunc minor
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+angelos,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+futura
+
+					<choice>
+						<orig>quod</orig>
+						<corr>qu&amp;</corr>
+					</choice>
+					<lb n="211" />
+angelorum si
+
+					<choice>
+						<orig>ex<g ref="#p_macron"/>cepto 
+
+						</orig>
+						<reg>expraecepto</reg>
+					</choice>
+sui creatoris hic vixerit. Origo vero
+
+					<choice>
+						<orig>animarū
+						</orig>
+						<reg>animarum</reg>
+					</choice>
+					<lb n="212" />
+unde sit, solius
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+cognitione
+
+					<choice>
+						<orig>relinquendū
+						</orig>
+						<reg>relinquendum</reg>
+					</choice>
+					<choice>
+						<orig>ē. 
+
+						</orig>
+						<reg>e.</reg>
+					</choice>
+					<choice>
+						<orig>Quā
+						</orig>
+						<reg>Quam</reg>
+					</choice>
+multa ex inde phi-
+
+					<lb n="213" />
+losophi vana finxerunt,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+plurimas
+
+					<choice>
+						<orig>
+							<foreign xml:lang="grc">xpiana</foreign>
+						</orig>
+						<reg>Christiani</reg>
+					</choice>
+doctores opiniones inde
+
+					<lb n="214" />
+posuerunt,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+nichil
+
+					<choice>
+						<orig>pene</orig>
+						<reg>paene</reg>
+					</choice>
+					<choice>
+						<orig>certū
+						</orig>
+						<reg>certum</reg>
+					</choice>
+reliquerunt. Ergo
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>bea<g ref="#t_macron"/>
+						</orig>
+						<reg>beatus</reg>
+					</choice>
+					<choice>
+						<orig>augusti<g ref="#n_macron"/>
+						</orig>
+						<reg>augustinus</reg>
+					</choice>
+					<lb n="215" />
+de origine
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+beato hieronimo scripsit,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+misit volens scire
+
+					<choice>
+						<orig>quod</orig>
+						<corr>quid</corr>
+					</choice>
+					<lb n="216" />
+					<choice>
+						<orig>adfirmar&amp;</orig>
+						<reg>adfirmaret</reg>
+					</choice>
+					<choice>
+						<orig>tan<g ref="#t_macron"/>
+						</orig>
+						<reg>tantus</reg>
+					</choice>
+doctor de origine
+
+					<choice>
+						<orig>animē. 
+
+						</orig>
+						<reg>animae.</reg>
+					</choice>
+Si ille liber vobiscum
+
+					<lb n="217" />
+inveniatur, lege
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>intelle</orig>
+						<corr>intelle
+
+							<add>ge</add>
+						</corr>
+					</choice>
+quid ille
+
+					<choice>
+						<orig>acutissi<g ref="#m_macron"/>
+						</orig>
+						<reg>acutissimus</reg>
+					</choice>
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+					<choice>
+						<orig>naturaliū
+						</orig>
+						<reg>naturalium</reg>
+					</choice>
+					<choice>
+						<orig>in<g ref="#q_macron"/>sitor 
+
+						</orig>
+						<reg>inquisitor</reg>
+					</choice>
+					<lb n="218" />
+de origine dixerit
+
+					<choice>
+						<orig>animē. 
+
+						</orig>
+						<reg>animae.</reg>
+					</choice>
+Quattuor
+
+					<choice>
+						<orig>quasdā
+						</orig>
+						<reg>quasdam</reg>
+					</choice>
+in ea posuit disputatio
+
+					<lb n="219" />
+ne opiniones ut arbitror, cui
+
+					<choice>
+						<orig>bea<g ref="#t_macron"/>
+						</orig>
+						<reg>beatus</reg>
+					</choice>
+					<choice>
+						<orig>hieroni<g ref="#m_macron"/>
+						</orig>
+						<reg>hieronimus</reg>
+					</choice>
+una parvissima, sed
+
+					<lb n="220" />
+acutissima respondit epistola.
+
+					<choice>
+						<orig>Quē
+						</orig>
+						<reg>Quem</reg>
+					</choice>
+					<choice>
+						<orig>libellū
+						</orig>
+						<reg>libellum</reg>
+					</choice>
+in patria
+
+					<choice>
+						<orig>legi<g ref="#m_macron"/>
+						</orig>
+						<reg>legimus</reg>
+					</choice>
+sed hic
+
+					<lb n="221" />
+					<choice>
+						<orig>nobiscū
+						</orig>
+						<reg>nobiscum</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+repperitur, nec
+
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+					<choice>
+						<orig>ep<g ref="#l_macron"/>am 
+
+						</orig>
+						<reg>epistolam</reg>
+					</choice>
+responsionis ad
+
+					<choice>
+						<orig>eū. 
+
+						</orig>
+						<reg>eum.</reg>
+					</choice>
+Fecit
+
+					<choice>
+						<orig><g ref="#q_macron"/><g ref="#q_macron"/>
+						</orig>
+						<reg>quoque</reg>
+					</choice>
+					<lb n="222" />
+idem doctor ut in libris
+
+					<choice>
+						<orig>retractationū
+						</orig>
+						<reg>retractationum</reg>
+					</choice>
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+legitur, alia de ratione
+
+					<lb n="223" />
+					<choice>
+						<orig>anime</orig>
+						<reg>animae</reg>
+					</choice>
+opuscula, id est de quantitate
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<choice>
+						<orig>librū
+						</orig>
+						<reg>librum</reg>
+					</choice>
+					<choice>
+						<orig>unū, 
+
+						</orig>
+						<reg>unum,</reg>
+					</choice>
+de
+
+					<choice>
+						<orig>īmortalitate 
+
+						</orig>
+						<reg>immortalitate</reg>
+					</choice>
+					<pb n="55v"/>
+					<lb n="224" />
+[ ]
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<choice>
+						<orig>librū
+						</orig>
+						<reg>librum</reg>
+					</choice>
+					<choice>
+						<orig>unū, 
+
+						</orig>
+						<reg>unum,</reg>
+					</choice>
+de
+
+					<choice>
+						<orig>dua<g ref="#b_macron"/>
+						</orig>
+						<reg>duabus</reg>
+					</choice>
+					<choice>
+						<orig>anima<g ref="#b_macron"/>
+						</orig>
+						<reg>animabus</reg>
+					</choice>
+					<choice>
+						<orig>librū
+						</orig>
+						<reg>librum</reg>
+					</choice>
+					<choice>
+						<orig>unū, 
+
+						</orig>
+						<reg>unum,</reg>
+					</choice>
+de immortalitate
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<lb n="225" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+origine libros quattuor: Qui nec
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+inventi sunt a nobis, si forte in
+
+					<lb n="226" />
+armario
+
+					<choice>
+						<orig>im<g ref="#p_macron"/>iali 
+
+						</orig>
+						<reg>imperiali</reg>
+					</choice>
+inveniantur,
+
+					<choice>
+						<orig>queritē, 
+
+						</orig>
+						<reg>quaerite,</reg>
+					</choice>
+legite,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+communione caritatis
+
+					<lb n="227" />
+nobis dirigite
+
+					<choice>
+						<orig>adlegendū. 
+
+						</orig>
+						<reg>adlegendus.</reg>
+					</choice>
+In hoc
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+omnes consentiunt catholici scrip-
+
+					<lb n="228" />
+tores, quod anima
+
+					<choice>
+						<orig>adō
+						</orig>
+						<reg>adeo</reg>
+					</choice>
+sit condita, nec
+
+					<choice>
+						<orig>partē
+						</orig>
+						<reg>partem</reg>
+					</choice>
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>naturē
+						</orig>
+						<reg>naturae</reg>
+					</choice>
+quia
+
+					<lb n="229" />
+si ex
+
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>ess&amp;</orig>
+						<reg>esset</reg>
+					</choice>
+natura
+
+					<choice>
+						<orig>adsūpta, 
+
+						</orig>
+						<reg>adsumpta,</reg>
+					</choice>
+peccare
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+					<choice>
+						<orig>poss&amp;.</orig>
+						<reg>posset.</reg>
+					</choice>
+Nec
+
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<choice>
+						<orig>cor<g ref="#p_macron"/>
+						</orig>
+						<reg>corpus</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+palpabile
+
+					<lb n="230" />
+vel visibile, nec mori
+
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+posse ita ut non sit, nec area tu
+
+					<choice>
+						<orig>primē
+						</orig>
+						<reg>primae</reg>
+					</choice>
+					<choice>
+						<orig>prēvaricatio 
+
+						</orig>
+						<reg>praevaricatio-</reg>
+					</choice>
+					<lb n="231" />
+nis liberari posse nisi
+
+					<choice>
+						<orig><g ref="#p_macron"/>grām 
+
+						</orig>
+						<reg>pergratiam</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>misteriū
+						</orig>
+						<reg>misterium</reg>
+					</choice>
+mediatoris
+
+					<choice>
+						<orig>di</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>hominū
+						</orig>
+						<reg>hominum</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#n_macron"/>i 
+
+						</orig>
+						<reg>domini</reg>
+					</choice>
+					<choice>
+						<orig>n<g ref="#r_macron"/>i 
+
+						</orig>
+						<reg>nostri</reg>
+					</choice>
+					<lb n="232" />
+					<choice>
+						<orig>i<g ref="#h_macron"/>u 
+
+						</orig>
+						<reg>ihesu</reg>
+					</choice>
+					<choice>
+						<orig>
+							<foreign xml:lang="grc">xpi.</foreign>
+						</orig>
+						<reg>Christi.</reg>
+					</choice>
+Qui
+
+					<choice>
+						<orig>plenā
+						</orig>
+						<reg>plenam</reg>
+					</choice>
+humanitatis
+
+					<choice>
+						<orig>n<g ref="#r_macron"/>e 
+
+						</orig>
+						<reg>nostrae</reg>
+					</choice>
+					<choice>
+						<orig>naturā
+						</orig>
+						<reg>naturam</reg>
+					</choice>
+					<choice>
+						<orig>abs<g ref="#q_macron"/>
+						</orig>
+						<reg>absque</reg>
+					</choice>
+omni peccato in
+
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+					<lb n="233" />
+divinitatis
+
+					<choice>
+						<orig>adsūpsit 
+
+						</orig>
+						<reg>adsumpsit</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sonā, 
+
+						</orig>
+						<reg>personam,</reg>
+					</choice>
+quia totus homo peccavit,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+totus homo libe-
+
+					<lb n="234" />
+randus erat
+
+					<choice>
+						<orig>se<g ref="#d_macron"/>m 
+
+						</orig>
+						<reg>secundum</reg>
+					</choice>
+					<choice>
+						<orig>dispensationē
+						</orig>
+						<reg>dispensationem</reg>
+					</choice>
+					<choice>
+						<orig>&amp;erne</orig>
+						<reg>eterne</reg>
+					</choice>
+					<choice>
+						<orig>pi&amp;atis</orig>
+						<reg>pietatis</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>dō. 
+
+						</orig>
+						<reg>deo.</reg>
+					</choice>
+Totus homo
+
+					<choice>
+						<orig>adsumen<g ref="#d_macron"/>
+						</orig>
+						<reg>adsumendus</reg>
+					</choice>
+					<lb n="235" />
+erat, idest anima
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+caro.
+
+					<choice>
+						<orig>Cuī
+						</orig>
+						<reg>Cuius</reg>
+					</choice>
+anima id
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+redemptoris
+
+					<choice>
+						<orig>nrī
+						</orig>
+						<reg>nostri</reg>
+					</choice>
+					<choice>
+						<orig>tantē
+						</orig>
+						<reg>tantae</reg>
+					</choice>
+					<choice>
+						<orig>scītatis 
+
+						</orig>
+						<reg>sanctitatis</reg>
+					</choice>
+					<lb n="236" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+iustificationis est, ut
+
+					<choice>
+						<orig>o<g ref="#m_macron"/>s 
+
+						</orig>
+						<reg>omnes</reg>
+					</choice>
+in se
+
+					<choice>
+						<orig>credentiū
+						</orig>
+						<reg>credentium</reg>
+					</choice>
+animas
+
+					<choice>
+						<orig><g ref="#p_macron"/>eā
+						</orig>
+						<reg>peream</reg>
+					</choice>
+					<choice>
+						<orig>scīficari 
+
+						</orig>
+						<reg>sanctificari</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+iustifi-
+
+					<lb n="237" />
+cari
+
+					<choice>
+						<orig>queant.</orig>
+						<corr>queunt.</corr>
+					</choice>
+Et caro
+
+					<choice>
+						<orig>tantē
+						</orig>
+						<reg>tantae</reg>
+					</choice>
+					<choice>
+						<orig>munditiē
+						</orig>
+						<reg>munditiae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+libertatis a peccato, ut omnium
+
+					<lb n="238" />
+in se
+
+					<choice>
+						<orig>confidentiū
+						</orig>
+						<reg>confidentium</reg>
+					</choice>
+carnes, divina in ea
+
+					<choice>
+						<orig>o<g ref="#p_macron"/>ante 
+
+						</orig>
+						<reg>operante</reg>
+					</choice>
+					<choice>
+						<orig>grā
+						</orig>
+						<reg>gratia</reg>
+					</choice>
+purgari
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+liberari pos-
+
+					<lb n="239" />
+sunt; quia sanguis qui de
+
+					<choice>
+						<orig>eadē
+						</orig>
+						<reg>eadem</reg>
+					</choice>
+					<choice>
+						<orig>carnē
+						</orig>
+						<reg>carnae</reg>
+					</choice>
+lancea militis vulnerata fluxerat
+
+					<lb n="240" />
+					<choice>
+						<orig>pr&amp;iū
+						</orig>
+						<reg>pretium</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+salutis
+
+					<choice>
+						<orig>humanē, 
+
+						</orig>
+						<reg>humanae,</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>cuī
+						</orig>
+						<reg>cuius</reg>
+					</choice>
+					<choice>
+						<orig>effusionē
+						</orig>
+						<reg>effusionem</reg>
+					</choice>
+extincta
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>flāmea 
+
+						</orig>
+						<reg>flammea</reg>
+					</choice>
+illa paradisi
+
+					<lb n="241" />
+custodia,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+via
+
+					<choice>
+						<orig>fideli<g ref="#b_macron"/>
+						</orig>
+						<reg>fidelibus</reg>
+					</choice>
+					<choice>
+						<orig>a<g ref="#p_macron"/>ta 
+
+						</orig>
+						<reg>aperta</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+ad
+
+					<choice>
+						<orig>lignū
+						</orig>
+						<reg>lignum</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+quod
+
+					<choice>
+						<orig>plantatū
+						</orig>
+						<reg>plantatum</reg>
+					</choice>
+est secus
+
+					<lb n="242" />
+decursus
+
+					<choice>
+						<orig>aquarū
+						</orig>
+						<reg>aquarum</reg>
+					</choice>
+					<choice>
+						<orig>viventiū. 
+
+						</orig>
+						<reg>viventium.</reg>
+					</choice>
+					<choice>
+						<orig>Cuī
+						</orig>
+						<reg>Cuius</reg>
+					</choice>
+ligni
+
+					<choice>
+						<orig>sapientissi<g ref="#m_macron"/>
+						</orig>
+						<reg>sapientissimus</reg>
+					</choice>
+salomon
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+de laude
+
+					<lb n="243" />
+					<choice>
+						<orig>sapientiē
+						</orig>
+						<reg>sapientiae</reg>
+					</choice>
+multa
+
+					<choice>
+						<orig>dixiss&amp;</orig>
+						<reg>dixisset</reg>
+					</choice>
+					<choice>
+						<orig>recorda<g ref="#t_macron"/>
+						</orig>
+						<reg>recordatus</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+ita dicens.
+
+					<choice>
+						<orig>Bea<g ref="#t_macron"/>
+						</orig>
+						<reg>Beatus</reg>
+					</choice>
+homo
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+invenit
+
+					<lb n="244" />
+					<choice>
+						<orig>sapientiā, 
+
+						</orig>
+						<reg>sapientiam,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+affluit prudentia. Et paulo post;
+
+					<choice>
+						<orig>Viē
+						</orig>
+						<reg>Viae</reg>
+					</choice>
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+					<choice>
+						<orig>viē
+						</orig>
+						<reg>viae</reg>
+					</choice>
+					<choice>
+						<orig>pulchrē
+						</orig>
+						<reg>pulchrae</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<lb n="245" />
+omnes
+
+					<choice>
+						<orig>semitē
+						</orig>
+						<reg>semitae</reg>
+					</choice>
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+					<choice>
+						<orig>pacificē. 
+
+						</orig>
+						<reg>pacificae.</reg>
+					</choice>
+					<choice>
+						<orig>Lignū
+						</orig>
+						<reg>Lignum</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+his
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+ad
+
+					<choice>
+						<orig><g ref="#p_macron"/>henderint 
+
+						</orig>
+						<reg>praehenderint</reg>
+					</choice>
+					<choice>
+						<orig>eā, 
+
+						</orig>
+						<reg>eam,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+qui
+
+					<lb n="246" />
+tenuerit
+
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<choice>
+						<orig>bea<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>beatus.</reg>
+					</choice>
+					<choice>
+						<orig>Humanē
+						</orig>
+						<reg>Humanae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+pulchritudo est
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+decus
+
+					<choice>
+						<orig>sapientiē
+						</orig>
+						<reg>sapientiae</reg>
+					</choice>
+					<lb n="247" />
+					<choice>
+						<orig>studiū. 
+
+						</orig>
+						<reg>studium.</reg>
+					</choice>
+Non illa
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+in terrenis
+
+					<choice>
+						<orig>sol&amp;</orig>
+						<reg>solet</reg>
+					</choice>
+occupari negotiis, sed illa magis
+
+					<lb n="248" />
+qua
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<choice>
+						<orig>coli<g ref="#t_macron"/>
+						</orig>
+						<reg>colitur</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>ama<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>amatur.</reg>
+					</choice>
+Cui te
+
+					<choice>
+						<orig>ipsā
+						</orig>
+						<reg>ipsam</reg>
+					</choice>
+studeas virgo nobilissima tota
+
+					<choice>
+						<orig><g ref="#m_macron"/>tis 
+
+						</orig>
+						<reg>mentis</reg>
+					</choice>
+					<lb n="249" />
+intentione mancipare,
+
+					<choice>
+						<orig><g ref="#q_macron"/>a 
+
+						</orig>
+						<reg>quia</reg>
+					</choice>
+in hac
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+vita omni tranquillitate beatissima,
+
+					<lb n="250" />
+in hac
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+illius
+
+					<choice>
+						<orig>sūmē
+						</orig>
+						<reg>summae</reg>
+					</choice>
+trinitatis imago feliciter
+
+					<choice>
+						<orig><g ref="#p_macron"/>fecta. 
+
+						</orig>
+						<reg>perfecta.</reg>
+					</choice>
+Hic
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<choice>
+						<orig>thesau<g ref="#r_macron"/>
+						</orig>
+						<reg>thesaurus</reg>
+					</choice>
+					<lb n="251" />
+desiderabilis
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>re<g ref="#q_macron"/>escit 
+
+						</orig>
+						<reg>requiescit</reg>
+					</choice>
+in ore prudentis,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+abundat in corde sapientis.
+
+					<lb n="252" />
+					<choice>
+						<orig>Hēc 
+
+						</orig>
+						<reg>Haec</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>virgiliacis</orig>
+						<reg>vergiliacis</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+					<choice>
+						<orig>inveni&amp;ur</orig>
+						<reg>invenietur</reg>
+					</choice>
+mendaciis, sed in evangelica
+
+					<choice>
+						<orig>affluen<g ref="#t_macron"/>
+						</orig>
+						<reg>affluenter</reg>
+					</choice>
+					<lb n="253" />
+					<choice>
+						<orig>repperie<g ref="#t_macron"/>
+						</orig>
+						<reg>repperietur</reg>
+					</choice>
+veritate. De vera
+
+					<choice>
+						<orig>scilic&amp;</orig>
+						<reg>scilicet</reg>
+					</choice>
+sapientia
+
+					<choice>
+						<orig>dici<g ref="#t_macron"/>, 
+
+						</orig>
+						<reg>dicitur,</reg>
+					</choice>
+omnis sapientia
+
+					<lb n="254" />
+a
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>i 
+
+						</orig>
+						<reg>domino</reg>
+					</choice>
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+est. Quicquid
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+recte
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig>sapientiā
+						</orig>
+						<reg>sapientiam</reg>
+					</choice>
+intelligitur
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+amatur,
+
+					<lb n="255" />
+					<choice>
+						<orig>dī
+						</orig>
+						<reg>dei</reg>
+					</choice>
+					<choice>
+						<orig>donū
+						</orig>
+						<reg>donum</reg>
+					</choice>
+					<choice>
+						<orig>ē. 
+
+						</orig>
+						<reg>est.</reg>
+					</choice>
+Proinde omnis
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>se<g ref="#d_macron"/>m 
+
+						</orig>
+						<reg>secundum</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#m_macron"/>
+						</orig>
+						<reg>deum</reg>
+					</choice>
+sapiens est,
+
+					<choice>
+						<orig>bea<g ref="#t_macron"/>
+						</orig>
+						<reg>beatus</reg>
+					</choice>
+					<choice>
+						<orig>ē. 
+
+						</orig>
+						<reg>est.</reg>
+					</choice>
+Unde ini ob
+
+					<lb n="256" />
+					<choice>
+						<orig>dici<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>dicitur.</reg>
+					</choice>
+Sapientia hominis est
+
+					<choice>
+						<orig>pi&amp;as,</orig>
+						<reg>pietas,</reg>
+					</choice>
+recedere
+
+					<choice>
+						<orig>autē
+						</orig>
+						<reg>autem</reg>
+					</choice>
+a malo scientia.
+
+					<lb n="257" />
+Uno
+
+					<choice>
+						<orig><g ref="#v_macron"/>
+						</orig>
+						<reg>vero</reg>
+					</choice>
+nomine
+
+					<choice>
+						<orig>pi&amp;atis,</orig>
+						<reg>pietatis,</reg>
+					</choice>
+					<choice>
+						<orig>cultū
+						</orig>
+						<reg>cultum</reg>
+					</choice>
+					<choice>
+						<orig>totī
+						</orig>
+						<reg>totius</reg>
+					</choice>
+					<choice>
+						<orig>divinē
+						</orig>
+						<reg>divinae</reg>
+					</choice>
+religionis designare volens.
+
+					<lb n="258" />
+Quid beatius est
+
+					<choice>
+						<orig>animē, 
+
+						</orig>
+						<reg>animae,</reg>
+					</choice>
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+summum diligere bonum quod
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+est.
+
+					<pb n="56r"/>
+					<lb n="259" />
+Quid felicius,
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+se
+
+					<choice>
+						<orig>dignā
+						</orig>
+						<reg>dignam</reg>
+					</choice>
+aeterna
+
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>parare 
+
+						</orig>
+						<reg>praeparare</reg>
+					</choice>
+beatitudine,
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+					<choice>
+						<orig>immortalē
+						</orig>
+						<reg>immortalem</reg>
+					</choice>
+se
+
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+					<lb n="260" />
+verissime novit.
+
+					<choice>
+						<orig>Hec</orig>
+						<reg>Haec</reg>
+					</choice>
+					<choice>
+						<orig>ēstimes 
+
+						</orig>
+						<reg>aestimes</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#t_macron"/>
+						</orig>
+						<reg>tibi</reg>
+					</choice>
+					<choice>
+						<orig>tantū
+						</orig>
+						<reg>tantum</reg>
+					</choice>
+sufficere nosse quid facere debeas,
+
+					<lb n="261" />
+in si
+
+					<choice>
+						<orig>&amp;iā
+						</orig>
+						<reg>etiam</reg>
+					</choice>
+					<choice>
+						<orig>o<g ref="#p_macron"/>e 
+
+						</orig>
+						<reg>opere</reg>
+					</choice>
+impleas
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+nosti.
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+plurimi se sapientes
+
+					<choice>
+						<orig>ēstimant, 
+
+						</orig>
+						<reg>aestimant,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+viam
+
+					<lb n="262" />
+se veritatis nosse
+
+					<choice>
+						<orig>glorian<g ref="#t_macron"/>. 
+
+						</orig>
+						<reg>gloriantur.</reg>
+					</choice>
+Sed
+
+					<choice>
+						<orig>nequaquā
+						</orig>
+						<reg>nequaquam</reg>
+					</choice>
+vere sunt sapientes,
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+non
+
+					<lb n="263" />
+habent
+
+					<choice>
+						<orig>fortitudinē
+						</orig>
+						<reg>fortitudinem</reg>
+					</choice>
+animi, ad
+
+					<choice>
+						<orig><g ref="#p_macron"/>ficiendū
+						</orig>
+						<reg>perficiendum</reg>
+					</choice>
+					<choice>
+						<orig>o<g ref="#p_macron"/>e
+
+						</orig>
+						<reg>opere</reg>
+					</choice>
+quod sapiunt. Ergo vera est
+
+					<lb n="264" />
+sapientia, nosse
+
+					<choice>
+						<orig>que</orig>
+						<reg>quae</reg>
+					</choice>
+debeas,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+nota
+
+					<choice>
+						<orig><g ref="#p_macron"/>ficere, 
+
+						</orig>
+						<reg>perficere,</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>inde 
+
+						</orig>
+						<reg>proinde</reg>
+					</choice>
+					<choice>
+						<orig>nullā
+						</orig>
+						<reg>nullam</reg>
+					</choice>
+quattuor
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<lb n="265" />
+					<choice>
+						<orig>virtutū
+						</orig>
+						<reg>virtutum</reg>
+					</choice>
+de
+
+					<choice>
+						<orig>qui<g ref="#b_macron"/>
+						</orig>
+						<reg>quibus</reg>
+					</choice>
+					<choice>
+						<orig>su<g ref="#p_macron"/>
+						</orig>
+						<reg>super</reg>
+					</choice>
+					<choice>
+						<orig>dixi<g ref="#m_macron"/>
+						</orig>
+						<reg>diximus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>fecte 
+
+						</orig>
+						<reg>perfecte</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;</orig>
+						<reg>habet</reg>
+					</choice>
+anima, si totas
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+					<choice>
+						<orig>hab&amp;.</orig>
+						<reg>habet.</reg>
+					</choice>
+Quia
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+					<lb n="266" />
+omnia ad
+
+					<choice>
+						<orig>unū
+						</orig>
+						<reg>unum</reg>
+					</choice>
+caritatis intendunt
+
+					<choice>
+						<orig><g ref="#p_macron"/>ceptū, 
+
+						</orig>
+						<reg>perceptum,</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+sola
+
+					<choice>
+						<orig>incatholicē
+						</orig>
+						<reg>incatholicae</reg>
+					</choice>
+fidei veri-
+
+					<lb n="267" />
+					<choice>
+						<orig>tatis</orig>
+						<corr>tates</corr>
+					</choice>
+					<choice>
+						<orig>dignā
+						</orig>
+						<reg>dignam</reg>
+					</choice>
+					<choice>
+						<orig>effici&amp;</orig>
+						<reg>efficiet</reg>
+					</choice>
+					<choice>
+						<orig>animā
+						</orig>
+						<reg>animam</reg>
+					</choice>
+habitatione
+
+					<choice>
+						<orig>scē
+						</orig>
+						<reg>sanctae</reg>
+					</choice>
+trinitatis, ad
+
+					<choice>
+						<orig>cuī
+						</orig>
+						<reg>cuius</reg>
+					</choice>
+imaginem
+
+					<lb n="268" />
+					<choice>
+						<orig>conditā
+						</orig>
+						<reg>conditam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+					<choice>
+						<orig>su<g ref="#p_macron"/>ī
+						</orig>
+						<reg>superius</reg>
+					</choice>
+					<choice>
+						<orig>ostendi<g ref="#m_macron"/>. 
+
+						</orig>
+						<reg>ostendimus.</reg>
+					</choice>
+De
+
+					<choice>
+						<orig>cuī
+						</orig>
+						<reg>cuius</reg>
+					</choice>
+ratione
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+natura, sicut flagitasti
+
+					<choice>
+						<orig>hēc 
+
+						</orig>
+						<reg>haec</reg>
+					</choice>
+					<lb n="269" />
+pauca
+
+					<choice>
+						<orig><g ref="#p_macron"/>strinxi<g ref="#m_macron"/>
+						</orig>
+						<reg>perstrinximus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>pro</reg>
+					</choice>
+ut epistolaris angustia concessit.
+
+					<choice>
+						<orig>Mirum<g ref="#q_macron"/>
+						</orig>
+						<reg>Mirumque</reg>
+					</choice>
+					<choice>
+						<orig>q<g ref="#d_macron"/>ammodo 
+
+						</orig>
+						<reg>quodammodo</reg>
+					</choice>
+					<lb n="270" />
+a scolasticis videri poterit, quomodo te plus
+
+					<choice>
+						<orig><g ref="#m_macron"/>
+						</orig>
+						<reg>mihi</reg>
+					</choice>
+					<choice>
+						<orig>cognitā
+						</orig>
+						<reg>cognitam</reg>
+					</choice>
+					<choice>
+						<orig>ēē
+						</orig>
+						<reg>esse</reg>
+					</choice>
+putare voluis-
+
+					<lb n="271" />
+ses
+
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#t_macron"/>
+						</orig>
+						<reg>tibi</reg>
+					</choice>
+ipsi. Unde vivis vel ratione viges, nisi in
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+substantia; dum
+
+					<lb n="272" />
+te
+
+					<choice>
+						<orig><g ref="#p_macron"/>raro 
+
+						</orig>
+						<reg>peraro</reg>
+					</choice>
+oculis vidi meis,
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+quos
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<choice>
+						<orig>naturā
+						</orig>
+						<reg>naturam</reg>
+					</choice>
+					<choice>
+						<orig>tuē
+						</orig>
+						<reg>tuae</reg>
+					</choice>
+cernere non potui.
+
+					<lb n="273" />
+					<choice>
+						<orig>Quāvis 
+
+						</orig>
+						<reg>Quamvis</reg>
+					</choice>
+iuxta
+
+					<choice>
+						<orig>cōmune 
+
+						</orig>
+						<reg>commune</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>ceptū
+						</orig>
+						<reg>praeceptum</reg>
+					</choice>
+					<choice>
+						<orig>dnī
+						</orig>
+						<reg>domini</reg>
+					</choice>
+					<choice>
+						<orig>diligā, 
+
+						</orig>
+						<reg>diligam,</reg>
+					</choice>
+nec non
+
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>pro</reg>
+					</choice>
+optima
+
+					<choice>
+						<orig>tuorū
+						</orig>
+						<reg>tuorum</reg>
+					</choice>
+fama
+
+					<lb n="274" />
+					<choice>
+						<orig>studiorū
+						</orig>
+						<reg>studiorum</reg>
+					</choice>
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+aliis
+
+					<choice>
+						<orig>narranti<g ref="#b_macron"/>
+						</orig>
+						<reg>narrantibus</reg>
+					</choice>
+de te
+
+					<choice>
+						<orig>sepī
+						</orig>
+						<reg>saepius</reg>
+					</choice>
+audivi, in
+
+					<choice>
+						<orig>qui<g ref="#b_macron"/>, 
+
+						</orig>
+						<reg>quibus,</reg>
+					</choice>
+velim te
+
+					<choice>
+						<orig>sē<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>ficere 
+
+						</orig>
+						<reg>proficere</reg>
+					</choice>
+					<lb n="275" />
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>dō
+						</orig>
+						<reg>deo</reg>
+					</choice>
+placere, ut digna efficiaris
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+					<choice>
+						<orig>rationē
+						</orig>
+						<reg>rationem</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>naturā
+						</orig>
+						<reg>naturam</reg>
+					</choice>
+nosse. Et quod
+
+					<lb n="276" />
+nunc in enigmate vides,
+
+					<choice>
+						<orig><g ref="#p_macron"/>fecta 
+
+						</orig>
+						<reg>perfecta</reg>
+					</choice>
+scientia in futura
+
+					<choice>
+						<orig><g ref="#p_macron"/>spicias 
+
+						</orig>
+						<reg>perspicias</reg>
+					</choice>
+beatudine; Proinde
+
+					<lb n="277" />
+opto te filia carissima
+
+					<choice>
+						<orig>&amp;ernē
+						</orig>
+						<reg>eternae</reg>
+					</choice>
+					<choice>
+						<orig>patriē
+						</orig>
+						<reg>patriae</reg>
+					</choice>
+					<choice>
+						<orig>felicitatē, 
+
+						</orig>
+						<reg>felicitatem,</reg>
+					</choice>
+					<choice>
+						<orig>quā
+						</orig>
+						<reg>quam</reg>
+					</choice>
+					<choice>
+						<orig>tuā
+						</orig>
+						<reg>tuam</reg>
+					</choice>
+desiderare optime
+
+					<lb n="278" />
+novi
+
+					<choice>
+						<orig>sapientiā, 
+
+						</orig>
+						<reg>sapientiam,</reg>
+					</choice>
+integra
+
+					<choice>
+						<orig><g ref="#p_macron"/>sequi 
+
+						</orig>
+						<reg>persequi</reg>
+					</choice>
+voluntate. Nec te ab
+
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+desiderio ulla huius
+
+					<lb n="279" />
+					<choice>
+						<orig>scli</orig>
+						<reg>saeculi</reg>
+					</choice>
+avertat ambitio, nec
+
+					<choice>
+						<orig>cuī
+						</orig>
+						<reg>cuius</reg>
+					</choice>
+					<choice>
+						<orig>lib&amp;</orig>
+						<reg>libet</reg>
+					</choice>
+					<choice>
+						<orig>tēporalis 
+
+						</orig>
+						<reg>temporalis</reg>
+					</choice>
+rei delectatio. Pauci sunt
+
+					<lb n="280" />
+					<choice>
+						<orig>huī
+						</orig>
+						<reg>huius</reg>
+					</choice>
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+dies,
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>meritoꝜ</orig>
+						<reg>meritorum</reg>
+					</choice>
+retributio nullo
+
+					<choice>
+						<orig>termina<g ref="#t_macron"/>
+						</orig>
+						<reg>terminatur</reg>
+					</choice>
+fine. Vera est
+
+					<choice>
+						<orig>scilic&amp;</orig>
+						<reg>scilicet</reg>
+					</choice>
+					<lb n="281" />
+sapientia,
+
+					<choice>
+						<orig>verā
+						</orig>
+						<reg>veram</reg>
+					</choice>
+toto corde diligere
+
+					<choice>
+						<orig>vitā, 
+
+						</orig>
+						<reg>vitam,</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+totis
+
+					<choice>
+						<orig>viri<g ref="#b_macron"/>; 
+
+						</orig>
+						<reg>viribus;</reg>
+					</choice>
+intendere, ut ad
+
+					<lb n="282" />
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>venire 
+
+						</orig>
+						<reg>pervenire</reg>
+					</choice>
+mereatur,
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+					<choice>
+						<orig>eā
+						</orig>
+						<reg>eam</reg>
+					</choice>
+diligere verbis se verissime
+
+					<choice>
+						<orig><g ref="#p_macron"/>fiteri 
+
+						</orig>
+						<reg>profiteri</reg>
+					</choice>
+videatur.
+
+					<lb n="283" />
+Quia
+
+					<choice>
+						<orig><g ref="#n_macron"/>
+						</orig>
+						<reg>non</reg>
+					</choice>
+est in sermone
+
+					<choice>
+						<orig>tantūmodo 
+
+						</orig>
+						<reg>tantummodo</reg>
+					</choice>
+					<choice>
+						<orig>regnū
+						</orig>
+						<reg>regnum</reg>
+					</choice>
+					<choice>
+						<orig>dī, 
+
+						</orig>
+						<reg>dei,</reg>
+					</choice>
+sed in virtute
+
+					<choice>
+						<orig>scī
+						</orig>
+						<reg>sancti</reg>
+					</choice>
+					<choice>
+						<orig>s<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>spiritus</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>scōrū
+						</orig>
+						<reg>sanctorum</reg>
+					</choice>
+					<!-- it honestly looks more like an i than an r but I don't know what that would be short for -->
+					<lb n="284" />
+					<choice>
+						<orig><g ref="#p_macron"/>fecta 
+
+						</orig>
+						<reg>perfecta</reg>
+					</choice>
+					<choice>
+						<orig>meritorū
+						</orig>
+						<reg>meritorum</reg>
+					</choice>
+claritate.
+
+					<g style="color:red" >
+Exept
+					</g>
+					<choice>
+						<orig>epta</orig>
+						<reg>epistola</reg>
+					</choice>
+					<!-- just a guess, take with grain of salt -->
+albini ad
+
+					<choice>
+						<orig>Eulaliā
+						</orig>
+						<reg>Eulaliam</reg>
+					</choice>
+					<choice>
+						<orig>virginē. 
+
+						</orig>
+						<reg>virginem.</reg>
+					</choice>
+					<lb n="285" />
+					<g style="color: brown" >
+Qui mare qui terram
+					</g>
+					<choice>
+						<orig>cēlum 
+
+						</orig>
+						<reg>caelum</reg>
+					</choice>
+qui condidit altum.
+
+					<lb n="286" />
+Qui regit imperio cuncta creata suo.
+
+					<lb n="287" />
+Iusserat hic
+
+					<choice>
+						<orig>ominem</orig>
+						<corr>
+							<add>h</add>ominem 
+
+						</corr>
+					</choice>
+rebus dominare sub astris.
+
+					<lb n="288" />
+Qui sensu solus
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+ratione
+
+					<choice>
+						<orig>vig&amp;.</orig>
+						<reg>viget.</reg>
+					</choice>
+					<lb n="289" />
+Qui
+
+					<choice>
+						<orig>val&amp;</orig>
+						<reg>valet</reg>
+					</choice>
+inter
+
+					<choice>
+						<orig>enī
+						</orig>
+						<reg>enim</reg>
+					</choice>
+viventia
+
+					<choice>
+						<orig>nocere</orig>
+						<corr>no
+
+							<add>s</add>cere 
+
+						</corr>
+					</choice>
+mundi.
+
+					<lb n="290" />
+					<choice>
+						<orig>Iam<g ref="#q_macron"/>
+						</orig>
+						<reg>Iamque</reg>
+					</choice>
+					<choice>
+						<orig>creatorē
+						</orig>
+						<reg>creatorem</reg>
+					</choice>
+mentis in
+
+					<choice>
+						<orig>arc</orig>
+						<corr>arc
+
+							<add>e</add>
+						</corr>
+					</choice>
+suum.
+
+					<lb n="291" />
+Factus ab
+
+					<choice>
+						<orig>&amp;erno</orig>
+						<reg>eterno</reg>
+					</choice>
+					<choice>
+						<orig>felix<g ref="#q_macron"/>
+						</orig>
+						<reg>felixque</reg>
+					</choice>
+					<choice>
+						<orig>&amp;er<g ref="#n_macron"/>
+						</orig>
+						<reg>eternus</reg>
+					</choice>
+ut
+
+					<choice>
+						<orig>ess&amp;.</orig>
+						<reg>esset.</reg>
+					</choice>
+					<lb n="292" />
+Mira
+
+					<choice>
+						<orig>quidē
+						</orig>
+						<reg>quidem</reg>
+					</choice>
+magni solus imago
+
+					<choice>
+						<orig>dī. 
+
+						</orig>
+						<reg>dei.</reg>
+					</choice>
+					<lb n="293" />
+Nobilis exinde est
+
+					<choice>
+						<orig>animē
+						</orig>
+						<reg>animae</reg>
+					</choice>
+natura sagacis 
+					<add>origo</add>
+					<pb n="56v"/>
+					<lb n="294" />
+					<choice>
+						<orig>At<g ref="#q_macron"/>
+						</orig>
+						<reg>Atque</reg>
+					</choice>
+potens sensu. cernere cuncta suo.
+
+					<lb n="295" />
+					<choice>
+						<orig>Quē
+						</orig>
+						<reg>Quae</reg>
+					</choice>
+mare
+
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quae</reg>
+					</choice>
+terras
+
+					<choice>
+						<orig>ce lum<g ref="#q_macron"/>
+						</orig>
+						<corr>ce lu<g ref="#m_macron"/> qua 
+
+						</corr>
+						<reg>caelum qua</reg>
+					</choice>
+pervolat ___ altum.
+
+					<lb n="296" />
+					<choice>
+						<orig>Quāvis 
+
+						</orig>
+						<reg>Quamvis</reg>
+					</choice>
+sit carnis. carcere clausa suae.
+
+					<lb n="297" />
+Corporis utque oculus visus ad sidera tendit.
+
+					<lb n="298" />
+Uno
+
+					<choice>
+						<orig>st&amp;</orig>
+						<reg>stet</reg>
+					</choice>
+quamvis carnis in arce loco.
+
+					<lb n="299" />
+Immortale decus huius lux aurea
+
+					<choice>
+						<orig>vitē. 
+
+						</orig>
+						<reg>vitae.</reg>
+					</choice>
+					<lb n="300" />
+In se digna
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>, 
+
+						</orig>
+						<reg>deum,</reg>
+					</choice>
+					<choice>
+						<orig>se<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+habere suum.
+
+					<lb n="301" />
+Si bona, si sapiens
+
+					<choice>
+						<orig>
+							<foreign xml:lang="grc">xpī
+							</foreign>
+						</orig>
+						<reg>Christi</reg>
+					</choice>
+si se ornat amore.
+
+					<lb n="302" />
+Ut felix valeat vivere in arce poli.
+
+					<lb n="303" />
+Et post huius enim
+
+					<choice>
+						<orig>vitē
+						</orig>
+						<reg>vitae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+saecla labores.
+
+					<lb n="304" />
+					<choice>
+						<orig>Cēlesti 
+
+						</orig>
+						<reg>Caelesti</reg>
+					</choice>
+in regno cernere
+
+					<choice>
+						<orig>sem<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+eum.
+
+					<lb n="305" />
+Lux
+
+					<choice>
+						<orig>ēterna 
+
+						</orig>
+						<reg>aeterna</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#s_macron"/>, 
+
+						</orig>
+						<reg>deus,</reg>
+					</choice>
+cui laus
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+gloria merces.
+
+					<lb n="306" />
+Si bene si digne vixerit ipsa
+
+					<choice>
+						<orig>dō. 
+
+						</orig>
+						<reg>deo.</reg>
+					</choice>
+					<lb n="307" />
+Sit modo
+
+					<choice>
+						<orig>scā
+						</orig>
+						<reg>sancta</reg>
+					</choice>
+piis meritis sit casta pudica.
+
+					<lb n="308" />
+Floreat in studiis semper ubique sacris.
+
+					<lb n="309" />
+Se regat
+
+					<choice>
+						<orig>at<g ref="#q_macron"/>
+						</orig>
+						<reg>atque</reg>
+					</choice>
+					<choice>
+						<orig>suē
+						</orig>
+						<reg>suae</reg>
+					</choice>
+carnis vivaciter actus.
+
+					<lb n="310" />
+Ut regina potens
+
+					<choice>
+						<orig>legi<g ref="#b_macron"/>
+						</orig>
+						<reg>legibus</reg>
+					</choice>
+					<choice>
+						<orig>&amp;hereis.</orig>
+						<reg>aethereis.</reg>
+					</choice>
+					<lb n="311" />
+In se nil cupiat
+
+					<choice>
+						<orig>parvi</orig>
+						<corr>pravi</corr>
+					</choice>
+nil
+
+					<choice>
+						<orig>opt&amp;</orig>
+						<reg>optet</reg>
+					</choice>
+iniqui.
+
+					<lb n="312" />
+Nil cuiquam noceat.
+
+					<choice>
+						<orig>opt&amp;</orig>
+						<reg>optet</reg>
+					</choice>
+agat vel
+
+					<choice>
+						<orig>am&amp;.</orig>
+						<reg>amet.</reg>
+					</choice>
+					<lb n="313" />
+Ne maculis
+
+					<choice>
+						<orig>sibim&amp;</orig>
+						<reg>sibimet</reg>
+					</choice>
+					<choice>
+						<orig>fusc&amp;</orig>
+						<reg>fuscet</reg>
+					</choice>
+data tempora
+
+					<choice>
+						<orig>vitā. 
+
+						</orig>
+						<reg>vitae.</reg>
+					</choice>
+					<lb n="314" />
+Sit pia servire
+
+					<choice>
+						<orig>scā
+						</orig>
+						<reg>sancta</reg>
+					</choice>
+					<choice>
+						<orig>qui&amp;a</orig>
+						<reg>quieta</reg>
+					</choice>
+					<choice>
+						<orig>dō. 
+
+						</orig>
+						<reg>deo.</reg>
+					</choice>
+					<lb n="315" />
+Moribus egregiis in se
+
+					<choice>
+						<orig>iā
+						</orig>
+						<reg>iam</reg>
+					</choice>
+vivat honeste.
+
+					<lb n="316" />
+Ut placeat sponso mens moderata pio.
+
+					<lb n="317" />
+					<choice>
+						<orig>S<g ref="#p_macron"/>s 
+
+						</orig>
+						<reg>Spiritus</reg>
+					</choice>
+est anima in
+
+					<choice>
+						<orig>menbris</orig>
+						<reg>membris</reg>
+					</choice>
+iam totus
+
+					<choice>
+						<orig>ubi<g ref="#q_macron"/>. 
+
+						</orig>
+						<reg>ubique.</reg>
+					</choice>
+					<lb n="318" />
+Quippe suis vivax
+
+					<choice>
+						<orig>fac<g ref="#t_macron"/>
+						</orig>
+						<reg>factus</reg>
+					</choice>
+amare
+
+					<choice>
+						<orig>d<g ref="#m_macron"/>. 
+
+						</orig>
+						<reg>deum.</reg>
+					</choice>
+					<lb n="319" />
+					<choice>
+						<orig>At<g ref="#q_macron"/>
+						</orig>
+						<reg>Atque</reg>
+					</choice>
+creatorem
+
+					<choice>
+						<orig>laud&amp;</orig>
+						<reg>laudet</reg>
+					</choice>
+sine fine benignum.
+
+					<lb n="320" />
+Qui se concessit scire patenter eum.
+
+					<lb n="321" />
+Et cultu prudens illum venerarier almo.
+
+					<lb n="322" />
+Est quod sola salus gloria vita
+
+					<choice>
+						<orig>animē. 
+
+						</orig>
+						<reg>animae.</reg>
+					</choice>
+					<lb n="323" />
+					<choice>
+						<orig>Scilic&amp;</orig>
+						<reg>Scilicet</reg>
+					</choice>
+					<choice>
+						<orig>&amp;hereis</orig>
+						<reg>aethereis</reg>
+					</choice>
+qua propter se actibus
+
+					<choice>
+						<orig>orn&amp;.</orig>
+						<reg>ornet.</reg>
+					</choice>
+					<lb n="324" />
+Ante oculos
+
+					<choice>
+						<orig>dnī
+						</orig>
+						<reg>domini</reg>
+					</choice>
+nocte
+
+					<choice>
+						<orig>die<g ref="#q_macron"/>
+						</orig>
+						<reg>dieque</reg>
+					</choice>
+sui.
+
+					<lb n="325" />
+Omnia qui cernit cordis secreta superno.
+
+					<lb n="326" />
+Lumine quem nullum velle latere potest.
+
+					<lb n="327" />
+Quocirca incumbit magnum nos
+
+					<choice>
+						<orig>nā<g ref="#q_macron"/>
+						</orig>
+						<reg>namque</reg>
+					</choice>
+necesse.
+
+					<lb n="328" />
+Ut pia
+
+					<choice>
+						<orig><g ref="#p_macron"/>tract&amp; 
+
+						</orig>
+						<reg>pertractet</reg>
+					</choice>
+mens bene digna
+
+					<choice>
+						<orig>dō. 
+
+						</orig>
+						<reg>deo.</reg>
+					</choice>
+					<pb n="57r"/>
+					<lb n="329" />
+Te cui castum. Corpore mente. Dirige templum. Dulcis amica.
+
+					<lb n="330" />
+Et sine
+
+					<choice>
+						<orig>sem<g ref="#p_macron"/>. 
+
+						</orig>
+						<reg>semper.</reg>
+					</choice>
+Fine valete.
+
+					<lb n="331" />
+Qui tibi solus. Sit rogo
+
+					<choice>
+						<orig>sem<g ref="#p_macron"/>. 
+
+						</orig>
+						<reg>semper.</reg>
+					</choice>
+Lux amor
+
+					<choice>
+						<orig>at<g ref="#q_macron"/>. 
+
+						</orig>
+						<reg>atque.</reg>
+					</choice>
+Forma salutis. Vita
+
+					<choice>
+						<orig><g ref="#p_macron"/>hennis. 
+
+						</orig>
+						<reg>perhennis.</reg>
+					</choice>
+					<lb n="332" />
+Gloria
+
+					<choice>
+						<orig><g ref="#p_macron"/>pes. 
+
+						</orig>
+						<reg>perpes.</reg>
+					</choice>
+					<lb n="333" />
+Hoc carmen tibi cecini senario numero nobile. qui numerus
+
+					<choice>
+						<orig><g ref="#p_macron"/>fectus 
+
+						</orig>
+						<reg>perfectus</reg>
+					</choice>
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<lb n="334" />
+in partibus suis. te optans esse
+
+					<choice>
+						<orig><g ref="#p_macron"/>fectā
+						</orig>
+						<reg>perfectam</reg>
+					</choice>
+in
+
+					<choice>
+						<orig>sensi<g ref="#b_macron"/>
+						</orig>
+						<reg>sensibus</reg>
+					</choice>
+tuis; Cuius numeri
+
+					<lb n="335" />
+					<choice>
+						<orig>rationē
+						</orig>
+						<reg>rationem</reg>
+					</choice>
+sicut
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+					<choice>
+						<orig>aliorū. 
+
+						</orig>
+						<reg>aliorum.</reg>
+					</choice>
+sapientissimus
+
+					<choice>
+						<orig>inperato<g ref="#r_macron"/>
+						</orig>
+						<reg>imperator</reg>
+					</choice>
+					<choice>
+						<orig>tuē
+						</orig>
+						<reg>tuae</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>facilē
+						</orig>
+						<reg>perfacile</reg>
+					</choice>
+					<!-- transcript suggests perfacilae due seeming presence of a macron, but this isn't grammatically possible for this word, so it's either perfacile or perfacilem (or a mistake on the scribe's part)  -->
+potest osten-
+
+					<lb n="336" />
+dere sagacitati. Cuius mentis miranda est nobilitas. dum
+
+					<choice>
+						<orig>in<g ref="#t_macron"/>
+						</orig>
+						<reg>inter</reg>
+					</choice>
+tantas
+
+					<lb n="337" />
+patatii curas
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+regni occupationes.
+
+					<choice>
+						<orig>philosophorū
+						</orig>
+						<reg>philosophorum</reg>
+					</choice>
+					<choice>
+						<orig>pleni<g ref="#t_macron"/>
+						</orig>
+						<reg>pleniter</reg>
+					</choice>
+archana cura-
+
+					<lb n="338" />
+vit scire misteria. quod vix otio torpens alius quis modo cognoscere
+
+					<choice>
+						<orig>stud&amp;:</orig>
+						<reg>studet:</reg>
+					</choice>
+					<lb n="339" />
+Nec tibi a nobis necesse est causas querere
+
+					<choice>
+						<orig>rerū. 
+
+						</orig>
+						<reg>rerum.</reg>
+					</choice>
+vel rationes
+
+					<choice>
+						<orig>phisicē
+						</orig>
+						<reg>phisicae</reg>
+					</choice>
+occultas
+
+					<lb n="340" />
+					<choice>
+						<orig>scientiē. 
+
+						</orig>
+						<reg>scientiae.</reg>
+					</choice>
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+					<choice>
+						<orig>illī
+						</orig>
+						<reg>illius</reg>
+					</choice>
+clarissima cotidie uteris sapientia. ac
+
+					<choice>
+						<orig>venerandā
+						</orig>
+						<reg>venerandam</reg>
+					</choice>
+intueris
+
+					<lb n="341" />
+faciem. Nec
+
+					<choice>
+						<orig><g ref="#t_macron"/>
+						</orig>
+						<reg>tibi</reg>
+					</choice>
+longo
+
+					<choice>
+						<orig>laborioso<g ref="#q_macron"/>
+						</orig>
+						<reg>laboriosoque</reg>
+					</choice>
+itinere de
+
+					<choice>
+						<orig>&amp;hiopia</orig>
+						<reg>Aethiopia</reg>
+					</choice>
+hierosolima visitanda
+
+					<lb n="342" />
+est. ut videas salomonem de
+
+					<choice>
+						<orig>rerū
+						</orig>
+						<reg>rerum</reg>
+					</choice>
+					<choice>
+						<orig>disputantē
+						</orig>
+						<reg>disputantem</reg>
+					</choice>
+naturis. Ecce iuxta te
+
+					<choice>
+						<orig>ē
+						</orig>
+						<reg>est</reg>
+					</choice>
+					<lb n="343" />
+					<choice>
+						<orig>quē
+						</orig>
+						<reg>quem</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+tantas
+
+					<choice>
+						<orig>terrarū
+						</orig>
+						<reg>terrarum</reg>
+					</choice>
+difficultates regina
+
+					<choice>
+						<orig>quesivit</orig>
+						<reg>quaesivit</reg>
+					</choice>
+austri. Sed
+
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+					<choice>
+						<orig>eadē
+						</orig>
+						<reg>eadem</reg>
+					</choice>
+					<lb n="344" />
+celebri laude
+
+					<choice>
+						<orig><g ref="#t_macron"/>
+						</orig>
+						<reg>tibi</reg>
+					</choice>
+					<choice>
+						<orig>dicendū
+						</orig>
+						<reg>dicendum</reg>
+					</choice>
+est. beati viri tui.
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+beati serui tui hi
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>qui</reg>
+					</choice>
+stant
+
+					<lb n="345" />
+					<choice>
+						<orig>corā
+						</orig>
+						<reg>coram</reg>
+					</choice>
+					<choice>
+						<orig>sē<g ref="#p_macron"/>
+						</orig>
+						<reg>semper</reg>
+					</choice>
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+audiunt
+
+					<choice>
+						<orig>sapientiā
+						</orig>
+						<reg>sapientiam</reg>
+					</choice>
+					<choice>
+						<orig>tuā. 
+
+						</orig>
+						<reg>tuam.</reg>
+					</choice>
+sit
+
+					<choice>
+						<orig>d<g ref="#n_macron"/>s 
+
+						</orig>
+						<reg>dominus</reg>
+					</choice>
+					<choice>
+						<orig>d<g ref="#s_macron"/>
+						</orig>
+						<reg>deus</reg>
+					</choice>
+tuus benedictus, cui
+
+					<lb n="346" />
+conplacuisti.
+
+					<choice>
+						<orig>&amp;</orig>
+						<reg>et</reg>
+					</choice>
+posuit te
+
+					<choice>
+						<orig>su<g ref="#p_macron"/>
+						</orig>
+						<reg>super</reg>
+					</choice>
+					<choice>
+						<orig>thronū
+						</orig>
+						<reg>thronum</reg>
+					</choice>
+populi sui eo quod dilexerit
+
+					<choice>
+						<orig>d<g ref="#n_macron"/>s 
+
+						</orig>
+						<reg>dominus</reg>
+					</choice>
+					<lb n="347" />
+					<choice>
+						<orig>populū
+						</orig>
+						<reg>populum</reg>
+					</choice>
+					<choice>
+						<orig>suū
+						</orig>
+						<reg>suum</reg>
+					</choice>
+in sempiternum. O
+
+					<choice>
+						<orig>filiē
+						</orig>
+						<reg>filiae</reg>
+					</choice>
+					<choice>
+						<orig>hierusalē. 
+
+						</orig>
+						<reg>hierusalem.</reg>
+					</choice>
+cernite salomonem
+
+					<lb n="348" />
+					<choice>
+						<orig>nr<g ref="#m_macron"/>
+						</orig>
+						<reg>nostrum</reg>
+					</choice>
+in diademate
+
+					<choice>
+						<orig>fulgentē
+						</orig>
+						<reg>fulgentem</reg>
+					</choice>
+					<choice>
+						<orig>sapientiē. 
+
+						</orig>
+						<reg>sapientiae.</reg>
+					</choice>
+imitamini mores illius nobilissi-
+
+					<lb n="349" />
+mos. aversamini vitia. colite virtutes. Magna vobis incumbit, si dis-
+
+					<lb n="350" />
+simulare non vultis optime vivendi necessitas.
+
+					<choice>
+						<orig>dū
+						</orig>
+						<reg>dum</reg>
+					</choice>
+apud
+
+					<choice>
+						<orig>eū
+						</orig>
+						<reg>eum</reg>
+					</choice>
+cotidie
+
+					<lb n="351" />
+conversamini. in
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+					<choice>
+						<orig>totī
+						</orig>
+						<reg>totius</reg>
+					</choice>
+honestatis
+
+					<choice>
+						<orig>hab&amp;is</orig>
+						<reg>habetis</reg>
+					</choice>
+exemplar.
+
+					<choice>
+						<orig>quati<g ref="#n_macron"/>
+						</orig>
+						<reg>quatinus</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>
+						</orig>
+						<reg>per</reg>
+					</choice>
+					<choice>
+						<orig><g ref="#p_macron"/>sentis 
+
+						</orig>
+						<reg>praesentis</reg>
+					</choice>
+					<lb n="352" />
+illius sacratissimos mores ad
+
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+					<choice>
+						<orig>cū
+						</orig>
+						<reg>cum</reg>
+					</choice>
+eodem
+
+					<choice>
+						<orig><g ref="#p_macron"/>venire 
+
+						</orig>
+						<reg>pervenire</reg>
+					</choice>
+mereamini
+
+					<choice>
+						<orig><g ref="#p_macron"/>sentiā. 
+
+						</orig>
+						<reg>praesentiam.</reg>
+					</choice>
+					<lb n="353" />
+de
+
+					<choice>
+						<orig><g ref="#q_macron"/>
+						</orig>
+						<reg>quo</reg>
+					</choice>
+ipsa cecinit sapientia.
+
+					<choice>
+						<orig>ferculū
+						</orig>
+						<reg>ferculum</reg>
+					</choice>
+sibi fecit rex salomon de lignis
+
+					<lb n="354" />
+					<choice>
+						<orig>labani.</orig>
+						<corr>libani.</corr>
+					</choice>
+columnas
+
+					<choice>
+						<orig>eī
+						</orig>
+						<reg>eius</reg>
+					</choice>
+fecit argenteas. reclinatorium aureum. ascen-
+
+					<lb n="355" />
+sum purpureum. media caritate constravit
+
+					<choice>
+						<orig><g ref="#p_macron"/>pter 
+
+						</orig>
+						<reg>propter</reg>
+					</choice>
+filias
+
+					<choice>
+						<orig>hierusalē. 
+
+						</orig>
+						<reg>hierusalem.</reg>
+					</choice>
+					<lb n="356" />
+					<choice>
+						<orig>Explicit</orig>
+						<reg>Explicitus</reg>
+					</choice>
+					<choice>
+						<orig></orig>
+						<reg>est</reg>
+					</choice>
+LIBER. 
+					<del></del>
+				</ab>
+			</div>
+		</body>
+	</text>
+</TEI>

@@ -1,0 +1,20 @@
+<div class="edition-home ui-font">
+  <header class="edition-home__header">
+    <img src="assets/images/logo_white.png" height="40" alt="" class="edition-home__logo">
+    <h1 class="edition-home__title edition-font">Digital Editions</h1>
+    <p class="edition-home__subtitle">Select a text to open in the viewer.</p>
+  </header>
+
+  <ul class="edition-home__list" *ngIf="editions.length; else empty">
+    <li *ngFor="let edition of editions; trackBy: trackEditions" class="edition-home__item">
+      <a [routerLink]="editionLink(edition)" class="edition-home__link">
+        <span class="edition-home__label edition-font">{{ edition.label }}</span>
+        <evt-icon [iconInfo]="{ icon: 'chevron-right', iconSet: 'fas' }"></evt-icon>
+      </a>
+    </li>
+  </ul>
+
+  <ng-template #empty>
+    <p class="edition-home__empty">No editions are configured. Add folders under <code>assets/editions/</code>.</p>
+  </ng-template>
+</div>

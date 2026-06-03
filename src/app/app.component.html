@@ -1,5 +1,5 @@
-<evt-main-header></evt-main-header>
-<div class="temp-panel" [ngClass]="{'has-navbar': navbarOpened$ | async}">
+<evt-main-header *ngIf="showHeader"></evt-main-header>
+<div class="temp-panel" [ngClass]="{'has-navbar': showHeader && (navbarOpened$ | async), 'edition-home-active': !showHeader}">
   <router-outlet></router-outlet>
 </div>
 <ng-container *ngIf="hasNavBar">

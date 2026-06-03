@@ -24,6 +24,17 @@
         height: $base-header-height;
         margin-top: 1px;
     }
+
+    .edition-select {
+        max-width: 220px;
+        min-width: 140px;
+
+        @include themify($themes) {
+            color: themed('baseColorDark');
+            background-color: themed('baseColorLight');
+            border-color: themed('baseColorLight');
+        }
+    }
 }
 
 ::ng-deep .viewMode-btn {

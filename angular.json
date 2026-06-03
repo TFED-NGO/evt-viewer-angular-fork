@@ -24,7 +24,12 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "404.html",
+                "input": "src/public",
+                "output": "/"
+              }
             ],
             "styles": [
               "node_modules/@ng-select/ng-select/themes/default.theme.css",
@@ -123,7 +128,35 @@
                 }
               ]
             },
-            "development": {}
+            "development": {},
+            "gh-pages": {
+              "baseHref": "/evt-viewer-angular-fork/",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "none",
+              "sourceMap": false,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "3mb",
+                  "maximumError": "7mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "10kb",
+                  "maximumError": "15kb"
+                }
+              ]
+            }
           },
           "defaultConfiguration": "production"
         },
@@ -136,6 +169,9 @@
             },
             "release": {
               "browserTarget": "evt-viewer-angular:build:release"
+            },
+            "gh-pages": {
+              "browserTarget": "evt-viewer-angular:build:gh-pages"
             },
             "development": {
               "browserTarget": "evt-viewer-angular:build:development"

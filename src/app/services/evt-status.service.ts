@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, NavigationStart, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, combineLatest, merge, Observable, Subject, timer } from 'rxjs';
-import { distinctUntilChanged, filter, first, map, mergeMap, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, mergeMap, shareReplay, switchMap, withLatestFrom } from 'rxjs/operators';
 
 import { AppConfig, EditionLevelType } from '../app.config';
 import { ChangeLayerData, Page, ViewMode } from '../models/evt-models';
+import { EditionContextService } from './edition-context.service';
 import { EVTModelService } from './evt-model.service';
 import { deepSearch } from '../utils/dom-utils';
 
@@ -15,10 +16,13 @@ export type URLParams = { [T in URLParamsKeys]: string };
     providedIn: 'root',
 })
 export class EVTStatusService {
-    public availableEditionLevels = AppConfig.evtSettings.edition.availableEditionLevels?.filter(((e) => e.enable)) || [];
+    get availableEditionLevels() {
+        return AppConfig.evtSettings?.edition?.availableEditionLevels?.filter(((e) => e.enable)) ?? [];
+    }
+
     get defaultEditionLevelId(): EditionLevelType {
-        const defaultConfig = AppConfig.evtSettings.edition.defaultEdition;
-        const availableEditionLevels = AppConfig.evtSettings.edition.availableEditionLevels?.filter(((e) => e.enable)) ?? [];
+        const defaultConfig = AppConfig.evtSettings?.edition?.defaultEdition;
+        const availableEditionLevels = AppConfig.evtSettings?.edition?.availableEditionLevels?.filter(((e) => e.enable)) ?? [];
         let defaultEdition = availableEditionLevels[0];
         if (defaultConfig) {
             defaultEdition = availableEditionLevels.find((e) => e.id === defaultConfig) ?? defaultEdition;
@@ -28,10 +32,13 @@ export class EVTStatusService {
     }
 
     get availableViewModes() {
-        return AppConfig.evtSettings.ui.availableViewModes?.filter(((e) => e.enable)) ?? [];
+        return AppConfig.evtSettings?.ui?.availableViewModes?.filter(((e) => e.enable)) ?? [];
     }
+
     get defaultViewMode(): ViewMode {
-        const defaultConfig = AppConfig.evtSettings.edition.defaultViewMode;
+        const entry = this.editionContext.activeEdition;
+        const entryDefault = entry?.defaultViewMode;
+        const defaultConfig = entryDefault ?? AppConfig.evtSettings?.edition?.defaultViewMode;
         let defaultViewMode = this.availableViewModes[0];
         if (defaultConfig) {
             defaultViewMode = this.availableViewModes.find((e) => e.id === defaultConfig) ?? defaultViewMode;
@@ -91,12 +98,11 @@ export class EVTStatusService {
     );
     public currentChanges$ = merge(
         merge(
-            //this.route.queryParams.pipe(map((params: URLParams) => params.lr ?? '')),
             this.evtModelService.changeData$,
         ).pipe(
             filter((n) => n !== undefined),
             withLatestFrom(this.updateLayer$),
-            map(([data,selectedLayer]) => {
+            map(([data, selectedLayer]) => {
                 data.selectedLayer = selectedLayer;
 
                 return data;
@@ -113,6 +119,7 @@ export class EVTStatusService {
         this.currentVersions$,
         this.currentChanges$,
     ]).pipe(
+        filter(([viewMode]) => !!viewMode),
         distinctUntilChanged((x, y) => JSON.stringify(x) === JSON.stringify(y)),
         shareReplay(1),
         map(([
@@ -126,7 +133,10 @@ export class EVTStatusService {
         ]) => {
             if (viewMode.id === 'textText') {
                 if (editionLevels.length === 1) {
-                    editionLevels.push(this.availableEditionLevels.filter((e) => e.id !== editionLevels[0])[0].id);
+                    const other = this.availableEditionLevels.filter((e) => e.id !== editionLevels[0])[0];
+                    if (other) {
+                        editionLevels.push(other.id);
+                    }
                 }
             } else if (viewMode.id === 'collation') {
                 editionLevels = [];
@@ -160,33 +170,55 @@ export class EVTStatusService {
         private evtModelService: EVTModelService,
         private router: Router,
         private route: ActivatedRoute,
+        private editionContext: EditionContextService,
     ) {
         this.currentStatus$.subscribe((currentStatus) => {
+            const slug = this.editionContext.activeSlug;
+            if (!slug || !currentStatus.viewMode) {
+                return;
+            }
             const { view, params } = this.getUrlFromStatus(currentStatus);
+            const commands = [slug, view];
             if (Object.keys(params).length > 0) {
-                this.router.navigate([`/${view}`], { queryParams: params });
+                this.router.navigate(commands, { queryParams: params });
             } else {
-                this.router.navigate([`/${view}`]);
+                this.router.navigate(commands);
             }
         });
-        this.router.events.pipe(
-            filter((event) => event instanceof NavigationStart),
-            first(),
-        ).subscribe((event: NavigationStart) => {
-            const currentViewMode = this.updateViewMode$.getValue();
-            if (!currentViewMode) {
-                const pathMatch = event.url.match(/(?<!\?.+)(?<=\/)[\w-]+(?=[/\r\n?]|$)/gm);
-                if (pathMatch) {
-                    this.updateViewMode$.next(this.availableViewModes.find((vm) => vm.id === pathMatch[0]));
-                } else {
-                    this.updateViewMode$.next(this.defaultViewMode);
-                }
+
+        let editionLoadCount = 0;
+        this.editionContext.editionChange$.subscribe(() => {
+            editionLoadCount += 1;
+            const { viewModeId } = this.parseEditionRoute(this.router.url);
+            const vmFromUrl = viewModeId
+                ? this.availableViewModes.find((v) => v.id === viewModeId)
+                : undefined;
+
+            if (editionLoadCount === 1) {
+                this.updateViewMode$.next(vmFromUrl ?? this.defaultViewMode);
+                return;
             }
+
+            this.updateViewMode$.next(vmFromUrl ?? this.defaultViewMode);
         });
+
         this.currentNamedEntityId$.pipe(
             filter((id) => !!id),
             switchMap((id) => timer(5000).pipe(map(() => id))),
         ).subscribe(() => this.currentNamedEntityId$.next(undefined));
+    }
+
+    private parseEditionRoute(url: string): { editionSlug?: string; viewModeId?: string } {
+        const path = url.replace(/\?.*$/, '').replace(/#.*/, '');
+        const segments = path.split('/').filter((s) => s.length > 0);
+        if (segments.length >= 2) {
+            return { editionSlug: segments[0], viewModeId: segments[1] };
+        }
+        if (segments.length === 1) {
+            return { editionSlug: segments[0] };
+        }
+
+        return {};
     }
 
     getUrlFromStatus(status: AppStatus) {
@@ -196,7 +228,7 @@ export class EVTStatusService {
             el: status.editionLevels.join(','),
             ws: status.witnesses.join(','),
             vs: status.versions.join(','),
-            lr: status.changeLayerData.selectedLayer,
+            lr: status.changeLayerData?.selectedLayer,
         };
         Object.keys(params).forEach((key) => (params[key] === '') && delete params[key]);
 
@@ -208,7 +240,7 @@ export class EVTStatusService {
 
     /** to avoid loops this function must not be fed with nodes */
     getPageElementsByClassList(classList) {
-        const attributesNotIncludedInSearch = ['originalEncoding','type','spanElements','includedElements'];
+        const attributesNotIncludedInSearch = ['originalEncoding', 'type', 'spanElements', 'includedElements'];
         const maxEffort = 4000;
 
         return this.currentStatus$.pipe(

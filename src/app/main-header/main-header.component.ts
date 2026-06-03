@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppConfig, EditionConfig } from '../app.config';
 import { ViewMode } from '../models/evt-models';
+import { SiteEditionEntry } from '../models/site-config';
+import { EditionContextService } from '../services/edition-context.service';
 import { EVTModelService } from '../services/evt-model.service';
 import { EVTStatusService } from '../services/evt-status.service';
 import { ThemesService } from '../services/themes.service';
@@ -22,11 +25,13 @@ export class MainHeaderComponent {
     map(([configTitle, editionTitle]) => configTitle ?? editionTitle ?? 'defaultTitle'),
   );
 
-  public viewModes: ViewMode[] = AppConfig.evtSettings.ui.availableViewModes?.filter(((e) => e.enable)) ?? [];
+  public viewModes: ViewMode[] = [];
+  public editions: SiteEditionEntry[] = [];
+  public activeEditionSlug: string | null = null;
   public currentViewMode$ = this.evtStatusService.currentViewMode$;
   public mainMenuOpened = false;
-  public editionConfig: EditionConfig = AppConfig.evtSettings.edition;
-  get editionHome() { return normalizeUrl(this.editionConfig.editionHome); }
+  public editionConfig: EditionConfig;
+  get editionHome() { return normalizeUrl(this.editionConfig?.editionHome); }
 
   get logoUrl() {
     return AppConfig?.evtSettings?.files?.logoUrl ?? 'assets/images/logo_white.png';
@@ -36,7 +41,38 @@ export class MainHeaderComponent {
     public themes: ThemesService,
     private evtModelService: EVTModelService,
     private evtStatusService: EVTStatusService,
+    private editionContext: EditionContextService,
+    private router: Router,
   ) {
+    this.editions = this.editionContext.enabledEditions;
+    this.editionContext.editionChange$.subscribe(() => this.refreshFromConfig());
+    this.editionContext.activeEdition$.subscribe((entry) => {
+      this.activeEditionSlug = entry?.slug ?? null;
+    });
+    if (AppConfig.evtSettings) {
+      this.refreshFromConfig();
+    }
+  }
+
+  private refreshFromConfig() {
+    this.editionConfig = AppConfig.evtSettings?.edition;
+    this.viewModes = AppConfig.evtSettings?.ui?.availableViewModes?.filter((e) => e.enable) ?? [];
+  }
+
+  onEditionSelect(slug: string) {
+    const entry = this.editions.find((e) => e.slug === slug);
+    if (entry) {
+      this.selectEdition(entry);
+    }
+  }
+
+  selectEdition(entry: SiteEditionEntry) {
+    const viewMode = this.evtStatusService.updateViewMode$.getValue()?.id ?? entry.defaultViewMode ?? 'readingText';
+    this.router.navigate([entry.slug, viewMode]);
+  }
+
+  trackEditions(_index: number, item: SiteEditionEntry) {
+    return item.slug;
   }
 
   selectViewMode(viewMode: ViewMode) {

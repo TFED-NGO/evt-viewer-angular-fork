@@ -1,0 +1,76 @@
+@import "../../assets/scss/themes";
+@import "../../assets/scss/variables";
+
+.edition-home {
+  min-height: calc(100vh - #{$base-header-height});
+  padding: 2rem 1.5rem 3rem;
+  max-width: 720px;
+  margin: 0 auto;
+
+  @include themify($themes) {
+    color: themed('baseColorDark');
+    background-color: themed('panelBackgroundColor');
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  &__logo {
+    margin-bottom: 1rem;
+    filter: brightness(0);
+    opacity: 0.85;
+  }
+
+  &__title {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__subtitle {
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  &__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    margin-bottom: 0.75rem;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+
+    @include themify($themes) {
+      color: themed('baseColorDark');
+      background-color: themed('appEntryBoxBackground');
+      border: 1px solid themed('baseBorder');
+    }
+
+    &:hover {
+      @include themify($themes) {
+        background-color: themed('appEntryBoxActiveTabBg');
+      }
+    }
+  }
+
+  &__label {
+    font-size: 1.1rem;
+  }
+
+  &__empty {
+    text-align: center;
+    opacity: 0.75;
+  }
+}
