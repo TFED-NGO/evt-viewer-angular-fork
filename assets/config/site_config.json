@@ -1,0 +1,26 @@
+{
+  "defaultEdition": "ls-xii",
+  "editions": [
+    {
+      "slug": "ls-xii",
+      "label": "Lives of Saints 12, Published",
+      "configBase": "assets/editions/ls-xii",
+      "defaultViewMode": "readingText",
+      "enabled": true
+    },
+    {
+      "slug": "pelavicino",
+      "label": "Codice Pelavicino Digitale",
+      "configBase": "assets/editions/pelavicino",
+      "defaultViewMode": "imageText",
+      "enabled": true
+    },
+    {
+      "slug": "saba",
+      "label": "Progetto Saba1919",
+      "configBase": "assets/editions/saba",
+      "defaultViewMode": "documentalMixed",
+      "enabled": true
+    }
+  ]
+}
